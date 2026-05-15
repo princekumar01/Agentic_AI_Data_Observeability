@@ -1,0 +1,501 @@
+patient_id,patient_name,age,medication,blood_pressure,glucose_level,side_effect,severity,visit_date,hospital_name
+P1001,Leon Peterson,64,Drug-D,129/77,237.3,Fatigue,Medium,2026-05-13,Sunrise Healthcare
+P1002,Luis Andersen,54,Drug-C,117/79,108.3,Fatigue,Medium,2026-05-11,Sunrise Healthcare
+P1003,Victoria Weaver,68,Drug-A,121/100,163.3,None,Low,2026-05-12,City Hospital
+P1004,Kelly Cohen,45,Drug-E,146/84,241.8,Headache,Medium,2026-05-10,Central Clinic
+P1005,Ronald Gonzalez,34,Drug-E,137/110,126.8,Dizziness,High,2026-05-10,Central Clinic
+P1006,Austin Moran,77,Drug-C,156/86,125.4,Nausea,Medium,2026-05-10,Green Valley Hospital
+P1007,Grace Lee,27,Drug-C,125/70,131.4,None,Low,2026-05-10,Metro Medical Center
+P1008,Thomas Mendoza,69,Drug-A,111/74,132.6,Headache,Medium,2026-05-14,Sunrise Healthcare
+P1009,Charles Graves,43,Drug-D,114/107,750.0,Dizziness,High,2026-05-13,City Hospital
+P1010,Annette Glass,59,Drug-C,141/107,224.1,Chest Pain,Critical,2026-05-11,Sunrise Healthcare
+P1011,Mr. Marcus Johnson,62,Drug-D,118/109,246.1,Chest Pain,Critical,2026-05-11,Green Valley Hospital
+P1012,Tracy Sullivan,76,Drug-D,156/98,125.2,Fatigue,Medium,2026-05-14,Metro Medical Center
+P1013,Mark White,72,Drug-C,149/73,250.7,Nausea,Medium,2026-05-14,City Hospital
+P1014,Mark Fletcher,76,Drug-B,119/89,171.4,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1015,Tom Pennington,74,Drug-C,143/99,150.1,None,Low,2026-05-11,Central Clinic
+P1016,Anne Johnson,64,Drug-C,117/110,120.0,None,Low,2026-05-11,Sunrise Healthcare
+P1017,Jacob Rodriguez,67,Drug-B,155/85,81.6,Nausea,Medium,2026-05-11,Central Clinic
+P1018,Michael Conley,34,Drug-B,153/109,232.0,Headache,Medium,2026-05-13,Green Valley Hospital
+P1019,Javier Wallace,74,Drug-E,151/104,141.9,Nausea,Medium,2026-05-10,Central Clinic
+P1020,Jennifer Palmer,48,Drug-E,163/71,166.4,None,Critical,2026-05-13,Central Clinic
+P1021,Melissa Gentry,44,Drug-B,150/88,162.9,None,Low,2026-05-09,Central Clinic
+P1022,Katherine Snyder,39,Drug-C,118/107,195.2,Fatigue,Medium,2026-05-14,Central Clinic
+P1023,Nicholas Wells,72,Drug-D,150/99,167.4,Fatigue,Medium,2026-05-11,Sunrise Healthcare
+P1024,William Santana,45,Drug-A,142/76,225.5,Fatigue,Medium,2026-05-11,Central Clinic
+P1025,John Gregory,71,Drug-D,117/87,187.2,Dizziness,High,2026-05-09,City Hospital
+P1026,Mark Richardson,27,Drug-D,146/90,197.3,Nausea,Medium,2026-05-11,Sunrise Healthcare
+P1027,Richard Perry,63,Drug-C,135/88,951.0,Nausea,Medium,2026-05-13,City Hospital
+P1028,Adriana Mccarthy,33,Drug-D,152/77,144.1,Nausea,Medium,2026-05-13,City Hospital
+P1029,Nicole Sandoval,29,Drug-D,151/70,142.2,None,Low,2026-05-10,Sunrise Healthcare
+P1030,Amy Morris,54,Drug-E,117/90,241.3,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1031,Allen Scott,44,Drug-E,144/81,245.8,Nausea,Medium,2026-05-10,Green Valley Hospital
+P1032,Samuel Gonzalez,53,Drug-D,112/85,155.8,Headache,Medium,2026-05-09,Green Valley Hospital
+P1033,Karen Jones,71,Drug-C,155/87,126.6,Chest Pain,Critical,2026-05-12,Central Clinic
+P1034,Jennifer Townsend,62,Drug-D,142/71,245.7,Dizziness,High,2026-05-13,Green Valley Hospital
+P1035,Susan Smith,66,Drug-D,117/106,241.6,Chest Pain,Critical,2026-05-10,Metro Medical Center
+P1036,April Green,26,Drug-E,129/77,89.8,None,Critical,2026-05-11,Central Clinic
+P1037,Benjamin Hanson,80,Drug-D,140/92,142.3,Chest Pain,Critical,2026-05-09,City Hospital
+P1038,Kimberly Kelly,68,Drug-C,153/72,185.0,Dizziness,High,2026-05-14,City Hospital
+P1039,Amanda Johnson MD,73,Drug-B,115/76,239.7,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1040,Michelle Wu,27,Drug-B,168/107,209.2,Nausea,Medium,2026-05-14,Sunrise Healthcare
+P1041,Tabitha Dennis,38,Drug-A,141/76,189.8,Chest Pain,Critical,2026-05-12,City Hospital
+P1042,Patrick Campbell,55,Drug-B,111/84,89.7,Dizziness,High,2026-05-14,Metro Medical Center
+P1043,Daniel Mitchell,60,Drug-B,157/108,192.5,Fatigue,Medium,2026-05-09,Metro Medical Center
+P1044,Heather Wright,26,Drug-E,160/82,718.0,Fatigue,Medium,2026-05-09,Sunrise Healthcare
+P1045,Elizabeth Gutierrez,58,Drug-A,150/109,239.3,Headache,Medium,2026-05-12,Central Clinic
+P1046,Rickey Mcdowell,42,Drug-E,135/92,257.5,None,Low,2026-05-09,Green Valley Hospital
+P1047,Heather Fisher,40,Drug-D,110/98,144.2,Headache,Medium,2026-05-11,Central Clinic
+P1048,Daniel Ryan,64,Drug-D,160/79,130.7,Fatigue,Medium,2026-05-14,Green Valley Hospital
+P1049,Alexandria Good,64,Drug-E,150/107,232.8,Nausea,Medium,2026-05-14,Central Clinic
+P1050,Mark Brown,52,Drug-C,142/94,103.4,Dizziness,High,2026-05-12,Central Clinic
+P1051,Jody Sanchez,58,Drug-E,114/100,253.8,Nausea,Medium,2026-05-11,City Hospital
+P1052,Douglas Harper,68,Drug-E,130/108,254.4,Chest Pain,Critical,2026-05-14,Metro Medical Center
+P1053,Natalie Roberts,47,Drug-E,127/86,222.3,None,Low,2026-05-11,Sunrise Healthcare
+P1054,Zachary Stafford,80,Drug-D,130/101,216.3,None,Low,2026-05-09,City Hospital
+P1055,Joann Bell,71,Drug-D,117/108,187.7,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1056,Spencer Roberts,53,Drug-E,115/74,148.7,Nausea,Medium,2026-05-10,Central Clinic
+P1057,Robert Smith,73,Drug-A,118/108,163.3,Dizziness,High,2026-05-10,Sunrise Healthcare
+P1058,Lori Sellers,73,Drug-E,152/103,212.5,Fatigue,Medium,2026-05-10,Central Clinic
+P1059,Jeffrey Martinez,61,Drug-A,148/96,190.9,Headache,Medium,2026-05-14,Metro Medical Center
+P1060,Charles Parrish,50,Drug-C,151/73,164.1,Fatigue,Medium,2026-05-09,Metro Medical Center
+P1061,Shawn Kelley,74,Drug-C,154/101,175.7,Dizziness,High,2026-05-11,Sunrise Healthcare
+P1062,Ralph Sanford,73,Drug-A,121/89,247.7,Dizziness,High,2026-05-12,Sunrise Healthcare
+P1063,Helen Soto,39,Drug-C,165/82,211.5,Nausea,Medium,2026-05-13,City Hospital
+P1064,Laura Campbell,70,Drug-E,151/109,94.6,Headache,Medium,2026-05-13,Sunrise Healthcare
+P1065,Christopher Little,80,Drug-A,113/102,180.8,Fatigue,Medium,2026-05-11,City Hospital
+P1066,Daniel Thompson,34,Drug-E,134/72,248.3,Dizziness,High,2026-05-14,Green Valley Hospital
+P1067,Stephen Martin,40,Drug-D,157/96,129.3,Dizziness,High,2026-05-09,City Hospital
+P1068,Robert Perkins,64,Drug-D,163/87,81.3,Dizziness,High,2026-05-11,Green Valley Hospital
+P1069,Jamie Lewis,30,Drug-D,139/86,83.1,Dizziness,High,2026-05-12,Central Clinic
+P1070,Mary Hill,79,Drug-E,137/82,83.6,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1071,Victoria Smith,75,Drug-D,130/80,98.6,Dizziness,High,2026-05-14,Central Clinic
+P1072,Sheri Flores,53,Drug-D,118/94,250.7,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1073,Jennifer Carr,77,Drug-B,113/72,254.7,Chest Pain,Critical,2026-05-11,City Hospital
+P1074,George Harris,35,Drug-C,156/76,87.6,None,Low,2026-05-13,Green Valley Hospital
+P1075,Sean Sims,80,Drug-D,154/93,166.9,Dizziness,High,2026-05-09,Green Valley Hospital
+P1076,Jamie Garcia,68,Drug-C,147/87,202.5,Fatigue,Medium,2026-05-10,Sunrise Healthcare
+P1077,Joshua Brown,50,Drug-B,160/76,240.8,Headache,Medium,2026-05-12,Sunrise Healthcare
+P1078,Reginald Simpson,71,Drug-C,153/84,195.2,Dizziness,High,2026-05-12,Green Valley Hospital
+P1079,Mark Ruiz,40,Drug-D,149/86,244.7,Dizziness,High,2026-05-12,Green Valley Hospital
+P1080,Kimberly Andrews,51,Drug-E,126/104,196.2,Chest Pain,Critical,2026-05-09,Sunrise Healthcare
+P1081,Daniel Watson,48,Drug-D,140/100,710.0,Fatigue,Medium,2026-05-10,Green Valley Hospital
+P1082,Lisa Chase,47,Drug-B,143/78,203.5,None,Low,2026-05-11,Green Valley Hospital
+P1083,Jacob Hull,75,Drug-C,156/77,148.5,None,Low,2026-05-14,Metro Medical Center
+P1084,Tyler Booth,39,Drug-C,142/99,214.0,Chest Pain,Critical,2026-05-10,Central Clinic
+P1085,Isaiah Williams,67,Drug-D,124/84,210.1,Nausea,Medium,2026-05-09,Central Clinic
+P1086,Mary Frost,60,Drug-E,151/93,162.4,Headache,Medium,2026-05-12,Central Clinic
+P1087,Terry Moore,36,Drug-A,167/109,916.0,None,Low,2026-05-14,Sunrise Healthcare
+P1088,Kurt Parker,69,Drug-E,169/78,159.4,Dizziness,High,2026-05-12,City Hospital
+P1089,Nathan Gates,55,Drug-E,167/91,182.5,Chest Pain,Critical,2026-05-14,Green Valley Hospital
+P1090,Jennifer Roberts,58,Drug-B,160/84,258.4,Dizziness,High,2026-05-10,Sunrise Healthcare
+P1091,Jonathan Miller,32,Drug-D,125/83,115.7,Nausea,Medium,2026-05-11,Central Clinic
+P1092,Melinda Brown,52,Drug-A,145/79,105.0,Chest Pain,Critical,2026-05-11,Central Clinic
+P1093,Adam Hicks,29,Drug-C,160/83,128.8,Headache,Medium,2026-05-12,Metro Medical Center
+P1094,Pamela Gomez,46,Drug-B,158/93,175.9,None,Low,2026-05-10,Green Valley Hospital
+P1095,Nicholas Ramos,66,Drug-E,135/109,104.0,Chest Pain,Critical,2026-05-12,Metro Medical Center
+P1096,Bailey Taylor,80,Drug-B,123/73,195.3,Dizziness,High,2026-05-14,Central Clinic
+P1097,Jason Morgan,74,Drug-A,126/99,91.4,None,Critical,2026-05-10,City Hospital
+P1098,Justin Little,38,Drug-A,164/70,257.8,None,Low,2026-05-14,Sunrise Healthcare
+P1099,Pamela Hickman,63,Drug-B,154/100,242.6,Dizziness,High,2026-05-09,Central Clinic
+P1100,Brian Shepherd,66,Drug-A,121/98,93.3,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1101,Miranda Jones,29,Drug-E,131/106,191.5,Dizziness,High,2026-05-09,Central Clinic
+P1102,Travis Sanchez,59,Drug-B,135/78,84.9,Nausea,Medium,2026-05-12,Metro Medical Center
+P1103,Richard Moreno Jr.,51,Drug-E,137/102,83.9,Chest Pain,Critical,2026-05-14,City Hospital
+P1104,Nicholas Thomas,63,Drug-C,169/102,218.4,None,Critical,2026-05-10,Central Clinic
+P1105,William Hodges,65,Drug-D,143/96,237.1,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1106,Chelsea Beasley,56,Drug-D,126/71,155.9,Dizziness,High,2026-05-14,Central Clinic
+P1107,Kristen Bowen,32,Drug-D,165/81,96.4,Fatigue,Medium,2026-05-14,City Hospital
+P1108,Jessica Rose,29,Drug-D,114/98,185.8,None,Critical,2026-05-12,City Hospital
+P1109,Andrew Parks,74,Drug-B,141/73,213.2,Fatigue,Medium,2026-05-12,Central Clinic
+P1110,Philip Pratt,78,Drug-D,119/89,106.5,Chest Pain,Critical,2026-05-13,City Hospital
+P1111,Linda Wolf,30,Drug-B,136/110,200.0,Headache,Medium,2026-05-09,City Hospital
+P1112,Julie Barton,42,Drug-E,124/109,204.5,None,Low,2026-05-10,Green Valley Hospital
+P1113,Larry Lambert,45,Drug-D,170/106,116.0,None,Low,2026-05-11,City Hospital
+P1114,Brian Clark,29,Drug-E,133/103,,Nausea,Medium,2026-05-14,City Hospital
+P1115,Brett Walker,60,Drug-B,167/71,149.8,Chest Pain,Critical,2026-05-14,Central Clinic
+P1116,John Ramirez,63,Drug-D,151/102,83.3,None,Low,2026-05-10,Metro Medical Center
+P1117,Leonard Fuentes,56,Drug-C,153/74,239.7,Fatigue,Medium,2026-05-13,Central Clinic
+P1118,Scott Clark,53,Drug-C,166/88,644.0,Fatigue,Medium,2026-05-13,Sunrise Healthcare
+P1119,Carol Hicks,79,Drug-B,143/78,109.4,Headache,Medium,2026-05-12,Metro Medical Center
+P1120,Joanna Walker,54,Drug-A,158/78,138.8,Fatigue,Medium,2026-05-09,Central Clinic
+P1121,Gregory Jones,62,Drug-A,162/70,152.1,None,Low,2026-05-14,City Hospital
+P1122,Mary Bryant,73,Drug-E,121/103,90.7,Chest Pain,Critical,2026-05-13,Metro Medical Center
+P1123,Richard Collins,32,Drug-A,169/77,242.2,Dizziness,High,2026-05-12,Metro Medical Center
+P1124,Alicia Benson,43,Drug-D,110/83,233.2,Dizziness,High,2026-05-09,Metro Medical Center
+P1125,Vicki Jensen,47,Drug-D,128/75,108.0,Fatigue,Medium,2026-05-13,City Hospital
+P1126,Brian Weaver,39,Drug-D,131/73,254.0,Headache,Medium,2026-05-12,Metro Medical Center
+P1127,Nicole Friedman,27,Drug-E,149/104,198.2,Fatigue,Medium,2026-05-11,Metro Medical Center
+P1128,Garrett Kennedy,69,Drug-E,148/90,157.9,Fatigue,Medium,2026-05-10,Sunrise Healthcare
+P1129,Jennifer Acosta,55,Drug-E,159/100,,Headache,Medium,2026-05-10,Green Valley Hospital
+P1130,Kenneth Riggs,39,Drug-B,166/87,165.9,Dizziness,High,2026-05-09,Green Valley Hospital
+P1131,Walter Brown,39,Drug-E,162/97,,Dizziness,High,2026-05-09,Sunrise Healthcare
+P1132,Brandon Campbell,74,Drug-B,138/78,85.5,None,Low,2026-05-09,Metro Medical Center
+P1133,Brenda Curry,39,Drug-C,122/89,254.9,Nausea,Medium,2026-05-09,City Hospital
+P1134,Joel Rice,60,Drug-D,136/73,142.4,Headache,Medium,2026-05-09,Green Valley Hospital
+P1135,John Johnson,56,Drug-D,123/89,179.9,Headache,Medium,2026-05-13,Metro Medical Center
+P1136,Henry Richardson,45,Drug-A,111/104,116.2,Dizziness,High,2026-05-09,Central Clinic
+P1137,Michael Hughes,66,Drug-E,154/76,127.5,Chest Pain,Critical,2026-05-11,Central Clinic
+P1138,Tamara Cameron,49,Drug-D,126/80,172.1,Chest Pain,Critical,2026-05-10,City Hospital
+P1139,Stephanie Gomez,55,Drug-D,164/74,88.8,Dizziness,High,2026-05-12,City Hospital
+P1140,Vincent Roy,56,Drug-E,126/96,249.1,Dizziness,High,2026-05-09,Central Clinic
+P1141,Jonathan Thornton,77,Drug-C,129/103,105.5,None,Low,2026-05-14,Central Clinic
+P1142,Kevin Warner,44,Drug-E,170/106,240.5,Nausea,Medium,2026-05-11,City Hospital
+P1143,Jeffrey Blair,74,Drug-E,153/94,109.3,None,Low,2026-05-11,Metro Medical Center
+P1144,Aaron Griffith,43,Drug-E,124/103,167.6,None,Low,2026-05-11,Central Clinic
+P1145,Sharon Jackson,78,Drug-B,168/100,91.2,Dizziness,High,2026-05-13,Metro Medical Center
+P1146,Jennifer Villa,64,Drug-B,164/89,191.7,None,Low,2026-05-14,Metro Medical Center
+P1147,Michael Harper,40,Drug-D,156/105,177.9,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1148,Steven Phillips,29,Drug-C,159/70,145.7,Fatigue,Medium,2026-05-09,Sunrise Healthcare
+P1149,Lori Horton,59,Drug-A,170/83,171.2,Headache,Medium,2026-05-13,Metro Medical Center
+P1150,Brooke Scott,35,Drug-E,162/107,106.8,Nausea,Medium,2026-05-14,Sunrise Healthcare
+P1151,Caitlin Davis,69,Drug-E,152/102,208.4,Fatigue,Medium,2026-05-10,Green Valley Hospital
+P1152,Krystal Brown,79,Drug-E,163/109,161.5,Fatigue,Medium,2026-05-09,Central Clinic
+P1153,Victoria Trujillo,69,Drug-C,159/89,176.6,Nausea,Medium,2026-05-10,Green Valley Hospital
+P1154,Emily Brown,52,Drug-A,114/108,193.6,Headache,Medium,2026-05-09,Metro Medical Center
+P1155,Paula Cordova,72,Drug-D,149/97,155.0,Chest Pain,Critical,2026-05-13,Sunrise Healthcare
+P1156,William Blackburn,25,Drug-A,146/76,119.6,Dizziness,High,2026-05-09,Green Valley Hospital
+P1157,Mark Vargas,60,Drug-B,151/84,99.7,Dizziness,High,2026-05-09,Green Valley Hospital
+P1158,Margaret Evans,70,Drug-B,110/78,253.3,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1159,David Collins,31,Drug-C,122/85,123.1,Fatigue,Medium,2026-05-11,Central Clinic
+P1160,Paula Adams,53,Drug-A,170/82,,None,Low,2026-05-12,Metro Medical Center
+P1161,Bradley Jones,57,Drug-D,112/103,151.5,Headache,Medium,2026-05-12,Sunrise Healthcare
+P1162,Kimberly Mcgee,62,Drug-B,123/83,136.7,Headache,Medium,2026-05-10,City Hospital
+P1163,Craig Williams,61,Drug-D,136/99,258.6,Chest Pain,Critical,2026-05-10,Central Clinic
+P1164,Kurt Curtis,61,Drug-D,118/70,88.4,Fatigue,Medium,2026-05-14,City Hospital
+P1165,Anne Phillips,29,Drug-C,152/82,132.6,Nausea,Medium,2026-05-14,Metro Medical Center
+P1166,Anthony Gomez,32,Drug-A,164/94,124.8,None,Low,2026-05-09,Metro Medical Center
+P1167,Rachael Higgins,69,Drug-B,170/92,238.3,None,Low,2026-05-10,City Hospital
+P1168,Mrs. Toni Massey,40,Drug-E,113/108,171.0,Dizziness,High,2026-05-12,Central Clinic
+P1169,Rebecca Porter,80,Drug-C,156/71,90.4,Fatigue,Medium,2026-05-10,Sunrise Healthcare
+P1170,Barbara Sanders,50,Drug-A,121/102,242.1,None,Low,2026-05-14,Green Valley Hospital
+P1171,Mackenzie Brown,70,Drug-C,145/83,253.8,Headache,Medium,2026-05-10,Green Valley Hospital
+P1172,William Simmons,75,Drug-B,152/100,200.9,Dizziness,High,2026-05-09,Green Valley Hospital
+P1173,Nicholas Smith,39,Drug-C,126/105,243.5,Headache,Medium,2026-05-14,Central Clinic
+P1174,Mr. Frederick Whitaker II,44,Drug-C,114/72,259.5,Dizziness,High,2026-05-14,Green Valley Hospital
+P1175,Thomas Thomas,48,Drug-B,153/91,157.8,None,Low,2026-05-12,Central Clinic
+P1176,Wayne Melton,67,Drug-A,119/70,109.1,None,Critical,2026-05-13,Green Valley Hospital
+P1177,Casey Soto,54,Drug-D,116/98,993.0,Nausea,Medium,2026-05-12,Metro Medical Center
+P1178,Erin Conner,79,Drug-C,134/106,86.1,Headache,Medium,2026-05-13,Metro Medical Center
+P1179,Amber Allen,25,Drug-E,110/88,253.5,None,Low,2026-05-13,Green Valley Hospital
+P1180,Jack Gibson,34,Drug-A,126/70,162.8,Nausea,Medium,2026-05-12,Metro Medical Center
+P1181,Richard Long,79,Drug-A,159/100,166.4,Fatigue,Medium,2026-05-13,Central Clinic
+P1182,Kristy Howell,32,Drug-A,134/87,91.0,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1183,Deborah Brown,42,Drug-E,140/87,220.5,Headache,Medium,2026-05-10,City Hospital
+P1184,Molly Barnes,42,Drug-D,123/83,211.7,Fatigue,Medium,2026-05-12,Green Valley Hospital
+P1185,Daniel Mccoy,36,Drug-A,156/92,202.5,Headache,Medium,2026-05-14,Metro Medical Center
+P1186,Franklin Brown,60,Drug-E,111/91,,Fatigue,Medium,2026-05-12,Sunrise Healthcare
+P1187,Jacob Fowler,33,Drug-D,110/79,105.2,Nausea,Medium,2026-05-10,Metro Medical Center
+P1188,Rachel Webb,73,Drug-E,123/108,115.6,Nausea,Medium,2026-05-12,Green Valley Hospital
+P1189,Jeffrey Herrera,45,Drug-C,122/94,193.1,Headache,Medium,2026-05-12,Metro Medical Center
+P1190,Louis Garrett,51,Drug-B,125/78,157.3,Dizziness,High,2026-05-13,Green Valley Hospital
+P1191,Kristen Williams,66,Drug-B,156/93,166.0,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1192,Connor Cook,53,Drug-E,116/92,196.4,Dizziness,High,2026-05-10,Central Clinic
+P1193,Bryan Lewis,60,Drug-A,167/95,131.3,None,Low,2026-05-12,Green Valley Hospital
+P1194,Jennifer Walker,42,Drug-A,146/87,144.8,Dizziness,High,2026-05-11,Central Clinic
+P1195,Vanessa Holt,66,Drug-A,170/78,224.7,Headache,Medium,2026-05-09,Sunrise Healthcare
+P1196,Zoe Bennett,47,Drug-D,149/103,95.8,Chest Pain,Critical,2026-05-13,Central Clinic
+P1197,Julia Fields,60,Drug-B,120/109,172.4,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1198,Wendy Huffman,34,Drug-D,159/106,125.4,Headache,Medium,2026-05-12,Green Valley Hospital
+P1199,Donna Ellis,62,Drug-D,148/90,255.4,Fatigue,Medium,2026-05-13,Metro Medical Center
+P1200,Bruce Miller,28,Drug-C,169/75,255.2,Chest Pain,Critical,2026-05-14,Sunrise Healthcare
+P1201,James Joseph,44,Drug-C,117/98,128.7,Chest Pain,Critical,2026-05-09,City Hospital
+P1202,Michelle Flores,46,Drug-D,138/92,116.3,Headache,Medium,2026-05-11,Metro Medical Center
+P1203,Dylan Lloyd,69,Drug-B,121/96,227.7,Nausea,Medium,2026-05-12,City Hospital
+P1204,Roberto Griffin,26,Drug-E,141/86,208.9,Fatigue,Medium,2026-05-11,Green Valley Hospital
+P1205,Rebecca Brooks,26,Drug-D,156/88,199.2,Chest Pain,Critical,2026-05-09,Metro Medical Center
+P1206,Caitlyn Mooney,37,Drug-D,111/86,159.2,Headache,Medium,2026-05-11,Central Clinic
+P1207,Mark Harris,69,Drug-E,156/96,139.2,Chest Pain,Critical,2026-05-12,Central Clinic
+P1208,Cindy Hammond,35,Drug-A,115/107,103.3,Dizziness,High,2026-05-10,City Hospital
+P1209,Susan Nichols,42,Drug-A,123/96,124.8,Fatigue,Medium,2026-05-13,Metro Medical Center
+P1210,Cheryl Snyder,76,Drug-A,155/95,,Fatigue,Medium,2026-05-13,Sunrise Healthcare
+P1211,Trevor Mcconnell,32,Drug-A,111/96,151.1,None,Low,2026-05-09,Metro Medical Center
+P1212,Mark Miller,58,Drug-E,110/94,90.8,Dizziness,High,2026-05-13,Sunrise Healthcare
+P1213,Shannon Wilson,31,Drug-B,153/85,222.7,Headache,Medium,2026-05-14,Metro Medical Center
+P1214,Patricia Allen,78,Drug-E,150/71,86.9,Fatigue,Medium,2026-05-14,Green Valley Hospital
+P1215,Kelly Lee,45,Drug-D,136/89,130.4,Nausea,Medium,2026-05-14,Green Valley Hospital
+P1216,Randy Campbell,33,Drug-D,125/70,145.8,Fatigue,Medium,2026-05-11,Central Clinic
+P1217,Mary Herrera,77,Drug-B,165/107,186.3,None,Low,2026-05-10,City Hospital
+P1218,Troy Bell,78,Drug-A,162/71,150.4,Chest Pain,Critical,2026-05-13,Green Valley Hospital
+P1219,Brandon Lewis,30,Drug-C,149/103,188.3,Headache,Medium,2026-05-14,Sunrise Healthcare
+P1220,Richard Larsen,76,Drug-C,153/109,150.1,Headache,Medium,2026-05-12,Green Valley Hospital
+P1221,Stephen Allen,42,Drug-A,116/108,112.1,Dizziness,High,2026-05-11,Sunrise Healthcare
+P1222,Jessica Bautista,59,Drug-E,152/72,,Fatigue,Medium,2026-05-14,Central Clinic
+P1223,Tiffany Williams,30,Drug-D,162/92,135.6,Chest Pain,Critical,2026-05-09,Sunrise Healthcare
+P1224,Mr. John Freeman,43,Drug-C,112/109,198.4,Fatigue,Medium,2026-05-12,Metro Medical Center
+P1225,Courtney Yu,33,Drug-A,131/88,837.0,Headache,Medium,2026-05-11,Green Valley Hospital
+P1226,Gregg Valdez,31,Drug-C,157/94,230.2,Dizziness,High,2026-05-13,City Hospital
+P1227,Destiny Garcia,49,Drug-E,164/94,147.3,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1228,Julia Dalton,66,Drug-B,115/82,183.6,Chest Pain,Critical,2026-05-09,Central Clinic
+P1229,Jennifer Lopez,26,Drug-D,149/106,218.0,Fatigue,Medium,2026-05-13,Metro Medical Center
+P1230,Devin Jacobs,58,Drug-D,115/83,101.2,None,Low,2026-05-09,Green Valley Hospital
+P1231,Kevin Davies,58,Drug-C,142/95,248.4,Nausea,Medium,2026-05-11,Sunrise Healthcare
+P1232,Tyler Reed,57,Drug-A,155/94,236.1,Dizziness,High,2026-05-14,Central Clinic
+P1233,Daniel Grimes,34,Drug-A,164/79,232.6,Fatigue,Medium,2026-05-13,Central Clinic
+P1234,Justin Campbell,79,Drug-E,136/74,123.5,Nausea,Medium,2026-05-10,City Hospital
+P1235,William Townsend,47,Drug-C,163/90,150.6,Headache,Medium,2026-05-09,Metro Medical Center
+P1236,Sherry Townsend,58,Drug-A,114/85,176.2,Dizziness,High,2026-05-09,City Hospital
+P1237,Lauren Avila,52,Drug-B,155/90,156.1,None,Critical,2026-05-09,Central Clinic
+P1238,Veronica Lamb,33,Drug-B,169/82,168.8,Fatigue,Medium,2026-05-11,Central Clinic
+P1239,Brad Smith,57,Drug-C,133/98,241.7,Dizziness,High,2026-05-09,Central Clinic
+P1240,Lauren Martinez,58,Drug-E,151/110,114.0,Fatigue,Medium,2026-05-10,Green Valley Hospital
+P1241,Jordan Rhodes,28,Drug-B,168/89,94.5,Chest Pain,Critical,2026-05-14,City Hospital
+P1242,William Moore,65,Drug-E,124/106,198.5,Chest Pain,Critical,2026-05-14,Sunrise Healthcare
+P1243,Monica Salinas,31,Drug-A,168/91,132.3,Fatigue,Medium,2026-05-14,Green Valley Hospital
+P1244,Patrick Mckinney,77,Drug-A,159/93,143.9,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1245,Emily Bentley,69,Drug-A,161/100,114.0,Fatigue,Medium,2026-05-09,Green Valley Hospital
+P1246,Steven Lewis,53,Drug-C,147/108,,Nausea,Medium,2026-05-09,Green Valley Hospital
+P1247,Cheryl Austin,50,Drug-A,116/92,252.4,Fatigue,Medium,2026-05-09,Metro Medical Center
+P1248,Christopher Barton,76,Drug-D,139/105,169.2,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1249,Ryan Johnson,64,Drug-E,120/93,198.2,Chest Pain,Critical,2026-05-10,Central Clinic
+P1250,Ana Torres,54,Drug-A,163/71,199.7,None,Low,2026-05-14,Green Valley Hospital
+P1251,Jennifer Hendricks,49,Drug-A,142/70,179.1,Headache,Medium,2026-05-09,Sunrise Healthcare
+P1252,Dwayne Warren,36,Drug-B,149/108,237.7,Nausea,Medium,2026-05-13,Metro Medical Center
+P1253,Jorge Swanson,39,Drug-D,137/109,256.7,Fatigue,Medium,2026-05-12,Green Valley Hospital
+P1254,Michael Taylor,53,Drug-E,170/98,168.7,Dizziness,High,2026-05-13,City Hospital
+P1255,Michelle Hall,32,Drug-B,114/85,233.2,Dizziness,High,2026-05-14,Central Clinic
+P1256,Cheryl Munoz,37,Drug-B,135/82,232.0,None,Low,2026-05-13,Central Clinic
+P1257,Jessica Edwards,35,Drug-E,118/78,97.1,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1258,Troy Davis,33,Drug-D,151/79,139.9,None,Low,2026-05-12,Metro Medical Center
+P1259,Jason Wheeler,25,Drug-B,123/71,93.0,Dizziness,High,2026-05-13,City Hospital
+P1260,Joshua Herrera,33,Drug-B,131/108,124.0,None,Low,2026-05-10,Green Valley Hospital
+P1261,Susan Woods,72,Drug-B,113/91,192.4,Chest Pain,Critical,2026-05-14,Central Clinic
+P1262,Timothy Hawkins,65,Drug-E,151/83,196.5,Fatigue,Medium,2026-05-14,Sunrise Healthcare
+P1263,Nathaniel Diaz,73,Drug-A,114/101,198.0,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1264,Abigail Wilkinson,41,Drug-B,115/72,178.7,Nausea,Medium,2026-05-14,Metro Medical Center
+P1265,Stacey Smith,50,Drug-E,136/75,85.2,Headache,Medium,2026-05-11,Sunrise Healthcare
+P1266,Brittany Nguyen,80,Drug-C,121/98,233.2,Headache,Medium,2026-05-11,Green Valley Hospital
+P1267,Betty Garcia,29,Drug-B,159/89,191.2,Fatigue,Medium,2026-05-13,Metro Medical Center
+P1268,Hunter Kennedy,52,Drug-A,119/77,141.8,Fatigue,Medium,2026-05-09,City Hospital
+P1269,Erin Johnson,44,Drug-D,132/72,220.7,None,Low,2026-05-09,Central Clinic
+P1270,Rachel Williams,33,Drug-D,129/85,248.4,Headache,Medium,2026-05-09,Green Valley Hospital
+P1271,Tyrone Russell,56,Drug-E,110/91,165.5,Fatigue,Medium,2026-05-12,Central Clinic
+P1272,Peter Marshall,33,Drug-B,150/82,122.0,None,Low,2026-05-10,City Hospital
+P1273,Justin Roberts,78,Drug-D,139/78,149.3,Headache,Medium,2026-05-10,Central Clinic
+P1274,Tony Hansen,57,Drug-B,128/79,156.2,Nausea,Medium,2026-05-14,Sunrise Healthcare
+P1275,Kevin Ferguson,61,Drug-C,140/84,250.3,None,Low,2026-05-11,City Hospital
+P1276,Angel Ramirez,46,Drug-C,112/72,223.9,Chest Pain,Critical,2026-05-14,Metro Medical Center
+P1277,Daniel Dominguez,77,Drug-E,153/74,143.7,Fatigue,Medium,2026-05-10,Metro Medical Center
+P1278,Michael Wells,62,Drug-E,142/84,209.4,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1279,Richard Hendrix,30,Drug-D,110/79,125.9,Headache,Medium,2026-05-14,City Hospital
+P1280,Mary Oconnell,60,Drug-C,144/93,152.7,Headache,Medium,2026-05-13,Metro Medical Center
+P1281,Eric George,74,Drug-E,155/103,207.1,Nausea,Medium,2026-05-09,Central Clinic
+P1282,Joshua Robinson,37,Drug-E,161/107,118.8,Dizziness,High,2026-05-09,Metro Medical Center
+P1283,Jeffery Johnson,72,Drug-D,159/95,110.0,Dizziness,High,2026-05-13,Central Clinic
+P1284,Shannon Guerrero,79,Drug-B,167/83,241.2,Headache,Medium,2026-05-12,Sunrise Healthcare
+P1285,John Martin,80,Drug-C,141/98,126.4,Dizziness,High,2026-05-09,City Hospital
+P1286,Alexis Ball,27,Drug-E,165/75,253.9,Nausea,Medium,2026-05-09,Sunrise Healthcare
+P1287,Joshua Perkins,34,Drug-D,119/85,233.2,Chest Pain,Critical,2026-05-11,City Hospital
+P1288,Alicia Fox,72,Drug-E,169/70,184.7,Headache,Medium,2026-05-11,Central Clinic
+P1289,Brian Fletcher,45,Drug-B,125/83,216.5,None,Low,2026-05-09,City Hospital
+P1290,Tammy Hale,51,Drug-C,112/73,150.9,Fatigue,Medium,2026-05-09,Sunrise Healthcare
+P1291,Nicole Davis,37,Drug-B,123/102,250.5,Fatigue,Medium,2026-05-13,Sunrise Healthcare
+P1292,Jamie Smith,51,Drug-C,119/95,176.3,Headache,Medium,2026-05-14,City Hospital
+P1293,Mario Sullivan,73,Drug-D,149/93,146.4,Headache,Medium,2026-05-12,Metro Medical Center
+P1294,Scott Harper,41,Drug-C,130/81,209.0,Chest Pain,Critical,2026-05-10,Metro Medical Center
+P1295,Christina Guerra,52,Drug-B,150/108,211.1,Headache,Medium,2026-05-13,Green Valley Hospital
+P1296,Elizabeth Phillips,57,Drug-A,117/88,254.6,Dizziness,High,2026-05-10,City Hospital
+P1297,Michele Stewart,44,Drug-E,137/81,153.4,Dizziness,High,2026-05-11,Green Valley Hospital
+P1298,Derrick Turner,44,Drug-C,125/90,136.8,Fatigue,Medium,2026-05-12,Sunrise Healthcare
+P1299,John Pierce,43,Drug-A,130/77,149.2,None,Low,2026-05-09,Green Valley Hospital
+P1300,Dr. Sean Lowe DVM,65,Drug-E,144/84,208.5,Dizziness,High,2026-05-11,Metro Medical Center
+P1301,Patricia Lopez,74,Drug-A,118/108,93.7,Dizziness,High,2026-05-09,City Hospital
+P1302,Michael Hahn,77,Drug-E,111/80,174.4,Dizziness,High,2026-05-11,Sunrise Healthcare
+P1303,Patrick Dominguez,46,Drug-A,152/90,178.9,None,Low,2026-05-13,Green Valley Hospital
+P1304,Jasmine Thomas,27,Drug-E,144/110,161.7,Nausea,Medium,2026-05-12,Green Valley Hospital
+P1305,Karen Kidd,44,Drug-C,139/74,188.4,None,Low,2026-05-13,Metro Medical Center
+P1306,Jennifer Thompson,44,Drug-C,138/78,236.6,Nausea,Medium,2026-05-10,Central Clinic
+P1307,Cheryl Cline,59,Drug-A,144/79,198.8,Fatigue,Medium,2026-05-11,City Hospital
+P1308,Sandra Kramer,40,Drug-D,161/95,238.7,Headache,Medium,2026-05-13,Sunrise Healthcare
+P1309,Joshua Miller,65,Drug-C,163/108,118.7,Nausea,Medium,2026-05-13,Central Clinic
+P1310,Whitney Mckenzie,65,Drug-A,140/91,104.9,Fatigue,Medium,2026-05-10,City Hospital
+P1311,Kimberly Rocha,60,Drug-E,125/94,254.2,Fatigue,Medium,2026-05-14,Metro Medical Center
+P1312,Aaron Vance,77,Drug-C,147/73,234.7,Fatigue,Medium,2026-05-12,Sunrise Healthcare
+P1313,Stephen Vaughn,54,Drug-E,121/71,175.9,Nausea,Medium,2026-05-11,Central Clinic
+P1314,William Smith,35,Drug-D,126/109,145.9,Headache,Medium,2026-05-09,City Hospital
+P1315,Dylan Glenn,27,Drug-A,117/99,109.6,Fatigue,Medium,2026-05-12,Sunrise Healthcare
+P1316,Aaron Marquez,71,Drug-E,158/87,129.0,Fatigue,Medium,2026-05-11,City Hospital
+P1317,Sheila Cook,28,Drug-E,120/91,246.0,None,Low,2026-05-11,Green Valley Hospital
+P1318,Laura Nelson,60,Drug-A,161/94,101.8,Fatigue,Medium,2026-05-10,Green Valley Hospital
+P1319,Lucas Alexander,70,Drug-E,114/107,168.2,Fatigue,Medium,2026-05-12,City Hospital
+P1320,Jennifer Richardson,41,Drug-E,116/73,189.4,Nausea,Medium,2026-05-11,Sunrise Healthcare
+P1321,Marcus Mullins,66,Drug-D,138/81,139.3,Headache,Medium,2026-05-11,Metro Medical Center
+P1322,Dennis Hill,25,Drug-E,130/80,133.1,Headache,Medium,2026-05-14,Central Clinic
+P1323,Mrs. Mary Lee,64,Drug-D,123/72,136.2,Fatigue,Medium,2026-05-14,Central Clinic
+P1324,Misty Scott,28,Drug-B,135/106,228.4,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1325,Joseph Singleton,74,Drug-A,170/75,158.1,None,Low,2026-05-11,Sunrise Healthcare
+P1326,Ashley Bell,63,Drug-C,169/88,220.4,None,Low,2026-05-12,City Hospital
+P1327,Christopher Morgan,70,Drug-D,135/106,219.2,Nausea,Medium,2026-05-13,Central Clinic
+P1328,Jackie Colon,64,Drug-E,152/100,171.9,Headache,Medium,2026-05-10,City Hospital
+P1329,Christy Fernandez,45,Drug-B,161/100,199.6,Chest Pain,Critical,2026-05-11,Central Clinic
+P1330,Tammy Foster,52,Drug-E,121/109,165.6,Chest Pain,Critical,2026-05-09,City Hospital
+P1331,Nathan Owens,49,Drug-C,157/77,179.2,None,Low,2026-05-11,City Hospital
+P1332,Christina Morris,65,Drug-A,135/75,148.0,None,Low,2026-05-12,City Hospital
+P1333,Michael Evans,47,Drug-D,151/88,259.1,Dizziness,High,2026-05-11,Metro Medical Center
+P1334,Brittany Cook,34,Drug-E,166/105,,None,Low,2026-05-11,Sunrise Healthcare
+P1335,John Cortez,34,Drug-A,117/101,153.4,Nausea,Medium,2026-05-09,Central Clinic
+P1336,April Brown,27,Drug-A,141/97,219.4,Chest Pain,Critical,2026-05-09,City Hospital
+P1337,Chad Joseph,44,Drug-D,157/99,185.5,Headache,Medium,2026-05-13,Green Valley Hospital
+P1338,Audrey Chan MD,53,Drug-A,114/93,110.6,Chest Pain,Critical,2026-05-09,Metro Medical Center
+P1339,John Maldonado,63,Drug-C,144/96,164.6,Nausea,Medium,2026-05-10,Sunrise Healthcare
+P1340,Jordan Mitchell,68,Drug-C,115/107,172.6,Dizziness,High,2026-05-13,Central Clinic
+P1341,Adam West,41,Drug-E,148/110,210.8,Nausea,Medium,2026-05-09,Green Valley Hospital
+P1342,Roger Stafford,72,Drug-B,127/90,153.0,Fatigue,Medium,2026-05-09,Central Clinic
+P1343,Sarah Owens,25,Drug-D,149/72,108.7,Dizziness,High,2026-05-12,Central Clinic
+P1344,Kelly Mcgee,59,Drug-B,110/82,187.3,Nausea,Medium,2026-05-14,Central Clinic
+P1345,Zachary Brown,80,Drug-A,150/70,159.8,Fatigue,Medium,2026-05-12,Metro Medical Center
+P1346,Donald Taylor,80,Drug-E,114/92,166.1,Headache,Medium,2026-05-09,Green Valley Hospital
+P1347,Laurie Molina,70,Drug-A,136/105,80.6,Chest Pain,Critical,2026-05-13,Green Valley Hospital
+P1348,Ashley Kaufman,78,Drug-C,167/85,217.8,None,Critical,2026-05-10,Central Clinic
+P1349,William Wong,59,Drug-E,137/82,88.0,None,Low,2026-05-14,City Hospital
+P1350,Brandon Phillips,52,Drug-B,132/104,936.0,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1351,Michael Powers,52,Drug-C,127/105,201.9,None,Low,2026-05-13,City Hospital
+P1352,Stephanie Flores,43,Drug-E,160/102,177.7,Headache,Medium,2026-05-12,Green Valley Hospital
+P1353,Paula Ward,52,Drug-D,140/87,105.5,Chest Pain,Critical,2026-05-09,City Hospital
+P1354,Dr. Anthony Stevens MD,69,Drug-D,135/84,139.1,Fatigue,Medium,2026-05-14,Sunrise Healthcare
+P1355,Sarah Stevens,77,Drug-C,110/110,131.3,Nausea,Medium,2026-05-09,Central Clinic
+P1356,Aaron Jones,36,Drug-C,129/73,106.2,Dizziness,High,2026-05-09,Sunrise Healthcare
+P1357,Kenneth Romero,46,Drug-C,131/106,122.7,Dizziness,High,2026-05-11,Central Clinic
+P1358,Brenda Tapia,52,Drug-D,157/87,94.8,Fatigue,Medium,2026-05-09,Central Clinic
+P1359,William Powell,70,Drug-C,167/93,84.8,Nausea,Medium,2026-05-13,Green Valley Hospital
+P1360,Miss Tina Munoz,49,Drug-A,144/105,209.5,None,Low,2026-05-14,City Hospital
+P1361,Thomas Clements,33,Drug-B,154/101,170.4,Fatigue,Medium,2026-05-12,Metro Medical Center
+P1362,Janet Williams,48,Drug-E,117/104,247.2,Headache,Medium,2026-05-13,City Hospital
+P1363,Daniel Barber,28,Drug-D,127/89,115.1,None,Critical,2026-05-14,Green Valley Hospital
+P1364,Kevin Everett,39,Drug-A,166/91,146.5,Headache,Medium,2026-05-13,Green Valley Hospital
+P1365,Pamela Tanner,46,Drug-B,140/76,203.5,Chest Pain,Critical,2026-05-09,Metro Medical Center
+P1366,Timothy Carter,45,Drug-E,119/107,210.6,Dizziness,High,2026-05-11,Green Valley Hospital
+P1367,Jesse Jones,31,Drug-A,168/81,148.1,Nausea,Medium,2026-05-09,Metro Medical Center
+P1368,David Lindsey,69,Drug-D,169/94,109.1,None,Low,2026-05-10,City Hospital
+P1369,Nicholas Perez,63,Drug-D,133/91,204.9,Dizziness,High,2026-05-14,Central Clinic
+P1370,Christopher Lucero,72,Drug-C,163/110,143.8,Chest Pain,Critical,2026-05-11,Green Valley Hospital
+P1371,Thomas West,67,Drug-A,128/74,154.3,Nausea,Medium,2026-05-09,Sunrise Healthcare
+P1372,Steven Morgan,32,Drug-A,140/99,230.5,None,Low,2026-05-12,Metro Medical Center
+P1373,Emily Baker,51,Drug-C,146/109,119.0,Chest Pain,Critical,2026-05-09,Sunrise Healthcare
+P1374,Wanda Winters,52,Drug-B,143/84,125.4,Dizziness,High,2026-05-12,Sunrise Healthcare
+P1375,Bobby Jones,77,Drug-A,133/70,180.7,Fatigue,Medium,2026-05-12,City Hospital
+P1376,Christopher Ramirez,74,Drug-A,123/75,91.0,Fatigue,Medium,2026-05-14,Central Clinic
+P1377,Jennifer Moran,71,Drug-E,168/104,193.1,Dizziness,High,2026-05-10,Sunrise Healthcare
+P1378,Amy Johnson,31,Drug-A,125/72,125.0,Chest Pain,Critical,2026-05-12,Sunrise Healthcare
+P1379,Patrick Anderson,79,Drug-E,127/89,159.0,None,Low,2026-05-09,Sunrise Healthcare
+P1380,Courtney Martinez,77,Drug-A,139/109,254.3,Dizziness,High,2026-05-13,Green Valley Hospital
+P1381,Anna Lynn,47,Drug-E,162/78,161.7,Dizziness,High,2026-05-12,Sunrise Healthcare
+P1382,David Cohen,46,Drug-A,162/75,212.2,Nausea,Medium,2026-05-09,Metro Medical Center
+P1383,Danielle Fox,49,Drug-B,117/107,89.1,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1384,Mark Peterson,46,Drug-E,149/95,117.6,Headache,Medium,2026-05-14,Sunrise Healthcare
+P1385,Matthew Nelson,38,Drug-E,160/107,98.7,Dizziness,High,2026-05-11,Green Valley Hospital
+P1386,Matthew Dodson,58,Drug-D,115/70,165.6,Dizziness,High,2026-05-14,Central Clinic
+P1387,Jordan Bauer,35,Drug-E,113/80,211.5,None,Critical,2026-05-09,Metro Medical Center
+P1388,Cole Armstrong,34,Drug-B,119/102,190.3,Dizziness,High,2026-05-12,Metro Medical Center
+P1389,Terry Benton,54,Drug-D,119/106,122.7,Headache,Medium,2026-05-11,Green Valley Hospital
+P1390,Patrick Lopez,59,Drug-E,111/82,248.1,Chest Pain,Critical,2026-05-12,Metro Medical Center
+P1391,Peter Bates,79,Drug-E,166/79,154.0,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1392,Robert Phillips,68,Drug-D,111/78,103.7,None,Critical,2026-05-12,Metro Medical Center
+P1393,Aaron Nguyen,69,Drug-B,138/70,240.3,Chest Pain,Critical,2026-05-09,Sunrise Healthcare
+P1394,Stephanie Olsen,65,Drug-B,118/76,123.5,Dizziness,High,2026-05-10,Sunrise Healthcare
+P1395,Alison Riggs,27,Drug-A,122/101,253.9,None,Low,2026-05-10,Central Clinic
+P1396,Brandon Walsh,37,Drug-B,125/98,252.9,Headache,Medium,2026-05-14,Central Clinic
+P1397,Debra Griffin,31,Drug-D,131/82,186.8,Headache,Medium,2026-05-09,Sunrise Healthcare
+P1398,Jason Elliott,41,Drug-D,141/103,218.3,Headache,Medium,2026-05-09,Metro Medical Center
+P1399,Kristina Higgins,71,Drug-D,128/84,92.9,Nausea,Medium,2026-05-12,Green Valley Hospital
+P1400,Lucas Dillon,73,Drug-E,120/103,142.8,Nausea,Medium,2026-05-11,Metro Medical Center
+P1401,Ashley Mitchell,44,Drug-C,126/73,162.3,Chest Pain,Critical,2026-05-11,Green Valley Hospital
+P1402,Nicole Blackburn,25,Drug-C,125/93,234.0,Dizziness,High,2026-05-09,City Hospital
+P1403,James Allen,25,Drug-A,149/99,165.2,None,Low,2026-05-13,Central Clinic
+P1404,Robert Campbell,27,Drug-D,157/79,922.0,None,Low,2026-05-13,Metro Medical Center
+P1405,Dakota Drake,48,Drug-A,169/97,250.2,Nausea,Medium,2026-05-09,Sunrise Healthcare
+P1406,Amy Gonzalez,75,Drug-E,145/99,136.7,None,Low,2026-05-12,Central Clinic
+P1407,Mark Spencer,75,Drug-E,170/90,103.5,Headache,Medium,2026-05-11,City Hospital
+P1408,Whitney Wagner,67,Drug-E,139/98,221.7,Nausea,Medium,2026-05-10,Sunrise Healthcare
+P1409,Megan White,41,Drug-B,139/73,83.8,Fatigue,Medium,2026-05-10,Sunrise Healthcare
+P1410,Austin Bell,79,Drug-A,112/94,209.9,Chest Pain,Critical,2026-05-10,Sunrise Healthcare
+P1411,Michelle Cisneros,51,Drug-A,138/91,,Nausea,Medium,2026-05-14,City Hospital
+P1412,Ryan Jordan,42,Drug-C,113/110,164.8,Headache,Medium,2026-05-11,Sunrise Healthcare
+P1413,Richard Evans,54,Drug-C,133/71,207.5,Headache,Medium,2026-05-10,Sunrise Healthcare
+P1414,Jamie Grant,65,Drug-D,141/92,102.8,Nausea,Medium,2026-05-10,Sunrise Healthcare
+P1415,Elizabeth Silva,57,Drug-D,129/106,177.4,Chest Pain,Critical,2026-05-13,Green Valley Hospital
+P1416,Brittany Sullivan,44,Drug-C,126/97,253.0,None,Low,2026-05-14,City Hospital
+P1417,Linda Patton,59,Drug-D,110/78,222.5,Chest Pain,Critical,2026-05-09,Metro Medical Center
+P1418,Madison Walker,77,Drug-A,155/110,155.5,Nausea,Medium,2026-05-10,Central Clinic
+P1419,Julie Esparza,49,Drug-B,170/101,258.4,Chest Pain,Critical,2026-05-13,Green Valley Hospital
+P1420,Kyle Deleon,33,Drug-D,127/101,135.6,Headache,Medium,2026-05-10,Metro Medical Center
+P1421,Ruth Gonzales,52,Drug-D,167/72,154.6,Chest Pain,Critical,2026-05-11,City Hospital
+P1422,Jacob Russell,40,Drug-C,168/89,80.1,None,Low,2026-05-10,Sunrise Healthcare
+P1423,Fred Caldwell,75,Drug-A,157/89,772.0,Headache,Medium,2026-05-10,Metro Medical Center
+P1424,James Jones,44,Drug-E,152/108,217.0,None,Critical,2026-05-13,Sunrise Healthcare
+P1425,Meghan Hicks,41,Drug-D,151/79,86.9,Dizziness,High,2026-05-10,Metro Medical Center
+P1426,Nicholas Rios,67,Drug-C,170/109,136.1,Chest Pain,Critical,2026-05-13,Sunrise Healthcare
+P1427,Christopher Avery,26,Drug-C,156/89,191.9,Nausea,Medium,2026-05-12,City Hospital
+P1428,Frederick Collins,51,Drug-D,131/94,167.7,None,Low,2026-05-10,Green Valley Hospital
+P1429,Jennifer Stewart,69,Drug-C,149/90,86.3,Chest Pain,Critical,2026-05-12,City Hospital
+P1430,Jonathan Calhoun,59,Drug-C,123/104,159.4,Nausea,Medium,2026-05-09,Metro Medical Center
+P1431,Anthony Acosta,63,Drug-E,143/104,120.1,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1432,Brian Livingston,46,Drug-C,156/93,247.1,Headache,Medium,2026-05-11,Central Clinic
+P1433,Lisa Ford,66,Drug-A,150/90,87.7,Nausea,Medium,2026-05-14,City Hospital
+P1434,Jamie Townsend,37,Drug-B,128/80,215.8,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1435,Kevin Ayala,65,Drug-A,157/72,248.8,Nausea,Medium,2026-05-11,City Hospital
+P1436,Courtney Schmidt,44,Drug-D,123/87,,Fatigue,Medium,2026-05-09,Metro Medical Center
+P1437,Kathryn White,70,Drug-C,134/103,246.2,Chest Pain,Critical,2026-05-12,Sunrise Healthcare
+P1438,Dr. Linda Osborne MD,48,Drug-C,116/106,249.4,Dizziness,High,2026-05-10,Green Valley Hospital
+P1439,Carolyn Baker DVM,31,Drug-C,149/93,219.7,Nausea,Medium,2026-05-12,City Hospital
+P1440,Brittany Stafford,79,Drug-C,159/84,941.0,Nausea,Medium,2026-05-10,Sunrise Healthcare
+P1441,Tyler Thomas,69,Drug-B,111/100,117.2,Fatigue,Medium,2026-05-10,Sunrise Healthcare
+P1442,Mrs. Jennifer Hebert,59,Drug-E,164/92,95.0,Chest Pain,Critical,2026-05-12,Metro Medical Center
+P1443,Ryan Singh,41,Drug-D,122/80,,None,Low,2026-05-14,City Hospital
+P1444,Richard Barber,34,Drug-D,122/72,236.0,Fatigue,Medium,2026-05-12,Sunrise Healthcare
+P1445,Jamie Sandoval,25,Drug-B,111/73,173.2,Nausea,Medium,2026-05-12,Metro Medical Center
+P1446,Cody Cox,61,Drug-B,154/89,82.0,Dizziness,High,2026-05-12,Central Clinic
+P1447,Jody Young,61,Drug-D,148/73,91.1,Chest Pain,Critical,2026-05-10,Central Clinic
+P1448,Thomas Harris,46,Drug-D,160/84,184.9,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1449,Gary Short,78,Drug-A,157/74,194.7,Dizziness,High,2026-05-10,Central Clinic
+P1450,Adam Castillo,55,Drug-E,136/83,240.9,Dizziness,High,2026-05-14,Sunrise Healthcare
+P1451,Tyler Rush,56,Drug-A,132/86,206.6,Dizziness,High,2026-05-09,City Hospital
+P1452,Robert Lyons,64,Drug-B,120/101,229.9,Nausea,Medium,2026-05-14,Central Clinic
+P1453,Mary Spence,58,Drug-D,158/93,100.7,None,Low,2026-05-14,Sunrise Healthcare
+P1454,Tammy Nelson,79,Drug-C,147/70,183.3,Fatigue,Medium,2026-05-10,Metro Medical Center
+P1455,Christopher Nash,43,Drug-E,133/70,150.1,Chest Pain,Critical,2026-05-12,Metro Medical Center
+P1456,Rebecca Lucas,72,Drug-E,120/83,173.3,Fatigue,Medium,2026-05-10,Green Valley Hospital
+P1457,Dustin Deleon,30,Drug-E,121/84,255.6,None,Low,2026-05-14,Central Clinic
+P1458,Janice Sanchez,55,Drug-B,120/109,238.1,Chest Pain,Critical,2026-05-10,Sunrise Healthcare
+P1459,Julia Calhoun,60,Drug-E,128/110,82.3,Nausea,Medium,2026-05-13,Sunrise Healthcare
+P1460,Justin Smith,69,Drug-B,168/96,85.0,None,Low,2026-05-14,Green Valley Hospital
+P1461,Brandy Harris,44,Drug-B,170/81,137.2,None,Low,2026-05-10,Metro Medical Center
+P1462,Kristopher Williams,73,Drug-E,162/103,159.3,None,Low,2026-05-11,Green Valley Hospital
+P1463,Rachael Anderson,44,Drug-D,123/90,108.7,Nausea,Medium,2026-05-09,Sunrise Healthcare
+P1464,John Jones,50,Drug-E,115/87,217.9,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1465,Cody Beck,25,Drug-C,116/98,168.0,Dizziness,High,2026-05-10,Green Valley Hospital
+P1466,Karen Neal,59,Drug-E,158/99,181.3,Headache,Medium,2026-05-13,Metro Medical Center
+P1467,Olivia Tanner,26,Drug-B,145/108,96.1,None,Low,2026-05-14,Green Valley Hospital
+P1468,Christopher Guerrero,37,Drug-A,136/103,176.0,Nausea,Medium,2026-05-10,Metro Medical Center
+P1469,Teresa Oliver,57,Drug-E,136/108,126.8,Chest Pain,Critical,2026-05-09,Central Clinic
+P1470,Melissa Garcia,43,Drug-B,133/81,162.2,Nausea,Medium,2026-05-14,City Hospital
+P1471,Bryan George,61,Drug-E,118/80,219.2,None,Low,2026-05-09,Central Clinic
+P1472,Anne Sparks,57,Drug-E,167/70,242.9,Dizziness,High,2026-05-09,City Hospital
+P1473,Kenneth Lee,32,Drug-E,133/102,200.1,Chest Pain,Critical,2026-05-13,Metro Medical Center
+P1474,Brittany Escobar,53,Drug-A,140/70,248.9,Fatigue,Medium,2026-05-13,Green Valley Hospital
+P1475,Guy Bass,32,Drug-B,117/77,98.7,None,Low,2026-05-14,Central Clinic
+P1476,Cassie Johnson,27,Drug-B,143/81,130.3,Nausea,Medium,2026-05-13,Green Valley Hospital
+P1477,Hunter Pitts,43,Drug-A,164/73,88.2,Nausea,Medium,2026-05-14,Green Valley Hospital
+P1478,Randall Bass,38,Drug-D,127/95,121.7,Chest Pain,Critical,2026-05-12,Metro Medical Center
+P1479,Patricia Edwards,34,Drug-E,140/85,174.5,Dizziness,High,2026-05-13,Metro Medical Center
+P1480,Lindsey Mcgee,36,Drug-A,163/101,199.4,Chest Pain,Critical,2026-05-11,City Hospital
+P1481,Tracy Mcdonald,35,Drug-C,131/80,83.0,Chest Pain,Critical,2026-05-10,City Hospital
+P1482,Olivia Horton,63,Drug-A,158/91,186.3,Fatigue,Medium,2026-05-12,Central Clinic
+P1483,Denise Walker,55,Drug-D,114/98,222.7,Headache,Medium,2026-05-11,Metro Medical Center
+P1484,Glenn Dixon,37,Drug-D,123/86,222.8,Headache,Medium,2026-05-13,Green Valley Hospital
+P1485,Ronald Lambert,31,Drug-A,154/95,168.1,Dizziness,High,2026-05-10,Sunrise Healthcare
+P1486,Ronald Baker,43,Drug-B,130/75,214.0,None,Low,2026-05-13,Sunrise Healthcare
+P1487,Kara Reed,73,Drug-D,125/81,123.1,Nausea,Medium,2026-05-11,City Hospital
+P1488,Glen Wright,76,Drug-A,157/102,200.7,Headache,Medium,2026-05-09,City Hospital
+P1489,Carlos Kelly,70,Drug-D,133/106,240.8,Dizziness,High,2026-05-10,Green Valley Hospital
+P1490,Austin Moreno,31,Drug-A,152/98,191.5,Dizziness,High,2026-05-14,Metro Medical Center
+P1491,Erin Clark,50,Drug-A,135/84,112.7,Fatigue,Medium,2026-05-10,City Hospital
+P1492,Kimberly Lee,69,Drug-B,136/95,80.2,Chest Pain,Critical,2026-05-13,City Hospital
+P1493,Amy Kim,25,Drug-D,111/102,90.0,Nausea,Medium,2026-05-11,Green Valley Hospital
+P1494,Barry Harmon,56,Drug-A,124/91,239.7,Nausea,Medium,2026-05-09,Metro Medical Center
+P1495,Gary Johnson,60,Drug-E,116/101,259.3,Dizziness,High,2026-05-12,City Hospital
+P1496,Patricia Douglas DVM,37,Drug-A,125/87,102.0,Chest Pain,Critical,2026-05-10,Central Clinic
+P1497,Pamela Maxwell,70,Drug-A,155/82,155.2,None,Low,2026-05-14,Green Valley Hospital
+P1498,Miranda Bryant,36,Drug-C,153/101,85.7,Nausea,Medium,2026-05-09,Metro Medical Center
+P1499,Karen Scott,55,Drug-D,167/77,88.7,Chest Pain,Critical,2026-05-09,Green Valley Hospital
+P1500,Hannah Wood,40,Drug-D,158/106,205.7,Dizziness,High,2026-05-11,Metro Medical Center
