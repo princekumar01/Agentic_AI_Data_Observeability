@@ -1,0 +1,13 @@
+{
+  "expected_row_count": 500,
+  "age_mean": 57.418,
+  "age_std": 22.1194,
+  "glucose_level_mean": 165.9563,
+  "glucose_level_std": 59.579,
+  "severity_distribution": {
+    "Low": 0.414,
+    "Medium": 0.274,
+    "High": 0.18,
+    "Critical": 0.132
+  }
+}

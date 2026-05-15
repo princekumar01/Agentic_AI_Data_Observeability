@@ -1,0 +1,58 @@
+data:
+  csv_directory: "data/clinical"
+  csv_filename: "clinical_trial_data.csv"
+  baseline_metrics_path: "config/baseline_metrics.json"
+  expected_row_count: 500
+  freshness_max_days: 7
+  file_freshness_max_hours: 24
+
+validation:
+  expected_columns:
+    - patient_id
+    - patient_name
+    - age
+    - medication
+    - blood_pressure
+    - glucose_level
+    - side_effect
+    - severity
+    - visit_date
+    - hospital_name
+  date_column: "visit_date"
+  date_format: "%Y-%m-%d"
+
+preprocessing:
+  null_threshold_pct: 5.0
+  outlier_iqr_multiplier: 1.5
+  drift_ks_pvalue_threshold: 0.05
+  numeric_columns:
+    - age
+    - glucose_level
+  categorical_columns:
+    - medication
+    - severity
+    - side_effect
+
+pii:
+  entities_to_detect:
+    - PERSON
+    - EMAIL_ADDRESS
+    - PHONE_NUMBER
+    - DATE_OF_BIRTH
+    - US_SSN
+    - NRP
+  replacement_operator: "replace"
+
+llm:
+  temperature: 0.5
+  max_tokens: 2048
+
+output:
+  runs_directory: "output/runs"
+
+backend:
+  host: "0.0.0.0"
+  port: 8000
+
+frontend:
+  backend_url: "http://localhost:8000"
