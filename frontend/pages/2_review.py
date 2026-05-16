@@ -5,6 +5,7 @@ Clinical Data Manager reads the AI-generated report and approves or rejects it.
 The dashboard is locked until a run is approved here.
 """
 
+import html
 import httpx
 import streamlit as st
 
@@ -64,6 +65,129 @@ def _pillar_icon(ok: bool) -> str:
     return "🟢" if ok else "🔴"
 
 
+def _status_class(value: str) -> str:
+    upper = value.upper()
+    if upper in ("OK", "CLEAN", "COMPLETE", "ALIGNED"):
+        return "ok"
+    if upper in ("WARNING", "MEDIUM", "DEGRADED", "NEEDS REVISION"):
+        return "warn"
+    if upper in ("ANOMALY", "HIGH", "RETURN FOR REVISION"):
+        return "bad"
+    return "neutral"
+
+
+def _render_incident_report(report_md: str) -> None:
+    html_parts = ['<div class="incident-report">']
+    list_open = False
+    section_open = False
+
+    for raw_line in report_md.splitlines():
+        line = raw_line.strip()
+        if not line or line == "---":
+            if list_open:
+                html_parts.append("</ul>")
+                list_open = False
+            continue
+        if line.startswith("# "):
+            html_parts.append(f"<h1>{html.escape(line[2:])}</h1>")
+        elif line.startswith("## "):
+            if list_open:
+                html_parts.append("</ul>")
+                list_open = False
+            if section_open:
+                html_parts.append("</section>")
+            html_parts.append(f'<section class="report-section"><h2>{html.escape(line[3:])}</h2>')
+            section_open = True
+        elif line.startswith("> "):
+            html_parts.append(f"<blockquote>{html.escape(line[2:])}</blockquote>")
+        elif line.startswith("- "):
+            if not list_open:
+                html_parts.append("<ul>")
+                list_open = True
+            html_parts.append(f"<li>{html.escape(line[2:])}</li>")
+        elif ":" in line and line.split(":", 1)[0].isupper():
+            if list_open:
+                html_parts.append("</ul>")
+                list_open = False
+            label, value = line.split(":", 1)
+            value = value.strip()
+            if label in {"STATUS", "OVERALL SEVERITY", "OPERATIONAL STATUS", "INCIDENT SEVERITY", "COMPLIANCE STATUS", "FINAL RECOMMENDATION", "PHI/PII CHECK"}:
+                html_parts.append(
+                    f'<div class="report-kv"><span>{html.escape(label)}</span>'
+                    f'<strong class="{_status_class(value)}">{html.escape(value)}</strong></div>'
+                )
+            else:
+                html_parts.append(
+                    f'<div class="report-kv"><span>{html.escape(label)}</span>'
+                    f'<strong>{html.escape(value)}</strong></div>'
+                )
+        elif line.startswith("**") and "**" in line[2:]:
+            html_parts.append(f'<p class="report-meta">{html.escape(line.replace("**", ""))}</p>')
+        elif line.startswith("*") and line.endswith("*"):
+            html_parts.append(f'<p class="report-footnote">{html.escape(line.strip("*"))}</p>')
+        else:
+            html_parts.append(f"<p>{html.escape(line)}</p>")
+
+    if list_open:
+        html_parts.append("</ul>")
+    if section_open:
+        html_parts.append("</section>")
+    html_parts.append("</div>")
+    st.markdown("".join(html_parts), unsafe_allow_html=True)
+
+
+st.markdown(
+    """
+    <style>
+    .incident-report {
+        padding: .8rem .9rem;
+        background: #0f172a;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        color: #e2e8f0;
+    }
+    .incident-report h1 { margin: 0 0 .3rem 0; font-size: 1.35rem; color: #f8fafc; }
+    .incident-report h2 {
+        margin: .85rem 0 .55rem 0;
+        padding-top: .65rem;
+        border-top: 1px solid #334155;
+        font-size: 1.05rem;
+        color: #f8fafc;
+    }
+    .incident-report p { margin: .3rem 0; line-height: 1.45; color: #e2e8f0; }
+    .incident-report blockquote {
+        margin: .55rem 0;
+        padding: .55rem .7rem;
+        border-left: 4px solid #3b82f6;
+        background: #111827;
+        color: #cbd5e1;
+    }
+    .incident-report ul { margin: .3rem 0 .55rem 1.1rem; color: #e2e8f0; }
+    .incident-report li { margin: .15rem 0; color: #e2e8f0; }
+    .report-kv {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: .3rem 0;
+        padding: .5rem .65rem;
+        background: #111827;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        color: #e2e8f0;
+    }
+    .report-kv span { color: #cbd5e1; font-weight: 600; }
+    .report-kv strong { color: #f8fafc; }
+    .report-kv strong.ok { color: #34d399; }
+    .report-kv strong.warn { color: #fbbf24; }
+    .report-kv strong.bad { color: #f87171; }
+    .report-meta { color: #f8fafc; font-weight: 600; }
+    .report-footnote { color: #94a3b8; font-style: italic; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
+
 # ── UI ────────────────────────────────────────────────────────────────────────
 
 st.title("📋 Incident Report Review")
@@ -101,7 +225,7 @@ run_id_display = run_id[:8] + "..."
 st.caption(f"**Run ID:** `{run_id}` | **Status:** `{pipeline_status}`")
 
 # ── Two-column layout ─────────────────────────────────────────────────────────
-col_report, col_review = st.columns([6, 4], gap="large")
+col_report, col_review = st.columns([7, 3], gap="large")
 
 with col_report:
     st.subheader("📄 AI Incident Report Draft")
@@ -135,7 +259,7 @@ with col_report:
     st.markdown("---")
     incident_report_md = payload.get("incident_report_md", "")
     with st.container(height=600):
-        st.markdown(incident_report_md)
+        _render_incident_report(incident_report_md)
 
 with col_review:
     st.subheader("✍️ Review Decision")

@@ -107,7 +107,14 @@ async def get_review_payload(run_id: str):
         "pillar_statuses": {
             "freshness": metrics.get("pillar_freshness", {}).get("freshness_ok", True),
             "volume": not metrics.get("pillar_volume", {}).get("volume_anomaly", False),
-            "schema": len(metrics.get("pillar_schema", {}).get("missing_columns", [])) == 0,
+            "schema": (
+                len(metrics.get("pillar_schema", {}).get("missing_columns", [])) == 0
+                and all(
+                    check.get("passed", False)
+                    for check in metrics.get("pillar_schema", {}).get("dtype_checks", {}).values()
+                )
+                and metrics.get("pillar_schema", {}).get("duplicate_patient_ids", 0) == 0
+            ),
             "distribution": True,
             "lineage": metrics.get("pillar_lineage", {}).get("error_count", 0) == 0,
         },

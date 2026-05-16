@@ -14,23 +14,22 @@ PHI safety is non-negotiable.
 import os
 import json
 import logging
+import re
 
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, RecognizerResult
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 
 logger = logging.getLogger(__name__)
 
-# Entities to scan for
-_ENTITIES = [
-    "PERSON",
-    "EMAIL_ADDRESS",
-    "PHONE_NUMBER",
-    "DATE_OF_BIRTH",
-    "US_SSN",
-    "NRP",
-    "LOCATION",
-]
+# Only these values should be masked in this project:
+# - patient names
+# - patient IDs such as P1038
+#
+# The previous broader Presidio entity list caused false positives on ordinary
+# metric text such as "Rash", "KS=0.1000", and even UUID fragments.
+_ENTITIES = ["PERSON"]
+_PATIENT_ID_PATTERN = re.compile(r"\bP\d+\b")
 
 # Lazy-initialise engines (spaCy model load is slow)
 _analyzer: AnalyzerEngine | None = None
@@ -44,6 +43,32 @@ def _get_engines() -> tuple:
     if _anonymizer is None:
         _anonymizer = AnonymizerEngine()
     return _analyzer, _anonymizer
+
+
+def _is_likely_patient_name(value: str) -> bool:
+    """Keep PERSON detections focused on full names, not one-word clinical terms."""
+    tokens = re.findall(r"[A-Za-z][A-Za-z'-]*", value)
+    return len(tokens) >= 2 and " " in value and not any(ch.isdigit() for ch in value)
+
+
+def _find_sensitive_entities(text: str, analyzer: AnalyzerEngine) -> list[RecognizerResult]:
+    """Return only actual patient names and patient IDs."""
+    person_results = analyzer.analyze(text=text, entities=_ENTITIES, language="en")
+    filtered_results = [
+        result
+        for result in person_results
+        if _is_likely_patient_name(text[result.start:result.end])
+    ]
+    filtered_results.extend(
+        RecognizerResult(
+            entity_type="PATIENT_ID",
+            start=match.start(),
+            end=match.end(),
+            score=1.0,
+        )
+        for match in _PATIENT_ID_PATTERN.finditer(text)
+    )
+    return filtered_results
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -70,7 +95,7 @@ def mask_metrics_json(metrics: dict) -> dict:
 
     try:
         metrics_str = json.dumps(metrics, default=str)
-        results = analyzer.analyze(text=metrics_str, entities=_ENTITIES, language="en")
+        results = _find_sensitive_entities(metrics_str, analyzer)
 
         if results:
             logger.warning(
@@ -127,9 +152,7 @@ def mask_etl_log(log_path: str, output_dir: str) -> str:
 
         for i, line in enumerate(raw_lines):
             try:
-                results = analyzer.analyze(
-                    text=line, entities=_ENTITIES, language="en"
-                )
+                results = _find_sensitive_entities(line, analyzer)
                 if results:
                     total_entities_found += len(results)
                     anonymized = anonymizer.anonymize(

@@ -4,6 +4,7 @@ Clinical Analytics Dashboard — rendered after HITL approval.
 Shows Plotly charts, agent findings, incident report, and audit trail.
 """
 
+import html
 import json
 import httpx
 import streamlit as st
@@ -45,6 +46,84 @@ def _health_color(score: int) -> str:
 def _pillar_badge(ok: bool, label: str) -> str:
     icon = "✅" if ok else "🔴"
     return f"{icon} {label}"
+
+
+def _finding_class(value: str) -> str:
+    upper = value.upper()
+    if upper in ("OK", "CLEAN", "COMPLETE", "ALIGNED"):
+        return "finding-ok"
+    if upper in ("WARNING", "MEDIUM", "DEGRADED", "NEEDS REVISION"):
+        return "finding-warn"
+    if upper in ("ANOMALY", "HIGH", "RETURN FOR REVISION"):
+        return "finding-bad"
+    return ""
+
+
+def _render_agent_finding(content: str) -> None:
+    html_parts = ['<div class="agent-finding">']
+    list_open = False
+    for raw_line in content.splitlines():
+        line = raw_line.strip()
+        if not line or line == "---":
+            if list_open:
+                html_parts.append("</ul>")
+                list_open = False
+            continue
+        if line.startswith("- "):
+            if not list_open:
+                html_parts.append("<ul>")
+                list_open = True
+            html_parts.append(f"<li>{html.escape(line[2:])}</li>")
+        elif ":" in line and line.split(":", 1)[0].isupper():
+            if list_open:
+                html_parts.append("</ul>")
+                list_open = False
+            label, value = line.split(":", 1)
+            html_parts.append(
+                f'<div class="finding-row"><span>{html.escape(label)}</span>'
+                f'<strong class="{_finding_class(value.strip())}">{html.escape(value.strip())}</strong></div>'
+            )
+        else:
+            html_parts.append(f"<p>{html.escape(line)}</p>")
+    if list_open:
+        html_parts.append("</ul>")
+    html_parts.append("</div>")
+    st.markdown("".join(html_parts), unsafe_allow_html=True)
+
+
+st.markdown(
+    """
+    <style>
+    .agent-finding {
+        padding: .8rem .9rem;
+        border: 1px solid #334155;
+        border-radius: 12px;
+        background: #0f172a;
+        color: #e2e8f0;
+    }
+    .agent-finding p { margin: .3rem 0; line-height: 1.45; color: #e2e8f0; }
+    .agent-finding ul { margin: .3rem 0 .55rem 1.1rem; color: #e2e8f0; }
+    .agent-finding li { margin: .15rem 0; color: #e2e8f0; }
+    .finding-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin: .3rem 0;
+        padding: .5rem .65rem;
+        border: 1px solid #334155;
+        border-radius: 10px;
+        background: #111827;
+        color: #e2e8f0;
+    }
+    .finding-row span { font-weight: 600; color: #cbd5e1; }
+    .finding-row strong { color: #f8fafc; }
+    .finding-ok { color: #34d399; }
+    .finding-warn { color: #fbbf24; }
+    .finding-bad { color: #f87171; }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 
 # ── Gate: require approved run ────────────────────────────────────────────────
@@ -140,9 +219,13 @@ p1, p2, p3, p4, p5 = st.columns(5)
 
 freshness_ok = freshness.get("freshness_ok", True)
 volume_ok    = not vol.get("volume_anomaly", False)
-schema_ok    = len(schema_data.get("missing_columns", [])) == 0
+schema_ok    = (
+    len(schema_data.get("missing_columns", [])) == 0
+    and all(check.get("passed", False) for check in schema_data.get("dtype_checks", {}).values())
+    and schema_data.get("duplicate_patient_ids", 0) == 0
+)
 dist_ok      = not any_drift
-lineage_ok   = lineage.get("error_count", 0) == 0
+lineage_ok   = lineage.get("error_count", 0) == 0 and lineage.get("warning_count", 0) == 0
 
 for col, label, ok, detail in [
     (p1, "🕐 Freshness",    freshness_ok, f"Last visit: {freshness.get('most_recent_visit_date','N/A')}"),
@@ -154,6 +237,8 @@ for col, label, ok, detail in [
     with col:
         if ok:
             st.success(f"**{label}**\n\n{detail}")
+        elif label == "🔗 Lineage" and lineage.get("error_count", 0) == 0:
+            st.warning(f"**{label}**\n\n{detail}")
         else:
             st.error(f"**{label}**\n\n{detail}")
 
@@ -420,7 +505,7 @@ for key, tab in agent_labels.items():
     with tab:
         content = agent_findings.get(key, "")
         if content:
-            st.markdown(content)
+            _render_agent_finding(content)
         else:
             st.info("Agent findings not available for this run.")
 

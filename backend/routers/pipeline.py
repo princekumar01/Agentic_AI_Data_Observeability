@@ -21,7 +21,7 @@ from backend.services.input_service import discover_csv
 from backend.services.validation_service import validate_entry
 from backend.services.preprocessing_service import run_preprocessing
 from backend.services.pii_service import mask_metrics_json, mask_etl_log, save_sanitized_metrics
-from backend.services.audit_service import AuditService
+from backend.services.audit_service import AuditService, load_audit
 from backend.services.dashboard_service import list_runs
 from backend.agents.graph import run_agent_pipeline
 
@@ -47,6 +47,49 @@ def _update_progress(run_id: str, status: str, stage: str, pct: int,
         "progress_pct": pct,
         "errors": errors or [],
         "warnings": warnings or [],
+    }
+
+
+def _load_persisted_progress(run_id: str) -> dict | None:
+    """Recover status for completed runs after a server restart."""
+    config = _load_config()
+    runs_dir = config["output"]["runs_directory"]
+    audit = load_audit(run_id, runs_dir)
+    if not audit:
+        return None
+
+    status = audit.get("pipeline_status", "unknown")
+    entries = audit.get("entries", [])
+    warnings = []
+    errors = []
+
+    if status in ("pending_review", "approved", "rejected"):
+        current_stage = "awaiting_human_review"
+        progress_pct = 95
+    elif status == "validation_failed":
+        current_stage = "entry_validation"
+        progress_pct = 15
+    elif status == "error":
+        last_error = next(
+            (entry for entry in reversed(entries) if entry.get("event_type") == "stage_error"),
+            None,
+        )
+        current_stage = last_error.get("stage", "unknown") if last_error else "unknown"
+        progress_pct = 0
+        if last_error:
+            error_msg = last_error.get("data", {}).get("error")
+            if error_msg:
+                errors.append(error_msg)
+    else:
+        current_stage = "unknown"
+        progress_pct = 0
+
+    return {
+        "status": status,
+        "current_stage": current_stage,
+        "progress_pct": progress_pct,
+        "errors": errors,
+        "warnings": warnings,
     }
 
 
@@ -81,7 +124,10 @@ async def trigger_pipeline(background_tasks: BackgroundTasks):
 @router.get("/status/{run_id}", response_model=PipelineStatus)
 async def get_pipeline_status(run_id: str):
     if run_id not in _run_progress:
-        raise HTTPException(status_code=404, detail=f"Run ID '{run_id}' not found.")
+        persisted = _load_persisted_progress(run_id)
+        if not persisted:
+            raise HTTPException(status_code=404, detail=f"Run ID '{run_id}' not found.")
+        _run_progress[run_id] = persisted
 
     prog = _run_progress[run_id]
     return PipelineStatus(

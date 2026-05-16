@@ -15,6 +15,19 @@ st.set_page_config(
 
 BACKEND_URL = st.session_state.get("backend_url", "http://localhost:8000")
 
+st.markdown(
+    """
+    <style>
+    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    .running-icon {
+        display: inline-block;
+        animation: spin 1s linear infinite;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
 def trigger_pipeline() -> dict:
@@ -174,7 +187,10 @@ if current_run_id and current_status in ("running", "pending_review", "approved"
                 elif stage_key in completed_stages or live_status in ("pending_review", "approved"):
                     st.markdown(f"✅  \n{stage_label}")
                 elif stage_key == current_stage and live_status == "running":
-                    st.markdown(f"⏳  \n{stage_label}")
+                    st.markdown(
+                        f'<span class="running-icon">🔄</span>  \n{stage_label}',
+                        unsafe_allow_html=True,
+                    )
                 else:
                     st.markdown(f"⬜  \n{stage_label}")
 
