@@ -23,7 +23,11 @@ BACKEND_URL = st.session_state.get("backend_url", "http://localhost:8000")
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+@st.cache_data(ttl=300, show_spinner=False)
 def fetch_dashboard(run_id: str) -> dict:
+    """Cache the dashboard payload for 5 minutes per run_id. Streamlit reruns
+    the whole script on every interaction; without caching, this would refire
+    on every tab click, expander open, etc."""
     try:
         resp = httpx.get(f"{BACKEND_URL}/dashboard/{run_id}", timeout=20)
         resp.raise_for_status()
@@ -33,6 +37,17 @@ def fetch_dashboard(run_id: str) -> dict:
         return {"error": detail}
     except Exception as exc:
         return {"error": str(exc)}
+
+
+@st.cache_data(ttl=300, show_spinner=False)
+def load_audit_trail(run_id: str, runs_directory: str) -> dict:
+    """Read audit_trail.json from disk once per run_id, not on every rerun."""
+    import os, json
+    audit_path = os.path.join(runs_directory, run_id, "audit_trail.json")
+    if not os.path.exists(audit_path):
+        return {}
+    with open(audit_path) as f:
+        return json.load(f)
 
 
 def _health_color(score: int) -> str:
@@ -59,7 +74,11 @@ def _finding_class(value: str) -> str:
     return ""
 
 
-def _render_agent_finding(content: str) -> None:
+@st.cache_data(show_spinner=False)
+def _build_agent_finding_html(content: str) -> str:
+    """Build the HTML for an agent finding once and cache it.
+    Tabs render content for ALL 5 agents on every rerun (Streamlit doesn't
+    skip hidden tabs), so caching the string-building step saves ~5× work."""
     html_parts = ['<div class="agent-finding">']
     list_open = False
     for raw_line in content.splitlines():
@@ -88,7 +107,11 @@ def _render_agent_finding(content: str) -> None:
     if list_open:
         html_parts.append("</ul>")
     html_parts.append("</div>")
-    st.markdown("".join(html_parts), unsafe_allow_html=True)
+    return "".join(html_parts)
+
+
+def _render_agent_finding(content: str) -> None:
+    st.markdown(_build_agent_finding_html(content), unsafe_allow_html=True)
 
 
 st.markdown(
@@ -185,10 +208,13 @@ k1.metric(
     delta=None,
     help="Overall pipeline health. 100 = no anomalies.",
 )
+vol_delta_val = vol.get('volume_delta_pct', 0)
+vol_delta_str = "On target" if vol_delta_val == 0 else f"{vol_delta_val:.1f}% vs expected"
+
 k2.metric(
     "Patient Records",
     vol.get("row_count", 0),
-    delta=f"{vol.get('volume_delta_pct', 0):.1f}% vs expected",
+    delta=vol_delta_str,
     delta_color="inverse" if vol.get("volume_anomaly") else "normal",
 )
 k3.metric(
@@ -224,14 +250,29 @@ schema_ok    = (
     and all(check.get("passed", False) for check in schema_data.get("dtype_checks", {}).values())
     and schema_data.get("duplicate_patient_ids", 0) == 0
 )
-dist_ok      = not any_drift
+# Distribution pillar is healthy only if BOTH drift and outlier checks are clean.
+# Previously this only checked drift, which meant 12 severe-hyperglycemia outliers
+# could be flagged elsewhere but the pillar card still showed green — confusing
+# reviewers because the Review page (which the LLM writes) called it an ANOMALY.
+glucose_outliers = dist.get("glucose_level", {}).get("outlier_count", 0)
+age_outliers     = dist.get("age", {}).get("outlier_count", 0)
+clinical_alerts  = (dist.get("glucose_level", {}).get("clinical_alert_count", 0)
+                    + dist.get("age", {}).get("clinical_alert_count", 0))
+dist_ok      = not any_drift and glucose_outliers == 0 and age_outliers == 0
+dist_detail  = "KS drift test"
+if clinical_alerts > 0:
+    dist_detail = f"{clinical_alerts} clinical alert(s)"
+elif glucose_outliers + age_outliers > 0:
+    dist_detail = f"{glucose_outliers + age_outliers} outlier(s)"
+elif any_drift:
+    dist_detail = "Drift detected"
 lineage_ok   = lineage.get("error_count", 0) == 0 and lineage.get("warning_count", 0) == 0
 
 for col, label, ok, detail in [
     (p1, "🕐 Freshness",    freshness_ok, f"Last visit: {freshness.get('most_recent_visit_date','N/A')}"),
     (p2, "📦 Volume",       volume_ok,    f"Δ {vol.get('volume_delta_pct',0):.1f}%"),
-    (p3, "🗂 Schema",       schema_ok,    "All columns present"),
-    (p4, "📈 Distribution", dist_ok,      "KS drift test"),
+    (p3, "🗂 Schema (10/10 validated)", schema_ok, "All columns present"),
+    (p4, "📈 Distribution", dist_ok,      dist_detail),
     (p5, "🔗 Lineage",      lineage_ok,   f"{lineage.get('warning_count',0)} warnings"),
 ]:
     with col:
@@ -461,14 +502,25 @@ st.markdown("---")
 # ══════════════════════════════════════════════════════════════════════════════
 st.subheader("🗂 Schema Validation Results")
 dtype_checks = schema_data.get("dtype_checks", {})
+phi_dropped_cols = set(schema_data.get("phi_dropped_columns", []))
 if dtype_checks:
     dtype_rows = []
     for col_name, check in dtype_checks.items():
+        is_phi = col_name in phi_dropped_cols
+        passed = check.get("passed", False)
+        if is_phi:
+            status_str = "🛡 PHI Masked (by design)" if passed else "❌ PHI Leak"
+            expected_str = "PHI — must be removed"
+            actual_str = "✓ Removed" if passed else "⚠ Still present"
+        else:
+            status_str = "✅ Pass" if passed else "❌ Fail"
+            expected_str = check.get("expected", "")
+            actual_str = check.get("actual", "")
         dtype_rows.append({
             "Column": col_name,
-            "Expected Type": check.get("expected", ""),
-            "Actual Type": check.get("actual", ""),
-            "Status": "✅ Pass" if check.get("passed") else "❌ Fail",
+            "Expected Type": expected_str,
+            "Actual Type": actual_str,
+            "Status": status_str,
         })
     st.dataframe(dtype_rows, use_container_width=True, hide_index=True)
 
@@ -546,25 +598,23 @@ a3.metric("Approved By", audit_summary.get("reviewer_id") or "N/A")
 a4.metric("Approved At", (audit_summary.get("pipeline_approved_at") or "N/A")[:19])
 
 with st.expander("📋 View Full Audit Log", expanded=False):
-    # Fetch full audit trail from output dir via backend
     try:
-        import yaml, os, json
+        import yaml, json
         with open("config.yaml") as f:
             cfg = yaml.safe_load(f)
-        audit_path = os.path.join(cfg["output"]["runs_directory"], run_id, "audit_trail.json")
-        if os.path.exists(audit_path):
-            with open(audit_path) as f:
-                audit_data = json.load(f)
+        audit_data = load_audit_trail(run_id, cfg["output"]["runs_directory"])
+        if audit_data:
             entries = audit_data.get("entries", [])
-            table_rows = []
-            for e in entries:
-                table_rows.append({
+            table_rows = [
+                {
                     "ID": e.get("entry_id"),
                     "Timestamp": e.get("timestamp", "")[:19],
                     "Stage": e.get("stage", ""),
                     "Event Type": e.get("event_type", ""),
                     "Agent": e.get("agent") or "—",
-                })
+                }
+                for e in entries
+            ]
             if table_rows:
                 st.dataframe(table_rows, use_container_width=True, hide_index=True)
 

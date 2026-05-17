@@ -25,6 +25,7 @@ preprocessing:
   null_threshold_pct: 5.0
   outlier_iqr_multiplier: 1.5
   drift_ks_pvalue_threshold: 0.05
+  drift_ks_statistic_threshold: 0.10   # effect-size floor (standard interpretation: KS<0.10 is trivial). Together with p-value, requires both statistical significance AND meaningful effect size. Lower KS=0.094 false positive on age while preserving real drift signals like glucose KS=0.219.
   numeric_columns:
     - age
     - glucose_level

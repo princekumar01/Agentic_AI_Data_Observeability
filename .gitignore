@@ -2,7 +2,6 @@
 .env
 .venv/
 data/
-{data/
 output/
 
 # Byte-compiled / optimized / DLL files

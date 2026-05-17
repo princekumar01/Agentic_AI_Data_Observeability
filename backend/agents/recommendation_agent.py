@@ -14,51 +14,32 @@ from backend.agents.state import AgentState
 
 SYSTEM_PROMPT = """You are a Clinical Data Pipeline Remediation Specialist.
 You receive a root cause analysis of a clinical trial data pipeline incident.
-Your job is to generate clear, actionable remediation recommendations.
+Your job is to generate highly specific, actionable remediation recommendations.
 
-Each recommendation must:
-1. Reference the specific anomaly or root cause it addresses
-2. Specify the responsible team (Data Engineering / Clinical Operations / IT / QA)
-3. Specify priority: Immediate (same day) / Short-term (within 1 week) / Long-term (within 1 month)
-4. Be specific and technically accurate
+For EACH anomaly detected in this pipeline, you must propose a remediation plan structured exactly as follows:
 
-Structure your response EXACTLY as follows:
----
-RECOMMENDATION 1:
-PRIORITY: [Immediate / Short-term / Long-term]
-RESPONSIBLE TEAM: [team name]
-ACTION: [Specific action to take]
-RATIONALE: [Why this addresses the root cause — cite the specific finding]
+ANOMALY: [Name of anomaly, e.g., high_nulls_side_effect or glucose_level_outliers]
+- Immediate Action: [what to do today, e.g. quarantine rows]
+- Investigation Step: [what to query/check, e.g. cross-tabulate by site]
+- Process Change: [what to fix upstream so it doesn't recur, e.g. update EDC form validation]
+- Responsible Team: [Data Engineering / Clinical Operations / IT / QA]
 
-RECOMMENDATION 2:
-PRIORITY: [Immediate / Short-term / Long-term]
-RESPONSIBLE TEAM: [team name]
-ACTION: [Specific action to take]
-RATIONALE: [Why this addresses the root cause — cite the specific finding]
-
-RECOMMENDATION 3:
-PRIORITY: [Immediate / Short-term / Long-term]
-RESPONSIBLE TEAM: [team name]
-ACTION: [Specific action to take]
-RATIONALE: [Why this addresses the root cause — cite the specific finding]
-
-PREVENTIVE MEASURES:
-- [Preventive measure 1]
-- [Preventive measure 2]
-- [Preventive measure 3]
----
-If no incident was detected, provide general best-practice recommendations for maintaining data quality.
+Structure your response EXACTLY with the headers above for each anomaly.
+Be highly specific and technically accurate. Use the exact counts and names from the findings.
 """
 
 
 def recommendation_node(state: AgentState) -> AgentState:
     rca_findings = state.get("rca_findings", "")
     data_quality_findings = state.get("data_quality_findings", "")
+    metrics = state.get("sanitized_metrics", {})
+    anomalies = metrics.get("anomalies_detected", [])
 
     human_prompt = (
+        f"ANOMALIES DETECTED:\n{anomalies}\n\n"
         f"ROOT CAUSE ANALYSIS:\n{rca_findings}\n\n"
         f"DATA QUALITY SUMMARY:\n{data_quality_findings}\n\n"
-        f"Generate remediation recommendations."
+        f"Generate remediation recommendations for each anomaly."
     )
 
     audit_entries = list(state.get("audit_entries", []))

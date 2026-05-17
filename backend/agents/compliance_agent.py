@@ -13,22 +13,29 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from llm_config import llm
 from backend.agents.state import AgentState
 
-SYSTEM_PROMPT = """You are a Regulatory Compliance Reviewer specializing in clinical trial data reporting.
-Your job is to review a draft incident report and ensure it meets the requirements of:
-- FDA 21 CFR Part 11 (Electronic Records and Signatures)
-- ICH E6 Good Clinical Practice (GCP) guidelines
-- HIPAA (verify no PHI/PII is present in the report)
+SYSTEM_PROMPT = """You are the single Final Verdict Agent specializing in clinical trial data reporting and GCP/HIPAA compliance.
+Your job is to review all pipeline findings (Data Quality, Log Analysis, RCA, Recommendations) and render a single final verdict.
 
-Check the report for:
-1. Completeness: Does it cover all required sections (Data Quality, Log Analysis, RCA, Recommendations)?
-2. Clarity: Is the language appropriate for a regulatory audience?
-3. PHI/PII safety: Does the report contain any patient identifiable information (names, IDs, DOB)?
-4. Regulatory alignment: Does it meet GCP incident reporting standards?
-5. Audit readiness: Is the evidence chain sufficient?
+You must output a structured JSON block at the very beginning of your response, followed by standard compliance sections.
 
-Structure your response EXACTLY as follows:
+The JSON block must follow this EXACT format:
+```json
+{{
+  "verdict": "APPROVED" | "APPROVED_WITH_CAVEATS" | "REJECTED",
+  "score": int,
+  "blocking_issues": ["list of critical/blocking issues, e.g. PII leaks, critical ETL failures"],
+  "non_blocking_issues": ["list of minor/non-blocking issues, e.g. mild outliers, minor nulls"]
+}}
+```
+
+Rules for the score and verdict:
+1. If there are any remaining PHI/PII or critical ETL errors, the verdict must be REJECTED, and the score must be under 60 (e.g. 55).
+2. If there are minor anomalies (like outliers, drift, or nullable side_effect nulls) but no PII and the data is safe to use, the verdict must be APPROVED_WITH_CAVEATS, and the score must be between 60 and 90 (e.g. 85).
+3. If there are no issues at all, the verdict must be APPROVED, and the score must be 100.
+
+After the JSON block, you must output the standard GCP/HIPAA compliance fields EXACTLY in this format for backwards compatibility:
 ---
-COMPLIANCE STATUS: [APPROVED / NEEDS REVISION]
+COMPLIANCE STATUS: [APPROVED / APPROVED_WITH_CAVEATS / NEEDS REVISION]
 
 PHI/PII CHECK: [CLEAN / CONTAINS PHI — MUST NOT PROCEED]
 
@@ -38,13 +45,10 @@ GCP ALIGNMENT: [Aligned / Issues: describe issues]
 
 REGULATORY NOTES:
 [Any specific notes for the clinical data manager reviewing this report.
-If APPROVED, summarize why it meets regulatory standards.
-If NEEDS REVISION, clearly state what must be changed.]
+Explain the rationale for the verdict and final score.]
 
 FINAL RECOMMENDATION: [APPROVE FOR REVIEW / RETURN FOR REVISION]
 ---
-If PHI/PII is detected, set COMPLIANCE STATUS to NEEDS REVISION and PHI/PII CHECK to CONTAINS PHI.
-Flag it prominently. This is a critical regulatory violation.
 """
 
 
@@ -55,13 +59,12 @@ def compliance_node(state: AgentState) -> AgentState:
     recommendations = state.get("recommendations", "")
 
     human_prompt = (
-        f"Please review the following incident report for regulatory compliance before it is "
-        f"presented to the Clinical Data Manager for approval:\n\n"
+        f"Please review the following findings and render the final verdict and regulatory compliance check:\n\n"
         f"DATA QUALITY FINDINGS:\n{data_quality}\n\n"
         f"LOG ANALYSIS FINDINGS:\n{log_analysis}\n\n"
         f"ROOT CAUSE ANALYSIS:\n{rca}\n\n"
         f"RECOMMENDATIONS:\n{recommendations}\n\n"
-        f"Review the above for compliance."
+        f"Review the above and output the structured JSON verdict followed by regulatory notes."
     )
 
     audit_entries = list(state.get("audit_entries", []))
@@ -79,6 +82,19 @@ def compliance_node(state: AgentState) -> AgentState:
         human_prompt=human_prompt,
         agent_name="compliance",
     )
+
+    # Parse verdict JSON from response_text and update the overall health score dynamically
+    import json
+    import re
+    try:
+        json_match = re.search(r"```json\s*(.*?)\s*```", response_text, re.DOTALL)
+        if json_match:
+            verdict_data = json.loads(json_match.group(1))
+            verdict_score = verdict_data.get("score")
+            if verdict_score is not None:
+                state["sanitized_metrics"]["overall_health_score"] = int(verdict_score)
+    except Exception:
+        pass
 
     audit_entries.append({
         "timestamp": datetime.now(timezone.utc).isoformat(),

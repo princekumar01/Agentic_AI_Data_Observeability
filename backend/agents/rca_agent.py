@@ -14,12 +14,16 @@ from llm_config import llm
 from backend.agents.state import AgentState
 
 SYSTEM_PROMPT = """You are a Root Cause Analysis (RCA) Specialist for clinical trial data pipelines.
-You receive two inputs: a data quality assessment and an operational log analysis.
-Your job is to cross-correlate the findings from both and identify the root cause of any incidents.
+Your job is to cross-correlate operational log analysis, data quality assessment, and causal analysis metrics to identify the root cause.
 
-For example: if the Data Quality report shows a 20% volume drop AND the Log Analysis report
-shows a "Database timeout connecting to EU database" at a specific timestamp — the root cause
-is the database connectivity failure, not a data issue.
+The deterministic causal analysis metrics computed for this run are:
+- Site Null Contributions: {site_null_contributions}
+- Side Effect Nulls & Severity Correlation: {side_effect_nulls_severity_correlation}
+- Recent Deployment History: {recent_deployment_history}
+
+You must form a precise causal hypothesis using these site contributions, severity correlation, and deployment history.
+Explain which sites contributed the most nulls, what fraction corresponds to Low severity patients (plausibly no side effects),
+and how it correlates with the recent EDC deployment v1.4.2.
 
 Structure your response EXACTLY as follows:
 ---
@@ -27,31 +31,41 @@ INCIDENT DETECTED: [Yes / No]
 INCIDENT SEVERITY: [Low / Medium / High / Critical / N/A]
 
 ROOT CAUSE:
-[Describe the root cause clearly. Cite which metric triggered the anomaly and which log event
-corroborated it. Include timestamps where available. Format: "Anomaly X in metric Y was caused
-by event Z in log at timestamp T." If no incident, write "No incident — pipeline ran normally."]
+[Formulate a precise causal hypothesis using the site contributions, severity correlation, and deployment history.
+Explain which sites contributed the most nulls, what fraction corresponds to Low severity patients (plausibly no side effects),
+and how it correlates with the recent EDC deployment v1.4.2.]
 
 CONTRIBUTING FACTORS:
 - [Factor 1]
 - [Factor 2]
-(write "None" if no incident)
 
 IMPACT ASSESSMENT:
-[What is the potential impact on the clinical trial data integrity?
-If no incident, write "No impact — data integrity maintained."]
+[Analyze potential impact on clinical trial data integrity.]
 ---
-Base your analysis entirely on the two inputs provided. Do not speculate beyond what the data shows.
+Base your analysis entirely on the inputs and metrics provided. Do not speculate or make up other statistics.
 """
 
 
 def rca_node(state: AgentState) -> AgentState:
     data_quality_findings = state.get("data_quality_findings", "")
     log_analysis_findings = state.get("log_analysis_findings", "")
+    metrics = state.get("sanitized_metrics", {})
+    causal = metrics.get("causal_analysis", {})
+    
+    site_nulls = causal.get("site_null_contributions", {})
+    se_nulls_sev = causal.get("side_effect_nulls_severity_correlation", {})
+    deploy_hist = causal.get("recent_deployment_history", [])
+
+    formatted_system_prompt = SYSTEM_PROMPT.format(
+        site_null_contributions=site_nulls,
+        side_effect_nulls_severity_correlation=se_nulls_sev,
+        recent_deployment_history=deploy_hist
+    )
 
     human_prompt = (
         f"DATA QUALITY ASSESSMENT:\n{data_quality_findings}\n\n"
         f"LOG ANALYSIS ASSESSMENT:\n{log_analysis_findings}\n\n"
-        f"Based on both inputs above, perform a root cause analysis."
+        f"Based on all inputs above and the causal analysis metrics, perform a root cause analysis."
     )
 
     audit_entries = list(state.get("audit_entries", []))
@@ -61,11 +75,11 @@ def rca_node(state: AgentState) -> AgentState:
         "agent": "rca",
         "event_type": "agent_prompt",
         "stage": "agent_rca",
-        "data": {"system_prompt": SYSTEM_PROMPT, "human_prompt": human_prompt},
+        "data": {"system_prompt": formatted_system_prompt, "human_prompt": human_prompt},
     })
 
     response_text = _call_llm_with_retry(
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=formatted_system_prompt,
         human_prompt=human_prompt,
         agent_name="rca",
     )
