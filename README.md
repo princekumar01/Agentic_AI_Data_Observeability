@@ -90,19 +90,21 @@ clinical_observability_poc/
 
 ## Setup & Installation
 
+### 1. Prerequisites and Repository Setup
+Ensure you have Python 3.9+ installed. If you haven't already, navigate to the project directory.
 
-### 2. Create and activate a virtual environment
+### 2. Create and activate a virtual environment (using uv)
 
 ```bash
-python -m venv venv
-source venv/bin/activate        # macOS/Linux
-venv\Scripts\activate           # Windows
+uv venv
+source .venv/bin/activate        # macOS/Linux
+.venv\Scripts\activate           # Windows
 ```
 
 ### 3. Install dependencies
 
 ```bash
-pip install -r requirements.txt
+uv pip install -r requirements.txt
 ```
 
 ### 4. Download the spaCy NLP model (required by Presidio)
@@ -110,6 +112,7 @@ pip install -r requirements.txt
 ```bash
 python -m spacy download en_core_web_lg
 ```
+*Note: If that fails, or you prefer a much faster, ~50MB model (fine for PII work), use `python -m spacy download en_core_web_sm` instead.*
 
 ### 5. Set up your environment variables
 
@@ -127,10 +130,11 @@ LLM_MODEL=meta-llama/Llama-3.1-8B-Instruct
 
 ### 6. Place the CSV file
 
-Copy your clinical trial dataset to:
+Copy the provided sample dataset from the `Data_Sources/` folder to `data/clinical/`:
 
-```
-data/clinical/clinical_trial_data.csv
+```bash
+mkdir -p data/clinical
+cp Data_Sources/clinical_trial_data_observability.csv data/clinical/clinical_trial_data.csv
 ```
 
 The CSV must have these columns:
