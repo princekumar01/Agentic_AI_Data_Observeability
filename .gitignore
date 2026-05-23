@@ -1,0 +1,40 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+venv/
+.venv/
+*.egg
+
+# Output / runtime artifacts
+output/
+
+# Uploaded data (user-specific)
+data/uploads/
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pytest
+.pytest_cache/
+.coverage
+htmlcov/

@@ -1,0 +1,59 @@
+# ─────────────────────────────────────────────────────────────────
+#  Clinical Trial AI Observability — config.yaml
+#  All application configuration.  Loaded by every backend module.
+# ─────────────────────────────────────────────────────────────────
+
+data:
+  csv_directory: data/clinical
+  csv_filename: clinical_trial_data.csv
+  uploads_directory: data/uploads
+  baseline_metrics_path: config/baseline_metrics.json
+  expected_row_count: 500
+  freshness_max_days: 7
+
+validation:
+  expected_columns:
+    - patient_id
+    - patient_name
+    - age
+    - gender
+    - diagnosis
+    - treatment_group
+    - visit_date
+    - glucose_level
+    - side_effects
+    - severity
+
+preprocessing:
+  null_threshold_pct: 5.0
+  outlier_iqr_multiplier: 1.5
+  drift_ks_pvalue_threshold: 0.05
+  numeric_columns:
+    - age
+    - glucose_level
+
+pii:
+  metrics_json_entities:
+    - PERSON
+  log_file_entities:
+    - PERSON
+    - EMAIL_ADDRESS
+    - PHONE_NUMBER
+    - US_SSN
+
+kafka:
+  bootstrap_servers: localhost:9092
+  topic: clinical_trial_events
+  inter_message_delay_ms: 50
+  window_threshold: 500
+  consumer_timeout_ms: 10000
+
+llm:
+  model: gpt-4o
+  model_fast: gpt-4o-mini
+  temperature: 0.3
+  max_tokens: 2048
+
+output:
+  runs_directory: output/runs
+  alerts_directory: output/alerts

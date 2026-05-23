@@ -1,0 +1,25 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Install dependencies
+COPY requirements.simulator.txt .
+RUN pip install --no-cache-dir -r requirements.simulator.txt
+
+# Copy required source files
+COPY backend/kafka/producer.py ./backend/kafka/producer.py
+COPY backend/kafka/__init__.py ./backend/kafka/__init__.py
+COPY backend/__init__.py ./backend/__init__.py
+COPY backend/services/input_service.py ./backend/services/input_service.py
+COPY backend/services/__init__.py ./backend/services/__init__.py
+COPY scripts/generate_synthetic_data.py ./scripts/generate_synthetic_data.py
+COPY config.yaml .
+COPY docker/simulator_entrypoint.sh .
+
+# Ensure entrypoint is executable
+RUN chmod +x ./simulator_entrypoint.sh
+
+# Create output dirs
+RUN mkdir -p /app/data/clinical /app/output/runs /app/output/alerts
+
+ENTRYPOINT ["./simulator_entrypoint.sh"]

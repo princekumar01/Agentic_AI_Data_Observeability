@@ -1,0 +1,501 @@
+patient_id,patient_name,age,medication,blood_pressure,glucose_level,side_effect,severity,visit_date,hospital_name
+P1342,Joshua Nguyen,29,Drug-B,148/84,176.3,Insomnia,Critical,2026-05-22,St. Mary's General Hospital
+P1007,Joseph Green,39,Drug-A,112/86,150.8,Blurred vision,Critical,2026-05-17,Pioneer Regional Medical Center
+P1003,Lisa Miller,30,Drug-D,112/82,35.5,Fever,Critical,2026-05-18,Northside University Hospital
+P1048,Joshua Hill,72,Drug-A,120/79,30.2,Fatigue,Critical,2026-05-18,St. Mary's General Hospital
+P1131,Daniel Davis,age_36,Drug-E,150/93,gl_80.0,Insomnia,Low,2026-05-17,Metro Clinical Research Hospital
+P1040,Kimberly Lewis,35,Drug-D,157/76,28.2,Dry mouth,Critical,2026-05-16,Northside University Hospital
+P1019,Melissa Baker,35,Drug-A,118/98,194.4,None,Medium,2026-05-16,Pioneer Regional Medical Center
+P1123,Michael Scott,68,Drug-D,136/76,162.3,None,Low,2026-04-25,Riverside Health Institute
+P1187,Susan Ramirez,,Drug-B,138/62,105.6,,Medium,2026-05-20,Valley Community Medical Center
+P1140,Anthony Scott,age_58,Drug-B,149/75,gl_176.7,Joint pain,Medium,2026-05-21,Valley Community Medical Center
+P1202,Paul Baker,,Drug-D,,99.3,,Medium,2026-05-22,St. Mary's General Hospital
+P1060,Donna Anderson,74,Drug-E,148/88,20.7,Chest pain,Critical,2026-05-20,Eastwood Clinical Trials Center
+P1284,Dorothy Roberts,72,Drug-E,172/74,146.9,None,Critical,2026-05-24,Valley Community Medical Center
+P1132,Sandra Baker,age_71,Drug-E,154/94,gl_179.9,None,Critical,2026-05-16,Metro Clinical Research Hospital
+P1015,Emily Anderson,25,Drug-A,180/63,12.5,Dry mouth,High,2026-05-22,St. Mary's General Hospital
+P1019,Robert Rodriguez,70,Drug-C,160/93,214.6,Chest pain,Low,2026-05-21,Eastwood Clinical Trials Center
+P1392,Richard Lee,26,Drug-B,106/94,129.4,Nausea,High,2026-05-21,City Medical Center
+P1066,Mark Moore,36,Drug-E,155/100,433.3,Palpitations,Critical,2026-05-22,Pioneer Regional Medical Center
+P1389,Richard Clark,60,Drug-D,150/75,154.1,Rash,Medium,2026-05-17,Lakeside Oncology Center
+P1356,Carol Williams,48,Drug-B,100/70,95.9,Dizziness,High,2026-05-20,Lakeside Oncology Center
+P1340,George Nelson,43,Drug-A,127/88,198.9,Hair loss,Critical,2026-05-19,Pioneer Regional Medical Center
+P1418,Brian Moore,60,Drug-E,171/96,174.2,Swelling,Medium,2026-05-21,City Medical Center
+P1378,Donna Jackson,54,Drug-B,121/100,155.9,Blurred vision,Low,2026-05-19,Eastwood Clinical Trials Center
+P1107,Andrew Hill,30,Drug-A,119/70,166.6,Hair loss,Medium,2026-04-26,City Medical Center
+P1255,David Torres,74,Drug-B,128/101,92.7,Dry mouth,Critical,2026-05-17,Metro Clinical Research Hospital
+P1421,Michael Hill,66,Drug-C,104/106,135.7,Swelling,High,2026-05-19,City Medical Center
+P1122,David White,48,Drug-C,149/86,195.4,Blurred vision,Medium,2026-04-30,Eastwood Clinical Trials Center
+P1384,Kevin Thompson,45,Drug-D,159/94,195.4,Joint pain,Low,2026-05-18,Pioneer Regional Medical Center
+P1236,Margaret Adams,35,Drug-E,155/70,83.8,Headache,Critical,2026-05-22,Valley Community Medical Center
+P1094,Elizabeth Davis,67,Drug-A,116/60,174.9,Fever,Medium,2026-04-25,Metro Clinical Research Hospital
+P1062,Charles Williams,39,Drug-C,136/104,37.6,Chest pain,Critical,2026-05-22,Metro Clinical Research Hospital
+P1089,Paul Clark,62,Drug-B,153/101,91.1,Fatigue,High,2026-04-24,Pioneer Regional Medical Center
+P1290,Joseph Robinson,46,Drug-E,--,181.7,Palpitations,Low,2026-05-17,Valley Community Medical Center
+P1021,Carol Wilson,70,Drug-E,162/65,185.2,Anxiety,Medium,2026-05-19,St. Mary's General Hospital
+P1006,Kenneth Hernandez,59,Drug-B,120/89,432.2,None,Critical,2026-05-20,Summit Healthcare Hospital
+P1015,Nancy Ramirez,50,Drug-D,149/81,170.9,Rash,Low,2026-05-19,Pioneer Regional Medical Center
+P1191,Matthew Lewis,,,151/92,96.5,Joint pain,High,2026-05-17,
+P1130,Andrew Lewis,54,Drug-C,148/92,126.9,Anxiety,Medium,2026-04-27,Riverside Health Institute
+P1412,Dorothy Miller,31,Drug-B,168/84,157.1,Vomiting,Low,2026-05-21,Summit Healthcare Hospital
+P1262,Kevin Thompson,12,Drug-D,121/102,130.6,Depression,Medium,2026-05-21,Northside University Hospital
+P1328,Donald Adams,74,Drug-B,146/85,108.5,Dry mouth,Critical,2026-05-16,Eastwood Clinical Trials Center
+P1150,Joseph Jones,age_70,Drug-B,101/73,gl_153.2,Anxiety,High,2026-05-19,Valley Community Medical Center
+P1317,Mark Harris,50,Drug-A,160/70,103.6,Depression,Low,2026-05-21,Riverside Health Institute
+P1034,Steven Martin,67,Drug-D,141/85,444.7,None,Critical,2026-05-20,Summit Healthcare Hospital
+P1315,Anthony Harris,53,Drug-D,155/80,372.1,Nausea,Critical,2026-04-29,City Medical Center
+P1018,Sarah Robinson,40,Drug-A,156/95,43.9,Fatigue,Critical,2026-05-22,Summit Healthcare Hospital
+P1138,Michelle Nelson,age_49,Drug-E,140/104,gl_139.8,Shortness of breath,Medium,2026-05-19,Riverside Health Institute
+P1157,Sarah Wright,age_61,Drug-A,122/80,gl_122.2,Nausea,High,2026-05-21,Eastwood Clinical Trials Center
+P1179,Betty Green,,,155/85,133.9,Nausea,Low,2026-05-17,Eastwood Clinical Trials Center
+P1409,Matthew Nelson,56,Drug-E,179/104,148.1,Swelling,Medium,2026-05-20,St. Mary's General Hospital
+P1090,Sarah Williams,69,Drug-C,127/88,211.9,Chest pain,Critical,2026-04-29,Valley Community Medical Center
+P1329,Charles Rodriguez,54,Drug-E,165/65,136.0,None,High,2026-05-20,Summit Healthcare Hospital
+P1092,Michelle Green,63,Drug-A,106/110,146.0,Blurred vision,High,2026-04-27,Riverside Health Institute
+P1178,Michelle Miller,,,,156.4,Rash,High,2026-05-18,Riverside Health Institute
+P1010,Elizabeth Williams,50,Drug-D,123/107,121.2,Muscle weakness,Critical,2026-05-22,St. Mary's General Hospital
+P1024,Amanda Lewis,30,Drug-C,144/105,177.1,Dizziness,Medium,2026-05-18,Summit Healthcare Hospital
+P1189,Paul Moore,,Drug-E,,124.6,,Medium,2026-05-20,
+P1025,Kevin Scott,44,Drug-A,117/76,426.6,Fatigue,High,2026-05-22,Summit Healthcare Hospital
+P1180,Amanda Jones,,Drug-A,168/71,108.1,,Low,2026-05-20,
+P1199,Linda Nguyen,71,Drug-D,144/87,149.1,,Low,2026-05-16,
+P1111,Steven Scott,67,Drug-C,109/85,165.4,Headache,High,2026-04-23,St. Mary's General Hospital
+P1020,Kevin Rivera,56,Drug-B,124/78,12.1,Vomiting,High,2026-05-22,Eastwood Clinical Trials Center
+P1050,Paul Ramirez,67,Drug-C,108/92,38.8,None,High,2026-05-20,St. Mary's General Hospital
+P1017,Brian Davis,65,Drug-C,147/99,214.8,Dry mouth,High,2026-05-21,Riverside Health Institute
+P1091,Michelle Thompson,28,Drug-D,135/72,183.3,Fatigue,Critical,2026-04-29,Pioneer Regional Medical Center
+P1237,Brian Scott,71,Drug-E,133/102,68.4,Muscle weakness,Critical,2026-05-20,Metro Clinical Research Hospital
+P1135,Robert Sanchez,age_53,Drug-B,169/73,gl_80.0,Headache,Low,2026-05-21,Summit Healthcare Hospital
+P1330,Donna Baker,35,Drug-E,117/88,175.8,Rash,Critical,2026-05-21,Eastwood Clinical Trials Center
+P1277,Donald Perez,40,Drug-A,101/102,111.6,Dizziness,High,2026-05-27,Eastwood Clinical Trials Center
+P1278,George Campbell,31,Drug-C,129/89,159.0,Muscle weakness,Medium,2026-05-24,Pioneer Regional Medical Center
+P1319,Robert Smith,61,Drug-E,150/94,87.5,Depression,Low,2026-05-22,Northside University Hospital
+P1054,Brian Walker,66,Drug-D,157/110,479.9,Nausea,High,2026-05-22,Northside University Hospital
+P1410,Susan Adams,56,Drug-A,159/100,118.1,Headache,Low,2026-05-20,Summit Healthcare Hospital
+P1379,John Garcia,35,Drug-C,129/80,112.4,Blurred vision,Medium,2026-05-17,Northside University Hospital
+P1303,Kimberly Harris,40,Drug-E,abc/def,122.7,None,High,2026-05-22,Lakeside Oncology Center
+P1003,Karen Roberts,43,Drug-B,162/80,126.7,Palpitations,Critical,2026-05-20,Summit Healthcare Hospital
+P1006,George Hill,58,Drug-D,114/109,132.0,Muscle weakness,Medium,2026-05-21,Northside University Hospital
+P1293,Betty Wilson,54,Drug-B,999/999,140.0,Shortness of breath,Low,2026-05-22,Eastwood Clinical Trials Center
+P1240,Matthew Lopez,48,Drug-D,147/71,116.6,Chest pain,Critical,2026-05-22,Northside University Hospital
+P1082,Joseph Hill,47,Drug-B,124/99,202.0,Joint pain,High,2026-04-29,Riverside Health Institute
+P1314,Lisa Williams,30,Drug-A,106/71,374.5,Joint pain,Critical,2026-04-27,City Medical Center
+P1307,Thomas Smith,46,Drug-D,119/62,343.1,Insomnia,Critical,2026-04-26,Eastwood Clinical Trials Center
+P1249,Brian Thomas,28,Drug-D,134/83,98.5,Nausea,Critical,2026-05-20,Northside University Hospital
+P1351,Amanda Sanchez,72,Drug-B,115/107,113.9,Dry mouth,Medium,2026-05-19,Riverside Health Institute
+P1019,Susan Sanchez,28,Drug-B,148/60,480.6,None,Critical,2026-05-20,Pioneer Regional Medical Center
+P1357,Betty Sanchez,62,Drug-B,166/60,146.4,None,Medium,2026-05-22,City Medical Center
+P1006,William Green,44,Drug-E,168/65,149.8,Anxiety,Medium,2026-05-17,Riverside Health Institute
+P1027,Mark Scott,70,Drug-D,171/60,498.5,Fatigue,Critical,2026-05-22,Riverside Health Institute
+P1072,Emily Nelson,56,Drug-B,157/94,460.6,Palpitations,Critical,2026-05-20,Valley Community Medical Center
+P1159,Melissa Rodriguez,age_75,Drug-A,164/107,gl_201.1,Fever,Medium,2026-05-22,City Medical Center
+P1252,Dorothy Torres,26,Drug-B,124/72,118.9,Headache,Critical,2026-05-21,St. Mary's General Hospital
+P1036,Steven Walker,75,Drug-B,110/78,496.4,Anxiety,Critical,2026-05-17,Eastwood Clinical Trials Center
+P1190,William Hall,,,,245.5,,Critical,2026-05-16,Metro Clinical Research Hospital
+P1021,Mark Carter,29,Drug-E,117/93,171.8,Fever,Medium,2026-05-19,Valley Community Medical Center
+P1267,Sarah Wilson,13,Drug-D,173/108,236.3,Rash,Low,2026-05-19,City Medical Center
+P1332,Kevin Wilson,58,Drug-C,149/90,153.1,Chest pain,Low,2026-05-22,St. Mary's General Hospital
+P1077,Kenneth Rivera,31,Drug-D,121/104,397.3,Muscle weakness,High,2026-05-22,St. Mary's General Hospital
+P1185,Mark Young,35,Drug-A,,173.5,,Medium,2026-05-20,
+P1247,Michael Miller,61,Drug-A,136/94,108.6,Fever,Critical,2026-05-19,Northside University Hospital
+P1165,Joshua Lee,age_49,Drug-A,137/86,gl_159.0,None,Low,2026-05-16,City Medical Center
+P1128,Elizabeth Hall,74,Drug-E,121/106,209.1,Chest pain,Low,2026-04-25,Lakeside Oncology Center
+P1216,Emily Miller,34,,121/88,171.0,Chest pain,High,2026-05-20,
+P1085,John Martinez,73,Drug-B,150/95,149.3,Fever,Low,2026-04-30,Lakeside Oncology Center
+P1134,Susan Jones,age_31,Drug-E,104/88,gl_157.3,Hair loss,Low,2026-05-17,St. Mary's General Hospital
+P1423,Dorothy Williams,45,Drug-E,172/69,80.0,Blurred vision,Low,2026-05-18,Metro Clinical Research Hospital
+P1417,Robert Jackson,63,Drug-A,166/68,122.5,Muscle weakness,Low,2026-05-22,Northside University Hospital
+P1112,Christopher Torres,52,Drug-E,151/105,180.6,None,Critical,2026-04-29,Northside University Hospital
+P1006,Paul Moore,60,Drug-C,117/66,80.0,Hair loss,Low,2026-05-17,Eastwood Clinical Trials Center
+P1368,Paul Williams,57,Drug-C,150/103,179.6,Rash,Medium,2026-05-19,City Medical Center
+P1371,Margaret Wilson,51,Drug-C,146/85,169.6,Joint pain,Low,2026-05-19,Riverside Health Institute
+P1331,Kevin Martinez,72,Drug-D,145/62,151.7,Dry mouth,Critical,2026-05-16,Pioneer Regional Medical Center
+P1114,Betty Martin,72,Drug-C,128/81,201.2,Rash,Medium,2026-04-29,Summit Healthcare Hospital
+P1207,John Taylor,,Drug-E,180/64,130.0,,Low,2026-05-19,
+P1154,Brian Anderson,age_44,Drug-A,104/65,gl_187.5,None,Low,2026-05-19,Lakeside Oncology Center
+P1059,Andrew Green,68,Drug-A,119/69,14.1,Swelling,Critical,2026-05-20,City Medical Center
+P1002,Richard Rivera,66,Drug-E,153/74,10.2,Chest pain,Critical,2026-05-18,Northside University Hospital
+P1033,Margaret Smith,58,Drug-E,125/83,33.2,Shortness of breath,High,2026-05-22,Valley Community Medical Center
+P1012,Michael Brown,43,Drug-D,178/86,123.0,Dry mouth,Low,2026-05-16,Riverside Health Institute
+P1274,Brian Baker,14,Drug-C,138/86,112.0,None,Low,2026-05-22,Summit Healthcare Hospital
+P1001,Joseph Rodriguez,72,Drug-A,169/65,418.4,Swelling,Critical,2026-05-19,St. Mary's General Hospital
+P1026,Carol Green,41,Drug-E,162/76,11.5,Headache,High,2026-05-22,Lakeside Oncology Center
+P1309,Jennifer Thompson,39,Drug-B,142/81,397.0,Fever,Critical,2026-04-22,Metro Clinical Research Hospital
+P1354,Betty Flores,66,Drug-E,136/105,106.5,Hair loss,Critical,2026-05-22,Riverside Health Institute
+P1414,Michael Hernandez,75,Drug-B,170/85,125.7,Anxiety,High,2026-05-20,Riverside Health Institute
+P1013,Andrew Campbell,45,Drug-B,120/91,155.8,Anxiety,High,2026-05-19,Pioneer Regional Medical Center
+P1143,James Wilson,age_37,Drug-A,161/75,gl_107.1,None,Medium,2026-05-18,Metro Clinical Research Hospital
+P1350,Donald Lopez,48,Drug-E,171/90,151.1,Joint pain,High,2026-05-20,Eastwood Clinical Trials Center
+P1115,Daniel Campbell,66,Drug-B,130/66,127.4,Insomnia,High,2026-04-28,Metro Clinical Research Hospital
+P1364,Andrew Moore,36,Drug-B,163/107,186.2,Vomiting,Medium,2026-05-21,Metro Clinical Research Hospital
+P1377,Michelle Wright,36,Drug-C,145/80,184.4,None,Medium,2026-05-18,Pioneer Regional Medical Center
+P1341,Anthony Hill,34,Drug-E,123/99,140.4,None,Low,2026-05-18,Northside University Hospital
+P1388,Donald Martin,25,Drug-D,137/98,229.0,Dry mouth,Critical,2026-05-16,St. Mary's General Hospital
+P1260,Joshua Sanchez,67,Drug-C,117/106,194.6,Nausea,Critical,2026-05-17,Pioneer Regional Medical Center
+P1038,Betty Thomas,34,Drug-A,113/109,34.4,Shortness of breath,Critical,2026-05-21,Riverside Health Institute
+P1327,Steven Green,26,Drug-E,174/85,151.4,Swelling,Critical,2026-05-21,St. Mary's General Hospital
+P1039,William Robinson,67,Drug-E,171/98,35.2,Blurred vision,Critical,2026-05-16,Pioneer Regional Medical Center
+P1086,Linda Robinson,48,Drug-C,174/84,118.2,None,Low,2026-04-27,City Medical Center
+P1361,Jessica Carter,46,Drug-D,158/97,164.7,Nausea,Medium,2026-05-19,City Medical Center
+P1279,Elizabeth Williams,43,Drug-C,140/87,162.3,Fatigue,Low,2026-05-24,St. Mary's General Hospital
+P1145,Sandra Miller,age_71,Drug-D,140/73,gl_165.7,Fever,Critical,2026-05-20,Lakeside Oncology Center
+P1204,Barbara Wright,,Drug-D,,134.6,,Low,2026-05-17,City Medical Center
+P1335,Daniel Young,75,Drug-D,177/60,135.5,Anxiety,Medium,2026-05-21,Pioneer Regional Medical Center
+P1318,Charles Green,34,Drug-C,147/60,148.7,Depression,High,2026-05-16,Summit Healthcare Hospital
+P1181,Dorothy Green,,,149/99,185.2,None,Critical,2026-05-18,
+P1209,Matthew Martinez,,Drug-A,,167.7,None,Medium,2026-05-19,
+P1022,Jessica Nguyen,63,Drug-A,179/65,431.1,Shortness of breath,High,2026-05-17,Eastwood Clinical Trials Center
+P1093,Susan Anderson,46,Drug-B,176/60,204.1,Joint pain,Low,2026-04-28,Riverside Health Institute
+P1188,Emily Hall,47,Drug-E,,154.1,,High,2026-05-18,Riverside Health Institute
+P1030,Brian Miller,49,Drug-A,160/74,496.7,Vomiting,Critical,2026-05-16,Pioneer Regional Medical Center
+P1405,Sandra Smith,74,Drug-E,148/106,196.5,Rash,Medium,2026-05-22,Eastwood Clinical Trials Center
+P1308,Amanda Lee,58,Drug-B,123/93,349.6,Dizziness,Critical,2026-04-22,Summit Healthcare Hospital
+P1042,Paul Robinson,51,Drug-A,126/86,10.7,None,Critical,2026-05-16,Eastwood Clinical Trials Center
+P1214,Dorothy Clark,,Drug-C,,148.0,,Low,2026-05-18,
+P1065,Joseph Baker,61,Drug-E,102/108,489.2,None,High,2026-05-16,Northside University Hospital
+P1184,Patricia Thompson,,,,169.3,None,Medium,2026-05-18,
+P1227,Jennifer Brown,39,,,99.2,,Medium,2026-05-19,St. Mary's General Hospital
+P1369,Sandra Lee,69,Drug-A,101/103,180.8,Vomiting,High,2026-05-19,Eastwood Clinical Trials Center
+P1022,Jessica Davis,26,Drug-B,163/93,181.4,None,High,2026-05-18,City Medical Center
+P1411,Anthony White,75,Drug-A,178/77,185.6,Anxiety,High,2026-05-22,City Medical Center
+P1163,Christopher White,age_31,Drug-A,100/79,gl_174.9,Chest pain,High,2026-05-20,Northside University Hospital
+P1007,Betty Moore,29,Drug-B,172/105,508.9,Blurred vision,Critical,2026-05-21,Pioneer Regional Medical Center
+P1018,Lisa Scott,48,Drug-B,125/98,219.8,Anxiety,Medium,2026-05-19,Summit Healthcare Hospital
+P1083,Mark Williams,62,Drug-C,116/65,191.5,Muscle weakness,Medium,2026-04-28,Lakeside Oncology Center
+P1171,Jessica Lee,49,,,173.2,,Critical,2026-05-18,
+P1390,Kenneth Thomas,58,Drug-E,134/78,161.7,None,Low,2026-05-17,Summit Healthcare Hospital
+P1312,Mark Young,27,Drug-C,124/80,350.0,Anxiety,Critical,2026-04-22,City Medical Center
+P1010,Donald Williams,65,Drug-D,147/76,175.9,Nausea,Medium,2026-05-20,City Medical Center
+P1297,William Clark,63,Drug-E,120 / 80,110.1,Depression,High,2026-05-16,Valley Community Medical Center
+P1047,Mary Flores,34,Drug-B,116/90,26.3,None,High,2026-05-22,Eastwood Clinical Trials Center
+P1029,Jessica Hernandez,36,Drug-D,103/71,40.2,Blurred vision,Critical,2026-05-16,Lakeside Oncology Center
+P1129,Charles Carter,72,Drug-D,129/94,138.5,Dry mouth,Medium,2026-04-27,Pioneer Regional Medical Center
+P1024,Steven Taylor,33,Drug-C,108/75,460.6,Fever,High,2026-05-20,Riverside Health Institute
+P1024,Patricia Jones,55,Drug-A,136/86,115.4,Rash,Medium,2026-05-16,Riverside Health Institute
+P1397,Carol Martin,45,Drug-B,180/106,191.5,Headache,Medium,2026-05-17,Summit Healthcare Hospital
+P1226,Mary Rivera,69,,172/96,168.7,,Critical,2026-05-18,
+P1401,Barbara Hall,59,Drug-A,116/91,131.2,Dry mouth,Medium,2026-05-20,Summit Healthcare Hospital
+P1399,Sarah Nguyen,32,Drug-D,131/60,146.5,Headache,Low,2026-05-18,Pioneer Regional Medical Center
+P1158,John Martin,age_35,Drug-E,130/96,gl_190.0,None,High,2026-05-17,Summit Healthcare Hospital
+P1381,William Campbell,40,Drug-C,110/73,103.7,Rash,Critical,2026-05-19,City Medical Center
+P1141,Mark White,age_30,Drug-E,124/63,gl_80.0,Joint pain,High,2026-05-19,Eastwood Clinical Trials Center
+P1355,Mark Smith,37,Drug-E,136/72,114.4,Headache,High,2026-05-16,Eastwood Clinical Trials Center
+P1338,Jessica Williams,33,Drug-E,175/70,107.5,Insomnia,Medium,2026-05-17,Summit Healthcare Hospital
+P1043,Karen Carter,49,Drug-D,168/107,27.1,Depression,High,2026-05-16,Eastwood Clinical Trials Center
+P1196,Dorothy Baker,,Drug-A,,153.2,,Medium,2026-05-16,City Medical Center
+P1074,Ashley Williams,33,Drug-E,175/81,508.4,Fatigue,High,2026-05-16,Pioneer Regional Medical Center
+P1336,Susan Martinez,36,Drug-B,146/98,157.1,None,High,2026-05-16,City Medical Center
+P1295,Donald Allen,74,Drug-B,120/80/60,201.6,Insomnia,High,2026-05-22,Lakeside Oncology Center
+P1273,Patricia Nelson,15,Drug-C,106/104,157.1,Fatigue,Medium,2026-05-19,Pioneer Regional Medical Center
+P1280,Daniel Lewis,64,Drug-C,111/83,180.9,Blurred vision,Low,2026-05-27,City Medical Center
+P1049,Emily Hall,65,Drug-B,113/104,37.9,Muscle weakness,Critical,2026-05-16,Eastwood Clinical Trials Center
+P1382,Patricia Johnson,74,Drug-D,167/108,217.9,Dizziness,Medium,2026-05-22,Northside University Hospital
+P1291,Linda Miller,73,Drug-B,130/,139.8,Fever,High,2026-05-16,Northside University Hospital
+P1020,Andrew Davis,28,Drug-E,164/72,88.0,Swelling,Low,2026-05-18,Riverside Health Institute
+P1100,Betty Clark,71,Drug-A,140/87,140.2,Blurred vision,High,2026-04-25,Northside University Hospital
+P1013,Charles Gonzalez,27,Drug-B,105/80,205.9,Muscle weakness,Medium,2026-05-18,Lakeside Oncology Center
+P1133,Daniel Martinez,age_42,Drug-B,114/62,gl_99.4,None,Low,2026-05-19,Eastwood Clinical Trials Center
+P1353,Donald Hill,52,Drug-A,108/76,174.6,Dry mouth,High,2026-05-20,City Medical Center
+P1326,Jennifer Moore,33,Drug-E,125/76,133.3,None,High,2026-05-22,City Medical Center
+P1420,Susan Campbell,29,Drug-C,161/71,155.8,Palpitations,Medium,2026-05-16,Eastwood Clinical Trials Center
+P1333,Christopher Miller,70,Drug-E,135/107,177.2,Joint pain,Critical,2026-05-18,Summit Healthcare Hospital
+P1063,Paul Anderson,66,Drug-B,134/69,30.8,Dizziness,Critical,2026-05-22,Riverside Health Institute
+P1149,Ashley Lopez,age_59,Drug-A,167/62,gl_214.9,Dizziness,High,2026-05-16,St. Mary's General Hospital
+P1373,Melissa Martinez,55,Drug-A,122/86,107.7,Palpitations,High,2026-05-21,Summit Healthcare Hospital
+P1254,Donald Nguyen,60,Drug-C,144/70,94.9,Joint pain,Critical,2026-05-17,City Medical Center
+P1334,Emily Adams,29,Drug-E,132/84,119.2,Dry mouth,Medium,2026-05-18,Lakeside Oncology Center
+P1004,Michael Rivera,66,Drug-C,118/68,96.4,Headache,Medium,2026-05-20,Pioneer Regional Medical Center
+P1270,Robert Martin,17,Drug-C,166/98,120.1,Anxiety,Low,2026-05-20,Lakeside Oncology Center
+P1251,Anthony Mitchell,56,Drug-E,147/63,64.2,Anxiety,Critical,2026-05-16,Riverside Health Institute
+P1325,Nancy Rodriguez,68,Drug-C,161/89,131.1,Chest pain,Low,2026-05-20,Northside University Hospital
+P1386,Daniel Walker,59,Drug-B,111/88,104.1,Muscle weakness,Medium,2026-05-20,Lakeside Oncology Center
+P1425,Barbara Rodriguez,46,Drug-A,160/96,193.0,Headache,High,2026-05-18,Lakeside Oncology Center
+P1008,Amanda Martinez,43,Drug-D,100/99,167.9,Fever,Medium,2026-05-21,Eastwood Clinical Trials Center
+P1023,Donna Jackson,69,Drug-D,125/67,148.0,Insomnia,Medium,2026-05-16,City Medical Center
+P1017,Kevin Jackson,44,Drug-D,177/105,120.4,Shortness of breath,Low,2026-05-21,Pioneer Regional Medical Center
+P1415,Joshua Lewis,47,Drug-C,170/80,180.2,Fever,Medium,2026-05-19,Lakeside Oncology Center
+P1275,Michael Allen,15,Drug-C,115/78,138.4,Fatigue,Medium,2026-05-16,City Medical Center
+P1408,William Lopez,27,Drug-B,113/91,137.1,Vomiting,High,2026-05-22,St. Mary's General Hospital
+P1221,Margaret Lopez,47,,,151.7,Joint pain,Medium,2026-05-19,Riverside Health Institute
+P1300,Paul Jackson,52,Drug-A,75,201.5,Nausea,High,2026-05-19,Riverside Health Institute
+P1387,Karen Smith,25,Drug-E,117/82,169.9,Muscle weakness,Low,2026-05-19,Summit Healthcare Hospital
+P1256,Carol Smith,55,Drug-B,122/98,140.2,Nausea,Critical,2026-05-21,Northside University Hospital
+P1009,Patricia Roberts,30,Drug-E,129/94,151.1,Headache,Low,2026-05-21,Lakeside Oncology Center
+P1208,Andrew Baker,71,Drug-A,,160.2,,High,2026-05-22,St. Mary's General Hospital
+P1011,Steven Carter,36,Drug-E,113/100,15.3,Muscle weakness,Critical,2026-05-16,Summit Healthcare Hospital
+P1292,David Young,33,Drug-D,/ 85,117.6,Hair loss,Low,2026-05-21,Metro Clinical Research Hospital
+P1229,Lisa Martin,,,,168.4,Shortness of breath,Medium,2026-05-16,
+P1110,Susan Roberts,33,Drug-C,137/80,164.0,Fatigue,Low,2026-04-24,Pioneer Regional Medical Center
+P1064,Mark Davis,54,Drug-C,151/77,467.7,Anxiety,Critical,2026-05-18,Pioneer Regional Medical Center
+P1153,Richard Flores,age_58,Drug-C,145/77,gl_153.4,None,Low,2026-05-22,Valley Community Medical Center
+P1118,Emily Brown,47,Drug-E,109/79,84.3,Chest pain,High,2026-04-30,St. Mary's General Hospital
+P1161,Daniel Scott,age_49,Drug-D,123/103,gl_175.7,Swelling,Medium,2026-05-17,Lakeside Oncology Center
+P1301,Patricia Gonzalez,42,Drug-B,systolic:130,130.6,Joint pain,Low,2026-05-21,St. Mary's General Hospital
+P1385,Brian Wright,36,Drug-E,176/89,199.1,None,Low,2026-05-17,Eastwood Clinical Trials Center
+P1126,Karen Lopez,38,Drug-C,162/72,131.8,Dry mouth,Low,2026-04-29,Riverside Health Institute
+P1003,Christopher Adams,29,Drug-D,159/103,202.9,Anxiety,Low,2026-05-20,Riverside Health Institute
+P1147,Joseph Harris,age_61,Drug-B,163/95,gl_169.8,None,Low,2026-05-17,Valley Community Medical Center
+P1113,Donna Robinson,69,Drug-C,111/87,80.0,Fatigue,Low,2026-04-24,Lakeside Oncology Center
+P1285,George Thomas,55,Drug-C,149/69,145.4,Depression,Medium,2026-05-24,St. Mary's General Hospital
+P1017,George Brown,68,Drug-A,107/85,414.7,Blurred vision,Critical,2026-05-16,City Medical Center
+P1053,Thomas Perez,42,Drug-E,135/95,483.6,Nausea,Critical,2026-05-18,Metro Clinical Research Hospital
+P1014,Jennifer Sanchez,67,Drug-A,123/68,152.8,Palpitations,Medium,2026-05-20,Metro Clinical Research Hospital
+P1052,Christopher Thomas,30,Drug-C,157/75,21.8,Chest pain,Critical,2026-05-18,Eastwood Clinical Trials Center
+P1017,John Harris,57,Drug-D,170/77,180.5,Hair loss,Medium,2026-05-17,Eastwood Clinical Trials Center
+P1011,Lisa Jackson,54,Drug-E,167/91,135.8,Insomnia,Critical,2026-05-16,Summit Healthcare Hospital
+P1347,Jennifer Jackson,63,Drug-E,152/76,201.0,Vomiting,Critical,2026-05-22,St. Mary's General Hospital
+P1233,Michael Campbell,25,Drug-A,149/88,124.0,Shortness of breath,Critical,2026-05-21,Lakeside Oncology Center
+P1169,Lisa Flores,age_49,Drug-C,156/81,gl_214.4,Shortness of breath,Critical,2026-05-16,Eastwood Clinical Trials Center
+P1225,Melissa Brown,73,Drug-B,,172.3,Fever,Low,2026-05-16,
+P1162,Amanda Jones,age_30,Drug-C,119/84,gl_191.7,None,High,2026-05-16,Riverside Health Institute
+P1004,Matthew Garcia,60,Drug-C,180/99,11.6,Fever,High,2026-05-18,Metro Clinical Research Hospital
+P1288,Linda Young,72,Drug-A,HIGH,84.7,Shortness of breath,Medium,2026-05-22,Summit Healthcare Hospital
+P1248,Sarah Sanchez,34,Drug-E,177/103,110.4,None,Critical,2026-05-19,St. Mary's General Hospital
+P1348,Michelle Wilson,69,Drug-C,152/83,134.5,Fatigue,Low,2026-05-21,Lakeside Oncology Center
+P1009,Linda Martinez,65,Drug-B,154/98,450.8,Dizziness,High,2026-05-19,Lakeside Oncology Center
+P1360,Thomas Wright,75,Drug-E,132/104,140.6,Chest pain,Medium,2026-05-19,Eastwood Clinical Trials Center
+P1099,Michelle Adams,74,Drug-E,127/87,137.4,Chest pain,High,2026-04-25,Lakeside Oncology Center
+P1084,Paul White,58,Drug-E,134/70,121.2,Joint pain,Low,2026-04-26,Pioneer Regional Medical Center
+P1228,Christopher Brown,26,,,138.2,,High,2026-05-16,
+P1168,Ashley Hill,age_64,Drug-B,158/66,gl_95.9,Insomnia,High,2026-05-20,St. Mary's General Hospital
+P1177,Dorothy Walker,47,Drug-D,112/88,103.8,,High,2026-05-19,
+P1296,Matthew Clark,63,Drug-B,normal,123.8,Blurred vision,Medium,2026-05-20,Pioneer Regional Medical Center
+P1339,Andrew Martinez,28,Drug-B,133/71,122.7,Anxiety,Low,2026-05-19,Eastwood Clinical Trials Center
+P1365,Susan Anderson,37,Drug-B,179/82,133.4,Insomnia,Critical,2026-05-16,City Medical Center
+P1166,Jessica Torres,age_58,Drug-B,148/70,gl_142.9,Insomnia,Critical,2026-05-20,Northside University Hospital
+P1183,Anthony Hill,,,,196.3,Rash,Medium,2026-05-19,
+P1069,Charles Lewis,69,Drug-D,115/61,20.9,None,High,2026-05-18,Metro Clinical Research Hospital
+P1170,Richard Walker,age_45,Drug-B,150/80,gl_170.2,Muscle weakness,Critical,2026-05-17,Pioneer Regional Medical Center
+P1041,Sarah Perez,45,Drug-E,110/68,34.7,Insomnia,High,2026-05-21,Lakeside Oncology Center
+P1004,George Moore,43,Drug-A,173/103,141.1,Depression,Critical,2026-05-19,Lakeside Oncology Center
+P1200,Charles Roberts,,Drug-A,138/73,150.5,Anxiety,High,2026-05-18,
+P1366,Ashley Flores,25,Drug-E,105/90,160.3,Fever,Critical,2026-05-18,Valley Community Medical Center
+P1217,Susan Lewis,,,,160.7,,Critical,2026-05-21,Northside University Hospital
+P1294,Emily Allen,33,Drug-D,bp:140/90,202.8,Headache,Medium,2026-05-18,Lakeside Oncology Center
+P1400,Jessica Hernandez,56,Drug-A,179/81,142.3,None,High,2026-05-22,St. Mary's General Hospital
+P1014,George Hall,37,Drug-C,151/102,25.8,None,High,2026-05-20,Pioneer Regional Medical Center
+P1222,Donald Brown,30,,149/68,125.3,,Critical,2026-05-21,Summit Healthcare Hospital
+P1234,Donald Torres,66,Drug-B,120/88,96.3,Dizziness,Critical,2026-05-16,St. Mary's General Hospital
+P1055,Margaret Mitchell,60,Drug-C,145/104,405.7,Chest pain,High,2026-05-20,Northside University Hospital
+P1097,Amanda Lewis,29,Drug-A,141/98,171.2,Insomnia,Low,2026-04-26,Riverside Health Institute
+P1253,Amanda Gonzalez,42,Drug-C,159/92,150.4,None,Critical,2026-05-17,City Medical Center
+P1011,Emily Mitchell,73,Drug-C,117/62,118.1,Fever,High,2026-05-18,Valley Community Medical Center
+P1374,Thomas Scott,61,Drug-A,150/66,120.2,None,Medium,2026-05-21,St. Mary's General Hospital
+P1001,Jessica Young,26,Drug-C,170/96,178.6,Fever,High,2026-05-19,Summit Healthcare Hospital
+P1136,Andrew Lee,age_61,Drug-E,141/75,gl_175.5,Muscle weakness,Critical,2026-05-21,Summit Healthcare Hospital
+P1391,Anthony Gonzalez,29,Drug-B,117/78,128.2,Fatigue,High,2026-05-17,Pioneer Regional Medical Center
+P1009,Paul Jackson,66,Drug-C,161/75,191.6,None,Critical,2026-05-19,Northside University Hospital
+P1257,Amanda Rivera,66,Drug-C,154/84,85.5,Fever,Critical,2026-05-19,Northside University Hospital
+P1287,Kimberly Adams,49,Drug-D,120 over 80,134.0,Chest pain,Medium,2026-05-19,Eastwood Clinical Trials Center
+P1395,John Wright,55,Drug-B,124/76,185.8,None,High,2026-05-16,St. Mary's General Hospital
+P1095,Anthony King,32,Drug-A,160/88,177.4,Fever,Low,2026-04-29,Eastwood Clinical Trials Center
+P1061,Susan Green,38,Drug-C,110/70,390.3,Dry mouth,Critical,2026-05-21,Summit Healthcare Hospital
+P1286,Ashley Hernandez,29,Drug-D,150-90,137.3,Blurred vision,High,2026-05-20,St. Mary's General Hospital
+P1211,Karen Lee,,,,209.2,Fever,High,2026-05-21,
+P1306,Elizabeth Lopez,72,Drug-E,115/84,373.4,Headache,Critical,2026-04-28,Northside University Hospital
+P1008,Thomas Adams,38,Drug-E,153/99,224.4,None,High,2026-05-22,Pioneer Regional Medical Center
+P1271,Ashley Thompson,17,Drug-C,121/85,149.4,Nausea,Medium,2026-05-21,Metro Clinical Research Hospital
+P1215,William Thomas,,Drug-C,140/85,160.3,,Medium,2026-05-16,
+P1372,Michael Campbell,42,Drug-B,171/87,80.0,None,High,2026-05-21,Riverside Health Institute
+P1398,Richard White,28,Drug-B,114/75,123.5,None,High,2026-05-19,Valley Community Medical Center
+P1416,Paul Wilson,49,Drug-E,132/83,164.2,Chest pain,Low,2026-05-19,Lakeside Oncology Center
+P1404,Joshua Scott,35,Drug-A,167/69,117.3,Chest pain,Low,2026-05-20,Northside University Hospital
+P1004,Elizabeth Roberts,33,Drug-D,164/63,193.9,Fatigue,High,2026-05-18,Riverside Health Institute
+P1232,Jennifer Rivera,67,Drug-C,157/60,152.0,Joint pain,Critical,2026-05-21,Metro Clinical Research Hospital
+P1104,Sarah Torres,39,Drug-D,171/109,140.6,Hair loss,Low,2026-04-30,Summit Healthcare Hospital
+P1238,Patricia White,25,Drug-D,111/78,122.2,None,Critical,2026-05-17,Eastwood Clinical Trials Center
+P1223,Amanda Thompson,55,Drug-E,,117.1,,Critical,2026-05-18,
+P1250,Joseph Rodriguez,44,Drug-D,141/77,81.3,Shortness of breath,Critical,2026-05-18,City Medical Center
+P1106,Melissa Green,26,Drug-A,167/73,117.6,None,Low,2026-04-25,Pioneer Regional Medical Center
+P1068,James Nelson,59,Drug-D,152/63,27.4,Vomiting,Critical,2026-05-18,Valley Community Medical Center
+P1203,Betty Allen,,,,193.7,,Critical,2026-05-19,City Medical Center
+P1155,Patricia Green,age_25,Drug-B,110/91,gl_140.2,Shortness of breath,Medium,2026-05-17,Valley Community Medical Center
+P1014,Betty Allen,54,Drug-B,127/97,179.8,Fever,Low,2026-05-22,St. Mary's General Hospital
+P1235,Michael Jones,46,Drug-B,148/70,102.3,Dizziness,Critical,2026-05-18,City Medical Center
+P1005,David Lee,70,Drug-B,144/93,107.7,Muscle weakness,Medium,2026-05-16,City Medical Center
+P1144,Charles Harris,age_54,Drug-E,145/79,gl_129.4,Joint pain,Medium,2026-05-20,Summit Healthcare Hospital
+P1079,Thomas Robinson,41,Drug-A,159/78,512.9,None,Critical,2026-05-18,Riverside Health Institute
+P1219,William Davis,25,,128/68,194.3,,Low,2026-05-16,
+P1124,Kevin Martinez,47,Drug-C,150/68,101.0,Hair loss,Low,2026-04-26,City Medical Center
+P1139,Elizabeth Carter,age_59,Drug-D,130/74,gl_146.3,Muscle weakness,Low,2026-05-16,Riverside Health Institute
+P1117,Donna Lee,65,Drug-C,119/88,119.7,Dizziness,High,2026-04-26,Pioneer Regional Medical Center
+P1239,Susan Hernandez,65,Drug-C,110/90,120.9,Fatigue,Critical,2026-05-20,Lakeside Oncology Center
+P1192,George Robinson,,,,210.4,Depression,High,2026-05-19,Metro Clinical Research Hospital
+P1016,Patricia Nelson,32,Drug-D,139/70,151.5,None,High,2026-05-17,Summit Healthcare Hospital
+P1045,Sandra Lopez,28,Drug-C,148/80,504.4,Vomiting,High,2026-05-19,Valley Community Medical Center
+P1071,Richard Hill,57,Drug-B,108/77,390.3,Shortness of breath,Critical,2026-05-20,Summit Healthcare Hospital
+P1272,Linda White,16,Drug-C,148/100,151.8,Joint pain,Medium,2026-05-16,Summit Healthcare Hospital
+P1020,Christopher Hernandez,50,Drug-E,138/97,165.0,Blurred vision,Critical,2026-05-18,Summit Healthcare Hospital
+P1078,Jessica King,51,Drug-E,123/70,31.7,Rash,High,2026-05-22,Eastwood Clinical Trials Center
+P1116,Michelle Jones,36,Drug-D,159/108,145.6,Swelling,High,2026-04-23,Eastwood Clinical Trials Center
+P1014,Paul Walker,41,Drug-A,124/78,173.4,Fever,Critical,2026-05-16,St. Mary's General Hospital
+P1210,Linda Allen,,Drug-A,122/74,122.2,Anxiety,Medium,2026-05-22,
+P1016,Susan Wright,33,Drug-E,173/90,16.7,Dry mouth,High,2026-05-16,Pioneer Regional Medical Center
+P1305,Kenneth Rivera,70,Drug-C,1OO/7O,206.9,Hair loss,High,2026-05-21,Metro Clinical Research Hospital
+P1002,David Moore,53,Drug-E,118/87,131.9,Dizziness,Low,2026-05-21,Pioneer Regional Medical Center
+P1266,Sandra Martinez,14,Drug-C,110/91,93.2,Blurred vision,Critical,2026-05-17,Riverside Health Institute
+P1032,Emily Taylor,27,Drug-A,176/87,518.0,Fever,High,2026-05-17,Valley Community Medical Center
+P1012,Elizabeth Roberts,68,Drug-D,161/100,197.1,Rash,High,2026-05-16,Riverside Health Institute
+P1363,Thomas Thomas,43,Drug-A,151/103,184.3,Blurred vision,Low,2026-05-22,Summit Healthcare Hospital
+P1121,Amanda Garcia,57,Drug-B,105/75,209.7,None,Medium,2026-04-22,Pioneer Regional Medical Center
+P1025,Amanda Hall,65,Drug-B,146/92,142.6,Dry mouth,Low,2026-05-22,Metro Clinical Research Hospital
+P1246,Brian Flores,62,Drug-E,153/67,134.3,Shortness of breath,Critical,2026-05-21,Riverside Health Institute
+P1002,George Baker,66,Drug-C,178/90,144.7,Vomiting,Medium,2026-05-21,Northside University Hospital
+P1001,Donald King,49,Drug-C,122/89,105.4,Depression,Critical,2026-05-20,Summit Healthcare Hospital
+P1023,George Brown,62,Drug-D,121/93,144.2,None,Medium,2026-05-17,Eastwood Clinical Trials Center
+P1362,Joseph Baker,69,Drug-B,140/86,148.3,Fever,High,2026-05-18,Summit Healthcare Hospital
+P1081,Kevin Sanchez,42,Drug-A,172/103,134.6,Headache,Low,2026-04-26,Pioneer Regional Medical Center
+P1022,Steven Clark,54,Drug-E,107/95,209.0,Chest pain,Medium,2026-05-17,Northside University Hospital
+P1176,Daniel Johnson,55,,,156.5,Dizziness,Medium,2026-05-22,
+P1016,Betty White,27,Drug-D,106/96,84.3,Depression,High,2026-05-21,Valley Community Medical Center
+P1376,Daniel Johnson,51,Drug-A,144/103,121.4,Hair loss,High,2026-05-21,Eastwood Clinical Trials Center
+P1197,Jennifer Campbell,31,Drug-A,,163.7,,Low,2026-05-21,Lakeside Oncology Center
+P1403,Mark Scott,43,Drug-E,162/72,92.9,Swelling,Medium,2026-05-21,Summit Healthcare Hospital
+P1021,Dorothy Hernandez,28,Drug-E,110/71,18.2,Dizziness,High,2026-05-18,City Medical Center
+P1343,Steven Baker,51,Drug-B,177/66,196.3,Rash,Low,2026-05-19,Eastwood Clinical Trials Center
+P1407,Barbara Flores,43,Drug-C,152/101,102.6,Blurred vision,High,2026-05-22,City Medical Center
+P1160,Donna Hill,age_50,Drug-C,103/100,gl_88.3,Joint pain,Medium,2026-05-16,Pioneer Regional Medical Center
+P1422,Margaret Clark,32,Drug-B,177/60,164.9,None,Medium,2026-05-16,Lakeside Oncology Center
+P1413,Andrew Green,36,Drug-E,171/86,137.8,Fatigue,High,2026-05-16,Eastwood Clinical Trials Center
+P1096,Joseph Flores,27,Drug-E,138/89,152.7,None,Medium,2026-04-23,St. Mary's General Hospital
+P1394,Ashley White,54,Drug-A,142/65,157.5,Insomnia,High,2026-05-22,Northside University Hospital
+P1198,Mark Thompson,,Drug-B,,145.5,,High,2026-05-19,
+P1231,Donna Anderson,65,Drug-E,113/91,88.3,Insomnia,Critical,2026-05-20,City Medical Center
+P1174,David Adams,,,172/101,170.4,,High,2026-05-17,Lakeside Oncology Center
+P1007,Emily Martinez,35,Drug-E,177/81,199.7,Swelling,Medium,2026-05-22,St. Mary's General Hospital
+P1051,Amanda Martinez,52,Drug-B,166/101,26.3,Joint pain,Critical,2026-05-18,Summit Healthcare Hospital
+P1289,Jennifer Hill,64,Drug-C,N/A,172.1,Vomiting,Medium,2026-05-17,Pioneer Regional Medical Center
+P1186,Ashley Scott,57,,173/67,158.7,,High,2026-05-16,
+P1015,Sarah Perez,44,Drug-E,173/60,184.4,Joint pain,Medium,2026-05-17,Valley Community Medical Center
+P1119,Jennifer Flores,63,Drug-E,149/89,130.5,Swelling,High,2026-04-23,St. Mary's General Hospital
+P1018,Sandra Mitchell,63,Drug-C,153/104,116.0,Depression,Medium,2026-05-19,Summit Healthcare Hospital
+P1258,Emily Miller,25,Drug-E,147/95,94.6,None,Critical,2026-05-18,Eastwood Clinical Trials Center
+P1020,John Thomas,74,Drug-C,146/84,172.6,Swelling,Low,2026-05-22,Eastwood Clinical Trials Center
+P1324,Christopher Ramirez,35,Drug-A,140/75,143.0,Dry mouth,Medium,2026-05-17,Lakeside Oncology Center
+P1056,Paul Carter,69,Drug-B,124/73,28.4,Palpitations,High,2026-05-20,Eastwood Clinical Trials Center
+P1005,Charles Williams,43,Drug-A,144/88,186.3,None,High,2026-05-20,Pioneer Regional Medical Center
+P1263,Thomas Campbell,13,Drug-D,142/101,104.0,Dizziness,Low,2026-05-21,Valley Community Medical Center
+P1321,Richard Davis,36,Drug-E,106/108,205.8,Depression,High,2026-05-19,Summit Healthcare Hospital
+P1311,Christopher Harris,75,Drug-A,149/76,341.5,Depression,Critical,2026-04-22,Northside University Hospital
+P1264,Emily Jackson,16,Drug-C,160/63,85.9,None,Medium,2026-05-18,Eastwood Clinical Trials Center
+P1019,Carol Carter,63,Drug-A,167/88,171.0,Anxiety,High,2026-05-17,Valley Community Medical Center
+P1035,Karen Sanchez,60,Drug-A,138/78,21.3,Vomiting,Critical,2026-05-19,Eastwood Clinical Trials Center
+P1005,Michael Harris,42,Drug-D,146/70,34.6,Fever,Critical,2026-05-20,Metro Clinical Research Hospital
+P1383,Jennifer Adams,49,Drug-C,129/75,196.5,Muscle weakness,High,2026-05-19,Riverside Health Institute
+P1164,Kimberly Scott,age_57,Drug-D,113/61,gl_162.0,Dizziness,Medium,2026-05-20,Summit Healthcare Hospital
+P1358,Emily Thompson,47,Drug-C,128/98,96.4,Vomiting,Medium,2026-05-19,Lakeside Oncology Center
+P1009,Nancy Jones,58,Drug-E,164/110,105.2,Anxiety,Low,2026-05-18,St. Mary's General Hospital
+P1242,Matthew King,51,Drug-E,160/96,66.1,Dry mouth,Critical,2026-05-19,Northside University Hospital
+P1282,Emily Walker,61,Drug-D,123/99,217.1,None,Low,2026-05-24,Valley Community Medical Center
+P1367,Andrew Moore,56,Drug-B,165/77,159.7,None,Medium,2026-05-21,Eastwood Clinical Trials Center
+P1016,Dorothy Moore,30,Drug-D,110/87,126.5,Hair loss,Medium,2026-05-16,Riverside Health Institute
+P1031,Sarah Jones,74,Drug-C,144/101,393.6,Anxiety,Critical,2026-05-19,Summit Healthcare Hospital
+P1088,Robert Martin,56,Drug-A,112/75,158.7,Depression,Low,2026-04-23,Lakeside Oncology Center
+P1001,Michelle Walker,48,Drug-E,113/105,156.0,Anxiety,Low,2026-05-16,City Medical Center
+P1370,Elizabeth Scott,41,Drug-B,134/90,176.7,Hair loss,Critical,2026-05-20,Valley Community Medical Center
+P1195,Kevin Adams,,,150/100,158.2,,Low,2026-05-17,Metro Clinical Research Hospital
+P1265,Richard Allen,13,Drug-C,167/79,185.0,Shortness of breath,Medium,2026-05-22,Riverside Health Institute
+P1224,Sarah Brown,55,,,139.7,Swelling,Critical,2026-05-21,Riverside Health Institute
+P1013,Carol Carter,37,Drug-B,178/100,181.6,None,Low,2026-05-16,Lakeside Oncology Center
+P1010,James Baker,71,Drug-A,168/108,446.5,Joint pain,Critical,2026-05-16,Valley Community Medical Center
+P1268,Matthew Smith,16,Drug-C,125/106,126.2,Fever,Critical,2026-05-22,Valley Community Medical Center
+P1419,Daniel Martinez,33,Drug-C,146/97,147.6,Dry mouth,Low,2026-05-21,Northside University Hospital
+P1349,Thomas Taylor,59,Drug-D,172/83,141.8,Hair loss,High,2026-05-20,Lakeside Oncology Center
+P1073,Andrew Harris,39,Drug-D,105/80,476.3,Palpitations,Critical,2026-05-17,Lakeside Oncology Center
+P1299,Brian Green,45,Drug-A,180+,80.0,Palpitations,Medium,2026-05-18,Eastwood Clinical Trials Center
+P1244,Susan Gonzalez,33,Drug-A,154/65,194.6,None,Critical,2026-05-19,Metro Clinical Research Hospital
+P1173,Matthew Jones,,,,138.7,,High,2026-05-18,Summit Healthcare Hospital
+P1206,Dorothy King,75,,,143.7,,Critical,2026-05-17,
+P1003,Betty Allen,48,Drug-B,149/65,210.5,Fever,Medium,2026-05-21,St. Mary's General Hospital
+P1310,Michelle Smith,32,Drug-C,157/75,354.6,None,Critical,2026-04-30,Eastwood Clinical Trials Center
+P1193,Charles Perez,,,,150.9,,Medium,2026-05-16,Valley Community Medical Center
+P1205,Margaret Davis,54,Drug-E,,189.0,,Low,2026-05-17,Riverside Health Institute
+P1105,Mary Lopez,42,Drug-C,143/82,110.3,Nausea,High,2026-04-24,Riverside Health Institute
+P1109,Emily Young,58,Drug-C,105/74,140.4,None,High,2026-04-30,St. Mary's General Hospital
+P1201,Jessica Young,49,,,197.4,,High,2026-05-18,
+P1359,Thomas Lopez,51,Drug-E,113/95,132.7,Dizziness,Medium,2026-05-18,Northside University Hospital
+P1108,Margaret Young,63,Drug-D,153/77,175.3,Vomiting,Medium,2026-04-29,Summit Healthcare Hospital
+P1015,Joshua Adams,68,Drug-D,136/94,121.7,Nausea,Low,2026-05-16,City Medical Center
+P1012,Dorothy Smith,63,Drug-C,162/61,421.3,Fatigue,Critical,2026-05-20,Northside University Hospital
+P1167,Barbara Jones,age_35,Drug-D,135/86,gl_105.7,Muscle weakness,Low,2026-05-19,City Medical Center
+P1156,Dorothy Williams,age_39,Drug-B,172/90,gl_86.7,Joint pain,Low,2026-05-22,City Medical Center
+P1380,Mark Roberts,48,Drug-E,166/88,138.3,Shortness of breath,Medium,2026-05-21,Riverside Health Institute
+P1057,Elizabeth Martin,25,Drug-E,116/77,512.7,Headache,Critical,2026-05-22,Summit Healthcare Hospital
+P1375,Thomas Walker,65,Drug-A,157/107,143.5,Blurred vision,Low,2026-05-20,Valley Community Medical Center
+P1281,Sandra Moore,49,Drug-D,153/101,108.6,Rash,Medium,2026-05-24,Riverside Health Institute
+P1021,Amanda Torres,44,Drug-D,102/83,138.1,Blurred vision,Medium,2026-05-17,City Medical Center
+P1008,Jessica Mitchell,60,Drug-E,133/107,418.5,Swelling,Critical,2026-05-19,Eastwood Clinical Trials Center
+P1018,Robert Campbell,47,Drug-E,155/77,141.3,None,Medium,2026-05-16,St. Mary's General Hospital
+P1345,Nancy Williams,69,Drug-E,154/74,107.9,Palpitations,Medium,2026-05-16,Lakeside Oncology Center
+P1352,Kimberly Flores,69,Drug-A,120/84,183.7,None,High,2026-05-22,City Medical Center
+P1076,Christopher Green,70,Drug-D,169/62,42.2,Hair loss,Critical,2026-05-22,Metro Clinical Research Hospital
+P1243,Amanda Williams,57,Drug-E,166/96,71.8,None,Critical,2026-05-18,Riverside Health Institute
+P1402,Mark Campbell,37,Drug-A,148/82,164.1,Insomnia,High,2026-05-20,St. Mary's General Hospital
+P1028,William Williams,44,Drug-C,105/82,22.4,Vomiting,Critical,2026-05-17,Metro Clinical Research Hospital
+P1304,Christopher Scott,28,Drug-A,130/8O,83.3,Hair loss,Critical,2026-05-16,Pioneer Regional Medical Center
+P1393,William Rivera,53,Drug-A,129/65,131.2,Insomnia,Low,2026-05-22,Pioneer Regional Medical Center
+P1424,Mark Carter,63,Drug-E,164/65,179.9,Dry mouth,Critical,2026-05-19,Northside University Hospital
+P1298,Richard Wilson,64,Drug-C,0/0,130.6,Insomnia,High,2026-05-17,Riverside Health Institute
+P1313,Kenneth Jones,38,Drug-B,154/66,378.8,Vomiting,Critical,2026-04-29,Lakeside Oncology Center
+P1080,Margaret Hall,41,Drug-D,138/72,439.6,None,High,2026-05-16,Pioneer Regional Medical Center
+P1012,Richard Davis,46,Drug-B,158/101,195.4,Joint pain,Medium,2026-05-17,Riverside Health Institute
+P1396,Mark Thomas,72,Drug-A,125/89,193.1,Fatigue,Low,2026-05-18,Metro Clinical Research Hospital
+P1103,Andrew Allen,38,Drug-B,161/74,196.5,Fatigue,Medium,2026-04-25,Summit Healthcare Hospital
+P1120,Andrew Adams,37,Drug-C,177/90,171.1,Anxiety,Critical,2026-04-23,St. Mary's General Hospital
+P1344,Linda Garcia,55,Drug-B,177/94,91.9,Nausea,Medium,2026-05-16,Lakeside Oncology Center
+P1023,William Nelson,66,Drug-C,158/80,29.7,Dizziness,High,2026-05-22,Pioneer Regional Medical Center
+P1151,Kenneth Nelson,age_64,Drug-D,162/61,gl_114.1,Nausea,Low,2026-05-18,Summit Healthcare Hospital
+P1075,John Walker,75,Drug-C,143/99,39.8,None,Critical,2026-05-19,City Medical Center
+P1245,Joshua Taylor,45,Drug-A,111/84,100.7,Depression,Critical,2026-05-19,Summit Healthcare Hospital
+P1152,Paul Jackson,age_26,Drug-E,155/71,gl_144.5,Fatigue,High,2026-05-22,Summit Healthcare Hospital
+P1337,Anthony Perez,71,Drug-A,161/103,162.1,Palpitations,High,2026-05-19,Metro Clinical Research Hospital
+P1346,Brian Torres,31,Drug-D,117/76,112.7,Palpitations,Critical,2026-05-16,Metro Clinical Research Hospital
+P1406,George Jones,67,Drug-E,149/72,187.7,Anxiety,Low,2026-05-17,Pioneer Regional Medical Center
+P1025,Brian Wilson,51,Drug-E,178/90,116.2,Headache,Low,2026-05-17,Riverside Health Institute
+P1087,Christopher Flores,39,Drug-A,159/104,102.1,Muscle weakness,Critical,2026-04-29,Lakeside Oncology Center
+P1002,Betty Rivera,71,Drug-D,167/86,199.8,Shortness of breath,Low,2026-05-16,Eastwood Clinical Trials Center
+P1320,Susan Clark,66,Drug-E,118/70,164.3,Rash,High,2026-05-21,Eastwood Clinical Trials Center
+P1013,Paul Roberts,33,Drug-B,160/95,24.8,Rash,High,2026-05-20,Summit Healthcare Hospital
+P1261,Anthony Sanchez,14,Drug-C,174/105,147.2,Swelling,Low,2026-05-16,Metro Clinical Research Hospital
+P1230,Karen Campbell,,,116/71,157.8,,Low,2026-05-17,Eastwood Clinical Trials Center
+P1022,George Hall,65,Drug-A,176/90,196.0,Joint pain,High,2026-05-17,Eastwood Clinical Trials Center
+P1010,Anthony Walker,54,Drug-B,143/98,98.8,Insomnia,Low,2026-05-20,Valley Community Medical Center
+P1098,Emily Scott,70,Drug-C,148/98,119.8,Anxiety,High,2026-04-22,Pioneer Regional Medical Center
+P1024,Jessica Williams,61,Drug-A,124/61,155.3,Chest pain,High,2026-05-20,Lakeside Oncology Center
+P1008,William Smith,60,Drug-B,152/101,161.3,Palpitations,Low,2026-05-19,Metro Clinical Research Hospital
+P1142,Emily Campbell,age_67,Drug-E,127/90,gl_93.2,Vomiting,Low,2026-05-16,Valley Community Medical Center
+P1137,Karen Moore,age_28,Drug-E,175/107,gl_149.0,Rash,Low,2026-05-17,Lakeside Oncology Center
+P1269,James Green,12,Drug-D,128/104,123.5,Fever,Low,2026-05-20,Riverside Health Institute
+P1058,Michael Smith,61,Drug-C,160/90,18.8,Chest pain,Critical,2026-05-20,Riverside Health Institute
+P1046,Anthony Taylor,30,Drug-D,102/107,398.9,Depression,Critical,2026-05-22,Valley Community Medical Center
+P1220,Mark Rodriguez,,,,162.7,,Critical,2026-05-22,Riverside Health Institute
+P1276,Richard Thompson,70,Drug-D,137/70,103.0,Headache,High,2026-05-25,Pioneer Regional Medical Center
+P1011,Daniel Sanchez,33,Drug-C,165/95,165.4,Fatigue,High,2026-05-20,Metro Clinical Research Hospital
+P1146,Mary Taylor,age_60,Drug-E,174/106,gl_217.1,Shortness of breath,High,2026-05-20,Riverside Health Institute
+P1323,Donna Jones,37,Drug-C,162/88,173.2,Blurred vision,Low,2026-05-18,Northside University Hospital
+P1007,Donna Robinson,29,Drug-A,163/98,168.6,Depression,High,2026-05-22,Summit Healthcare Hospital
+P1037,Mary Williams,40,Drug-D,178/109,30.1,Dizziness,Critical,2026-05-19,Lakeside Oncology Center
+P1125,William Nelson,69,Drug-E,111/101,103.1,None,Medium,2026-04-25,Summit Healthcare Hospital
+P1127,Paul Mitchell,58,Drug-A,143/109,132.5,Hair loss,Medium,2026-04-24,Eastwood Clinical Trials Center
+P1194,Sandra Smith,52,,116/101,230.2,Muscle weakness,Low,2026-05-21,
+P1302,Robert Thompson,53,Drug-A,130:80,139.3,Depression,High,2026-05-16,Metro Clinical Research Hospital
+P1241,Sarah Torres,28,Drug-B,112/65,113.0,None,Critical,2026-05-20,Summit Healthcare Hospital
+P1213,Matthew Mitchell,71,Drug-C,,127.8,,High,2026-05-21,
+P1101,Jennifer Garcia,30,Drug-D,112/107,201.1,Fever,Medium,2026-04-22,Riverside Health Institute
+P1218,Betty Allen,,,,182.9,,Critical,2026-05-19,Pioneer Regional Medical Center
+P1259,Donald Jones,46,Drug-C,141/77,81.4,Joint pain,Critical,2026-05-17,Northside University Hospital
+P1023,Melissa Wilson,62,Drug-A,105/87,144.1,Fever,High,2026-05-17,City Medical Center
+P1175,Joseph Allen,,Drug-E,,166.8,None,Low,2026-05-18,
+P1102,Kimberly Scott,46,Drug-A,152/82,134.7,None,Low,2026-04-30,Lakeside Oncology Center
+P1212,Richard Campbell,,Drug-B,,115.8,,High,2026-05-22,
+P1172,Mark Jackson,69,Drug-A,,187.3,Palpitations,High,2026-05-21,
+P1070,Joseph Davis,54,Drug-A,119/91,24.5,None,Critical,2026-05-20,Summit Healthcare Hospital
+P1316,John Thompson,57,Drug-A,137/110,151.7,None,High,2026-05-20,Eastwood Clinical Trials Center
+P1067,Charles Nelson,50,Drug-E,104/89,516.1,Dizziness,Critical,2026-05-20,Northside University Hospital
+P1283,George Rodriguez,55,Drug-D,114/86,142.2,Chest pain,Critical,2026-05-26,City Medical Center
+P1322,Richard Campbell,62,Drug-D,142/82,196.8,Insomnia,Low,2026-05-17,Metro Clinical Research Hospital
+P1148,Michelle Mitchell,age_56,Drug-D,121/106,gl_147.0,Fever,Critical,2026-05-21,Riverside Health Institute
+P1182,Donna Nguyen,30,Drug-B,,174.5,Dry mouth,High,2026-05-20,
+P1025,Anthony White,49,Drug-D,148/84,159.6,Dizziness,High,2026-05-17,Summit Healthcare Hospital
+P1044,Matthew Perez,67,Drug-D,121/89,441.2,Insomnia,Critical,2026-05-18,Summit Healthcare Hospital
+P1005,Mark Flores,25,Drug-A,102/76,143.6,Vomiting,High,2026-05-16,Riverside Health Institute
