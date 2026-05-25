@@ -47,7 +47,7 @@ export default function Overview() {
           {/* Hero */}
           <div style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(6,182,212,0.05) 100%)', border: '1px solid var(--border-color)', borderRadius: 16, padding: '40px 48px', marginBottom: 28, position: 'relative', overflow: 'hidden', textAlign: 'center' }}>
             <div style={{ position: 'absolute', top: -40, right: -40, width: 200, height: 200, borderRadius: '50%', background: 'radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)' }} />
-            <span style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 20, padding: '3px 12px', fontSize: 12, fontFamily: 'Space Grotesk', fontWeight: 700 }}>v4.0 Enhanced</span>
+            <span style={{ background: 'rgba(16,185,129,0.15)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 20, padding: '3px 12px', fontSize: 12, fontFamily: 'Space Grotesk', fontWeight: 700 }}>v6.0.0</span>
             <div className="animate-float" style={{ fontSize: 56, margin: '16px auto 20px' }}>🛡️</div>
             <h1 style={{ fontSize: 32, fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'Space Grotesk', marginBottom: 8 }}>Agentic AI Data Observability System</h1>
             <p style={{ fontSize: 16, color: 'var(--text-secondary)', marginBottom: 4 }}>Clinical Trials — Real-Time Kafka Streaming</p>

@@ -239,7 +239,7 @@ export default function Audit() {
                     const icon = EVENT_ICONS[ev.event_type] || '•';
                     return (
                       <tr
-                        key={ev.id}
+                        key={(ev as any).row_key ?? ev.id}
                         className="hover:bg-slate-800/20 transition-colors cursor-pointer"
                         onClick={() => setSelected(ev)}
                       >

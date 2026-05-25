@@ -212,9 +212,13 @@ class RunPipelineRequest(BaseModel):
     run_id: str
     run_name: Optional[str] = None
     input_mode: str = "csv"
-    window_size: int = 500
+    window_size: int = 5
     inter_event_delay_ms: int = 50
     description: Optional[str] = None
+    api_url: Optional[str] = None
+    api_auth_type: str = "None"
+    api_token: Optional[str] = None
+    api_max_records_per_poll: int = 500
 
 
 class StageStatus(BaseModel):
@@ -556,6 +560,7 @@ class TokenUsageDashboardResponse(BaseModel):
     runs: int
     cost_per_run: float
     by_agent: List[AgentTokenShare]
+    by_run: List[Dict[str, Any]] = Field(default_factory=list)
 
 
 class PipelineHealthResponse(BaseModel):

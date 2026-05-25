@@ -18,7 +18,7 @@ export default function Pipeline() {
   const [activeRunId, setActiveRunId] = useState<string|null>(null);
   const [loading, setLoading] = useState<Record<string,boolean>>({});
   const [toast, setToast] = useState<{msg:string;type:'success'|'error'|'info'}|null>(null);
-  const [runConfig, setRunConfig] = useState({ run_name:'', window_size:500, delay_ms:50, description:'' });
+  const [runConfig, setRunConfig] = useState({ run_name:'', window_size:5, delay_ms:50, description:'' });
   const [synConfig, setSynConfig] = useState({ scenario:'normal', rows:500, null_rate:5, outlier_pct:2, date_drift_days:0, duplicate_rate:0 });
   const [apiConfig, setApiConfig] = useState({ url:'', auth_type:'Bearer', token:'', poll_interval_seconds:30, max_records_per_poll:500 });
   const pollRef = useRef<ReturnType<typeof setInterval>|null>(null);
@@ -42,7 +42,7 @@ export default function Pipeline() {
   },[activeRunId]);
 
   useEffect(() => {
-    if (pipelineStatus?.status === 'completed' || pipelineStatus?.status === 'failed') {
+    if (['completed', 'failed', 'pending_review', 'approved', 'rejected'].includes(pipelineStatus?.status || '')) {
       pollRef.current && clearInterval(pollRef.current);
       pipelineApi.getRuns().then((d:any) => setRuns(d.runs||[])).catch(()=>{});
     }
@@ -72,7 +72,21 @@ export default function Pipeline() {
     const rid = uploadResult?.run_id || syntheticResult?.run_id || `RUN_${Date.now().toString().slice(-8)}`;
     setLoading(l=>({...l,run:true}));
     try {
-      await pipelineApi.runPipeline({ run_id:rid, run_name:runConfig.run_name, input_mode:['csv','synthetic','api'][mode-1], window_size:runConfig.window_size, inter_event_delay_ms:runConfig.delay_ms, description:runConfig.description });
+      const inputMode = ['csv','synthetic','api'][mode-1];
+      await pipelineApi.runPipeline({
+        run_id:rid,
+        run_name:runConfig.run_name,
+        input_mode:inputMode,
+        window_size:runConfig.window_size,
+        inter_event_delay_ms:runConfig.delay_ms,
+        description:runConfig.description,
+        ...(inputMode === 'api' ? {
+          api_url: apiConfig.url,
+          api_auth_type: apiConfig.auth_type,
+          api_token: apiConfig.token,
+          api_max_records_per_poll: apiConfig.max_records_per_poll,
+        } : {}),
+      });
       setActiveRunId(rid);
       setPipelineStatus(null);
       showToast('Pipeline started!','success');
@@ -110,7 +124,8 @@ export default function Pipeline() {
     finally { setLoading(l=>({...l,conn:false})); }
   }
 
-  const canRun = !!preflight?.passed && !loading.run && pipelineStatus?.status !== 'running';
+  const apiReady = mode !== 3 || !!apiConnResult?.connected;
+  const canRun = !!preflight?.passed && apiReady && !loading.run && pipelineStatus?.status !== 'running';
   const isRunning = pipelineStatus?.status === 'running';
 
   return (
@@ -257,7 +272,7 @@ export default function Pipeline() {
                 </div>
                 <div>
                   <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-muted)',fontFamily:'Space Grotesk',marginBottom:4}}>Window Size (events)</label>
-                  <input className="field" type="number" min={50} max={5000} value={runConfig.window_size} onChange={e=>setRunConfig(c=>({...c,window_size:+e.target.value}))}/>
+                  <input className="field" type="number" min={1} max={5000} value={runConfig.window_size} onChange={e=>setRunConfig(c=>({...c,window_size:+e.target.value}))}/>
                 </div>
                 <div>
                   <label style={{display:'block',fontSize:12,fontWeight:600,color:'var(--text-muted)',fontFamily:'Space Grotesk',marginBottom:4}}>Inter-event Delay (ms)</label>
@@ -274,8 +289,9 @@ export default function Pipeline() {
                 </button>
                 <button onClick={handleReset} className="btn-secondary">⟳ Reset</button>
                 {!preflight&&<span style={{fontSize:12,color:'var(--accent-orange)'}}>⚠ Run preflight checks first</span>}
+                {mode===3&&!apiConnResult?.connected&&<span style={{fontSize:12,color:'var(--accent-orange)'}}>⚠ Test API connection first</span>}
                 {preflight&&preflight.hard_blocks.length>0&&<span style={{fontSize:12,color:'var(--accent-red)'}}>✕ Fix hard blocks to enable run</span>}
-                {preflight&&preflight.hard_blocks.length===0&&<span style={{fontSize:12,color:'var(--accent-green)'}}>✓ All clear — ready to run</span>}
+                {preflight&&preflight.hard_blocks.length===0&&apiReady&&<span style={{fontSize:12,color:'var(--accent-green)'}}>✓ All clear — ready to run</span>}
               </div>
             </GlassCard>
 
@@ -308,7 +324,7 @@ export default function Pipeline() {
                   <span style={{fontSize:12,color:'var(--text-secondary)'}}>Current Stage: <b style={{color:'var(--accent-blue)'}}>{pipelineStatus.current_stage}</b></span>
                   <span style={{fontSize:12,color:'var(--text-secondary)'}}>Events Processed: <b style={{color:'var(--text-primary)',fontFamily:'JetBrains Mono'}}>{pipelineStatus.events_processed}</b></span>
                 </div>
-                {pipelineStatus.status==='completed'&&(
+                {['completed','pending_review'].includes(pipelineStatus.status)&&(
                   <div style={{marginTop:12,padding:'10px 14px',background:'rgba(16,185,129,0.1)',border:'1px solid rgba(16,185,129,0.25)',borderRadius:8}}>
                     <p style={{fontSize:13,color:'#10B981',fontFamily:'Space Grotesk',fontWeight:600}}>✓ Pipeline completed — navigate to Review to approve the AI report</p>
                   </div>

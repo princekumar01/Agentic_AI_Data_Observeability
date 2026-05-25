@@ -83,13 +83,32 @@ def _load_synthetic(scenario: str, rows: int) -> List[Dict[str, Any]]:
     return generate_dataset(scenario=scenario, rows=rows)
 
 
-def _load_external_api(url: str, api_key: Optional[str], max_records: int) -> List[Dict[str, Any]]:
+def _load_external_api(
+    url: str,
+    api_key: Optional[str],
+    max_records: int,
+    auth_type: str = "Bearer",
+) -> List[Dict[str, Any]]:
     import requests  # type: ignore
+    from urllib.parse import urlsplit, urlunsplit
+
+    parts = urlsplit(url)
+    safe_url = urlunsplit((parts.scheme, parts.netloc, parts.path, "", ""))
+    logger.info(
+        "[Producer] Calling external API | url=%s auth_type=%s max_records=%s",
+        safe_url,
+        auth_type,
+        max_records,
+    )
     headers = {}
     if api_key:
-        headers["Authorization"] = f"Bearer {api_key}"
+        if auth_type == "API Key":
+            headers["X-API-Key"] = api_key
+        else:
+            headers["Authorization"] = f"Bearer {api_key}"
     resp = requests.get(url, headers=headers, timeout=15)
     resp.raise_for_status()
+    logger.info("[Producer] External API response received | status=%s", resp.status_code)
     body = resp.json()
     if isinstance(body, list):
         return body[:max_records]
@@ -190,11 +209,14 @@ def run_hospital_api_simulator(
         records = _load_synthea(synthea_url, rows)
         source = "synthea_fhir"
     elif mode == "api":
-        ext_url = os.environ.get("EXTERNAL_API_URL", "")
-        api_key = os.environ.get("API_KEY")  # never logged
+        api_cfg = (config or {}).get("external_api", {})
+        ext_url = api_cfg.get("url") or os.environ.get("EXTERNAL_API_URL", "")
+        api_key = api_cfg.get("token") or os.environ.get("API_KEY")  # never logged
+        auth_type = api_cfg.get("auth_type") or os.environ.get("API_AUTH_TYPE", "Bearer")
+        max_records = int(api_cfg.get("max_records_per_poll") or rows)
         if not ext_url:
             raise ValueError("EXTERNAL_API_URL env var not set for mode=api")
-        records = _load_external_api(ext_url, api_key, rows)
+        records = _load_external_api(ext_url, api_key, max_records, auth_type)
         source = "external_api"
     else:
         raise ValueError(f"Unknown producer mode: {mode}")

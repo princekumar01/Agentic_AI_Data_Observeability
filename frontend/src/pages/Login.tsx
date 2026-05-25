@@ -70,7 +70,7 @@ export default function Login() {
             <p style={{ fontSize: 13, fontWeight: 700, color: 'var(--accent-cyan)', fontFamily: 'Space Grotesk', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Clinical Trials</p>
             <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>AI Observability Platform</p>
           </div>
-          <span style={{ marginLeft: 16, background: 'rgba(16,185,129,0.15)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontFamily: 'Space Grotesk', fontWeight: 700 }}>v4.0 Enhanced</span>
+          <span style={{ marginLeft: 16, background: 'rgba(16,185,129,0.15)', color: '#10B981', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 20, padding: '2px 10px', fontSize: 11, fontFamily: 'Space Grotesk', fontWeight: 700 }}>v6.0.0</span>
         </div>
 
         {/* Hero */}

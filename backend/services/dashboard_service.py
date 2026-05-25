@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 
 
@@ -72,6 +72,31 @@ def _load_token_usage(run_id: str) -> List[Dict]:
     return []
 
 
+def _parse_dt(value: Optional[str]) -> Optional[datetime]:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _load_audit(run_id: str) -> Optional[Dict]:
+    return _load_json(os.path.join(RUNS_DIR, run_id, "audit_trail.json"))
+
+
+def _audit_time_bounds(run_id: str) -> tuple[Optional[datetime], Optional[datetime]]:
+    audit = _load_audit(run_id) or {}
+    entries = audit.get("entries", [])
+    timestamps = [
+        parsed for parsed in (_parse_dt(e.get("timestamp")) for e in entries)
+        if parsed is not None
+    ]
+    if not timestamps:
+        return None, None
+    return min(timestamps), max(timestamps)
+
+
 # ─── Public API ──────────────────────────────────────────────────────────────
 
 def get_summary(period: str = "24h") -> Dict[str, Any]:
@@ -102,36 +127,48 @@ def get_summary(period: str = "24h") -> Dict[str, Any]:
     return {
         "period": period,
         "total_runs": total,
-        "total_runs_change_pct": 12.6,
+        "total_runs_change_pct": 0.0,
         "completed_runs": completed,
-        "completed_runs_change_pct": 15.3,
+        "completed_runs_change_pct": 0.0,
         "anomalies_detected": anomalies,
-        "anomalies_change_pct": -8.2,
+        "anomalies_change_pct": 0.0,
         "critical_issues": critical,
-        "critical_issues_change_pct": -16.7,
+        "critical_issues_change_pct": 0.0,
         "avg_confidence_score": avg_conf,
-        "avg_confidence_change_pct": 4.3,
+        "avg_confidence_change_pct": 0.0,
     }
 
 
 def get_pipeline_runs_over_time(period: str = "24h", granularity: str = "hourly") -> Dict[str, Any]:
     runs = _list_run_dirs()
-    # Build simple bucketed data
-    data = []
     now = datetime.now(timezone.utc)
-    for i in range(24, 0, -1):
-        hour_label = f"{(now.hour - i) % 24:02d}:00"
-        data.append({
-            "time": hour_label,
-            "completed": max(0, len(runs) - i) % 3,
-            "failed": 0,
-            "in_progress": 0,
-        })
-    # Inject real last run
-    if runs:
-        data[-1]["completed"] = sum(1 for r in runs if _run_status(r) in ("completed", "approved"))
-        data[-1]["failed"] = sum(1 for r in runs if _run_status(r) == "failed")
-        data[-1]["in_progress"] = sum(1 for r in runs if _run_status(r) == "running")
+    bucket_count = 24 if granularity == "hourly" else 7
+    delta = timedelta(hours=1) if granularity == "hourly" else timedelta(days=1)
+    fmt = "%H:00" if granularity == "hourly" else "%Y-%m-%d"
+
+    buckets: Dict[str, Dict[str, Any]] = {}
+    for i in range(bucket_count - 1, -1, -1):
+        bucket_time = now - (delta * i)
+        label = bucket_time.strftime(fmt)
+        buckets[label] = {"time": label, "completed": 0, "failed": 0, "in_progress": 0}
+
+    for run_id in runs:
+        start, end = _audit_time_bounds(run_id)
+        event_time = end or start
+        if not event_time:
+            continue
+        label = event_time.strftime(fmt)
+        if label not in buckets:
+            continue
+        status = _run_status(run_id)
+        if status in ("completed", "approved", "pending_review"):
+            buckets[label]["completed"] += 1
+        elif status == "failed":
+            buckets[label]["failed"] += 1
+        else:
+            buckets[label]["in_progress"] += 1
+
+    data = list(buckets.values())
     return {"granularity": granularity, "data": data}
 
 
@@ -150,7 +187,7 @@ def get_anomalies_by_severity(period: str = "24h") -> Dict[str, Any]:
         {"severity": k, "count": v, "pct": round(v / total * 100, 1), "color": colors[k]}
         for k, v in counts.items()
     ]
-    return {"total": sum(counts.values()), "breakdown": breakdown, "change_pct": -8.2}
+    return {"total": sum(counts.values()), "breakdown": breakdown, "change_pct": 0.0}
 
 
 def get_agents_performance(period: str = "24h") -> Dict[str, Any]:
@@ -172,13 +209,15 @@ def get_agents_performance(period: str = "24h") -> Dict[str, Any]:
                 if a in conf:
                     agent_stats[a]["runs"] += 1
                     agent_stats[a]["confidence_sum"] += conf[a]
+                    if conf[a] < 75:
+                        agent_stats[a]["issues"] += 1
     agents = []
     for a in agent_names:
         s = agent_stats[a]
         avg = round(s["confidence_sum"] / s["runs"], 1) if s["runs"] > 0 else 0.0
         agents.append({
             "name": a.replace("_", " ").title(),
-            "status": "Active",
+            "status": "Active" if s["runs"] > 0 else "No Data",
             "runs": s["runs"],
             "avg_confidence": avg,
             "issues": s["issues"],
@@ -191,16 +230,27 @@ def get_token_usage_summary(period: str = "24h") -> Dict[str, Any]:
     total_tokens = 0
     total_cost = 0.0
     agent_totals: Dict[str, int] = {}
+    by_run: List[Dict[str, Any]] = []
 
     for run_id in runs:
         records = _load_token_usage(run_id)
+        run_tokens = 0
+        run_cost = 0.0
         for rec in records:
             t = rec.get("total_tokens", 0)
             total_tokens += t
+            run_tokens += t
             c = rec.get("estimated_cost_usd", 0.0)
             total_cost += c
+            run_cost += c
             name = rec.get("agent_name", "unknown")
             agent_totals[name] = agent_totals.get(name, 0) + t
+        if records:
+            by_run.append({
+                "run_id": run_id,
+                "total_tokens": run_tokens,
+                "total_cost_usd": round(run_cost, 6),
+            })
 
     total_runs = len(runs) or 1
     cost_per_run = round(total_cost / total_runs, 6)
@@ -215,6 +265,7 @@ def get_token_usage_summary(period: str = "24h") -> Dict[str, Any]:
         "runs": len(runs),
         "cost_per_run": cost_per_run,
         "by_agent": by_agent,
+        "by_run": by_run,
     }
 
 
@@ -223,18 +274,29 @@ def get_pipeline_health() -> Dict[str, Any]:
     completed = sum(1 for r in runs if _run_status(r) in ("completed", "approved"))
     total = len(runs) or 1
     success_rate = round(completed / total * 100, 1)
-    health_score = min(100.0, success_rate)
+    scores = [
+        m.get("health_score")
+        for r in runs
+        for m in [_load_metrics(r)]
+        if m and isinstance(m.get("health_score"), (int, float))
+    ]
+    health_score = round(sum(scores) / len(scores), 1) if scores else success_rate
     health_label = (
         "Excellent" if health_score >= 90 else
         "Good" if health_score >= 75 else
         "Fair" if health_score >= 60 else "Poor"
     )
+    durations: List[float] = []
+    for run_id in runs:
+        start, end = _audit_time_bounds(run_id)
+        if start and end and end >= start:
+            durations.append((end - start).total_seconds())
     return {
         "health_score": health_score,
         "health_label": health_label,
-        "availability_pct": 99.5,
+        "availability_pct": success_rate,
         "success_rate_pct": success_rate,
-        "avg_processing_time_seconds": 45.0,
+        "avg_processing_time_seconds": round(sum(durations) / len(durations), 1) if durations else 0.0,
         "events_processed": sum(
             (_load_metrics(r) or {}).get("total_rows", 0) for r in runs
         ),
@@ -243,25 +305,26 @@ def get_pipeline_health() -> Dict[str, Any]:
 
 def get_anomalies_trend(period: str = "7d", granularity: str = "daily") -> Dict[str, Any]:
     runs = _list_run_dirs()
-    data = []
-    for i in range(7, 0, -1):
-        from datetime import timedelta
+    buckets: Dict[str, Dict[str, int | str]] = {}
+    for i in range(6, -1, -1):
         date = (datetime.now(timezone.utc) - timedelta(days=i)).strftime("%Y-%m-%d")
-        # Use actual data for the most recent day
-        if i == 1:
-            counts = {"critical": 0, "high": 0, "medium": 0, "low": 0}
-            for run_id in runs:
-                m = _load_metrics(run_id)
-                if m:
-                    dist = m.get("distribution", {}).get("severity_distribution", {})
-                    counts["critical"] += dist.get("Critical", 0)
-                    counts["high"] += dist.get("High", 0)
-                    counts["medium"] += dist.get("Medium", 0)
-                    counts["low"] += dist.get("Low", 0)
-            data.append({"date": date, **counts})
-        else:
-            data.append({"date": date, "critical": 0, "high": 0, "medium": 0, "low": 0})
-    return {"data": data}
+        buckets[date] = {"date": date, "critical": 0, "high": 0, "medium": 0, "low": 0}
+
+    for run_id in runs:
+        metrics = _load_metrics(run_id)
+        if not metrics:
+            continue
+        _, end = _audit_time_bounds(run_id)
+        label = (end or _parse_dt(metrics.get("computed_at")) or datetime.now(timezone.utc)).strftime("%Y-%m-%d")
+        if label not in buckets:
+            continue
+        dist = metrics.get("distribution", {}).get("severity_distribution", {})
+        buckets[label]["critical"] = int(buckets[label]["critical"]) + dist.get("Critical", 0)
+        buckets[label]["high"] = int(buckets[label]["high"]) + dist.get("High", 0)
+        buckets[label]["medium"] = int(buckets[label]["medium"]) + dist.get("Medium", 0)
+        buckets[label]["low"] = int(buckets[label]["low"]) + dist.get("Low", 0)
+
+    return {"data": list(buckets.values())}
 
 
 def get_top_anomaly_types(period: str = "24h", limit: int = 5) -> Dict[str, Any]:
@@ -294,7 +357,7 @@ def get_run_status_distribution(period: str = "24h") -> Dict[str, Any]:
         "completed": {"count": completed, "pct": round(completed / total * 100, 1)},
         "failed": {"count": failed, "pct": round(failed / total * 100, 1)},
         "in_progress": {"count": in_progress, "pct": round(in_progress / total * 100, 1)},
-        "change_pct": 5.2,
+        "change_pct": 0.0,
     }
 
 

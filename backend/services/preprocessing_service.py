@@ -28,7 +28,7 @@ def _create_etl_logger(run_id: str, log_path: str) -> logging.Logger:
     logger.handlers.clear()
     logger.propagate = False
 
-    fh = logging.FileHandler(log_path, mode="w", encoding="utf-8")
+    fh = logging.FileHandler(log_path, mode="a", encoding="utf-8")
     fh.setLevel(logging.DEBUG)
     fmt = logging.Formatter(
         "%(asctime)s | %(levelname)-8s | %(message)s",

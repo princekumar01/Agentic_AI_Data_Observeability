@@ -4,6 +4,25 @@
 
 ---
 
+# Go to project folder
+cd Agentic_AI_Data_Observeability
+
+# Stop running containers
+docker compose down
+
+# Rebuild docker images without cache
+docker compose build --no-cache
+
+# Start containers
+docker compose up -d
+
+# Check running containers
+docker ps
+
+# Check container logs
+docker compose logs -f
+
+
 ## Quick Start
 
 ### 1. Infrastructure

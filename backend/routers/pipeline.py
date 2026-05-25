@@ -264,21 +264,29 @@ def _run_pipeline_bg(
 
         # Start producer in background thread
         config["kafka"]["window_threshold"] = window_size
-        producer_thread = threading.Thread(
-            target=run_hospital_api_simulator,
-            kwargs={
-                "csv_path": csv_path,
-                "run_id": run_id,
-                "config": config,
-                "logger_": etl_logger,
-                "audit_service": audit,
-                "mode": input_mode if input_mode in ("csv", "synthetic", "synthea", "api") else "csv",
-                "kafka_servers": os.environ.get("KAFKA_BOOTSTRAP_SERVERS",
+        producer_errors: List[str] = []
+
+        def run_producer() -> None:
+            try:
+                run_hospital_api_simulator(
+                    csv_path=csv_path,
+                    run_id=run_id,
+                    config=config,
+                    logger_=etl_logger,
+                    audit_service=audit,
+                    mode=input_mode if input_mode in ("csv", "synthetic", "synthea", "api") else "csv",
+                    kafka_servers=os.environ.get("KAFKA_BOOTSTRAP_SERVERS",
                                                 config.get("kafka", {}).get("bootstrap_servers", "localhost:9092")),
-                "delay_ms": inter_event_delay_ms,
-                "topic": config.get("kafka", {}).get("topic", "clinical_trial_events"),
-                "streaming_state": streaming_state,
-            },
+                    delay_ms=inter_event_delay_ms,
+                    topic=config.get("kafka", {}).get("topic", "clinical_trial_events"),
+                    streaming_state=streaming_state,
+                )
+            except Exception as exc:
+                producer_errors.append(str(exc))
+                etl_logger.error(f"[Producer] Fatal error: {exc}", exc_info=True)
+
+        producer_thread = threading.Thread(
+            target=run_producer,
             daemon=True,
         )
         producer_thread.start()
@@ -297,6 +305,20 @@ def _run_pipeline_bg(
 
         producer_thread.join(timeout=30)
         streaming_state.set_producer_done()
+
+        if producer_errors or not event_buffer:
+            reason = producer_errors[0] if producer_errors else "No events were consumed from Kafka"
+            write_alert(
+                severity="CRITICAL",
+                message=f"Preprocessing failed: {reason}",
+                run_id=run_id,
+                source="preprocessing",
+            )
+            mark(2, "failed", int((time.time() - t0) * 1000))
+            update_status("failed")
+            audit.log("preprocessing", "STAGE_FAILED", {"reason": reason})
+            audit.finalize("failed")
+            return
 
         with _runs_lock:
             r = _pipeline_runs.get(run_id)
@@ -645,6 +667,23 @@ def run_pipeline(
 
     run_id = body.run_id
     config = _load_config()
+    logger.info(
+        "[pipeline] Run request received | run_id=%s mode=%s window_size=%s delay_ms=%s",
+        run_id,
+        body.input_mode,
+        body.window_size,
+        body.inter_event_delay_ms,
+    )
+    if body.input_mode == "api":
+        if not body.api_url:
+            raise HTTPException(status_code=400, detail="API URL is required for External API runs")
+        logger.info("[pipeline] External API mode configured | run_id=%s url=%s", run_id, body.api_url)
+        config["external_api"] = {
+            "url": body.api_url,
+            "auth_type": body.api_auth_type,
+            "token": body.api_token,
+            "max_records_per_poll": body.api_max_records_per_poll,
+        }
 
     with _runs_lock:
         if run_id not in _pipeline_runs:
@@ -713,7 +752,10 @@ def reset_pipeline(body: ResetPipelineRequest, user: Dict = Depends(_require_aut
 def kafka_health():
     from backend.kafka.topics import check_kafka_available
     config = _load_config()
-    servers = config.get("kafka", {}).get("bootstrap_servers", "localhost:9092")
+    servers = os.environ.get(
+        "KAFKA_BOOTSTRAP_SERVERS",
+        config.get("kafka", {}).get("bootstrap_servers", "localhost:9092"),
+    )
     topic = config.get("kafka", {}).get("topic", "clinical_trial_events")
     ok = check_kafka_available(servers)
     return KafkaHealthResponse(

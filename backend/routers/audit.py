@@ -13,10 +13,12 @@ from __future__ import annotations
 
 import json
 import os
+import csv
+import io
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
 
 from backend.models.schemas import (
     AgentInfo,
@@ -146,15 +148,15 @@ def audit_summary(user: Dict = Depends(_require_auth)):
     return AuditSummaryResponse(
         period={"start": None, "end": None},
         total_events=total,
-        total_events_change_pct=12.0,
+        total_events_change_pct=0.0,
         ai_agent_executions=ai_executions,
-        ai_executions_change_pct=8.5,
+        ai_executions_change_pct=0.0,
         data_access_events=data_access,
-        data_access_change_pct=5.2,
+        data_access_change_pct=0.0,
         user_actions=hitl,
-        user_actions_change_pct=-3.1,
+        user_actions_change_pct=0.0,
         errors=errors,
-        errors_change_pct=-15.0,
+        errors_change_pct=0.0,
     )
 
 
@@ -164,6 +166,7 @@ def list_audit_events(
     event_type: Optional[str] = Query(default=None),
     agent: Optional[str] = Query(default=None),
     stage: Optional[str] = Query(default=None),
+    user_filter: Optional[str] = Query(default=None, alias="user"),
     from_dt: Optional[str] = Query(default=None),
     to_dt: Optional[str] = Query(default=None),
     page: int = Query(1, ge=1),
@@ -183,6 +186,11 @@ def list_audit_events(
             continue
         if stage and entry.get("stage") != stage:
             continue
+        if user_filter:
+            data = entry.get("data", {})
+            entry_user = data.get("reviewer_id", "system")
+            if entry_user != user_filter:
+                continue
         if from_dt and entry.get("timestamp", "") < from_dt:
             continue
         if to_dt and entry.get("timestamp", "") > to_dt:
@@ -314,3 +322,32 @@ def get_audit_event_prompt(event_id: str, user: Dict = Depends(_require_auth)):
         prompt_text = fh.read()
 
     return AuditPromptResponse(event_id=event_id, prompt=prompt_text)
+
+
+@router.get("/export")
+def export_audit_events(
+    format: str = Query("csv", pattern="^(csv|json)$"),
+    user: Dict = Depends(_require_auth),
+):
+    events = [_entry_to_item(e).model_dump() for e in _load_all_audit_entries()]
+
+    if format == "json":
+        return Response(
+            content=json.dumps(events, indent=2),
+            media_type="application/json",
+            headers={"Content-Disposition": "attachment; filename=audit_log.json"},
+        )
+
+    buffer = io.StringIO()
+    fieldnames = [
+        "id", "time", "event_type", "event_type_color", "agent_source",
+        "description", "detail", "user", "status", "run_id",
+    ]
+    writer = csv.DictWriter(buffer, fieldnames=fieldnames)
+    writer.writeheader()
+    writer.writerows(events)
+    return Response(
+        content=buffer.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": "attachment; filename=audit_log.csv"},
+    )

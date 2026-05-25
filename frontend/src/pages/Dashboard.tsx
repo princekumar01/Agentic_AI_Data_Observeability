@@ -50,7 +50,8 @@ export default function Dashboard() {
           dashboardApi.getRunStatusDistribution(),
           dashboardApi.getRecentAlerts(),
         ]);
-        setSummary(sum);
+        const totalTokenCost = tu.reduce((total: number, item: any) => total + Number(item.cost ?? 0), 0);
+        setSummary({ ...sum, total_token_cost: totalTokenCost });
         setRunsOverTime(rot);
         setAnomaliesBySeverity(abs);
         setAgentsPerf(ap);

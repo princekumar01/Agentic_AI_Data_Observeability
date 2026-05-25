@@ -44,6 +44,6 @@ def system_status():
             api="healthy",
             storage="healthy" if storage_ok else "degraded",
         ),
-        version="4.0 Enhanced",
+        version="6.0.0",
         uptime_seconds=int(time.time() - _start_time),
     )

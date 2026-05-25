@@ -64,7 +64,7 @@ def streaming_status(run_id: str, user: Dict = Depends(_require_auth)):
     config = _load_config()
     kafka_cfg = config.get("kafka", {})
     topic = kafka_cfg.get("topic", "clinical_trial_events")
-    window_threshold = kafka_cfg.get("window_threshold", 500)
+    window_threshold = kafka_cfg.get("window_threshold", 5)
 
     state = streaming_state_service.get_state(run_id)
     pipeline_status = _get_pipeline_status(run_id)
@@ -245,7 +245,7 @@ def live_ai_findings(
 @router.get("/window/status/{run_id}", response_model=WindowStatusResponse)
 def window_status(run_id: str, user: Dict = Depends(_require_auth)):
     config = _load_config()
-    window_size = config.get("kafka", {}).get("window_threshold", 500)
+    window_size = config.get("kafka", {}).get("window_threshold", 5)
     state = streaming_state_service.get_state(run_id)
 
     if state:

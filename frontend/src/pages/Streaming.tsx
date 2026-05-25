@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Activity, Cpu, Zap, Clock, AlertTriangle, CheckCircle, RefreshCw, Eye, TrendingUp, Database, Radio, Layers } from 'lucide-react';
-import { streamingApi } from '../lib/api';
+import { pipelineApi, streamingApi } from '../lib/api';
 import { StreamingStatus, StreamingEvent, AgentStatus, AIFinding } from '../lib/types';
 import { ConsumerLagChart, ThroughputChart } from '../components/charts';
 import { GlassCard, StatusBadge, AgentCard, LoadingSpinner, ConfidenceBadge } from '../components/ui';
@@ -18,26 +18,143 @@ export default function Streaming() {
   const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   const [activeTab, setActiveTab] = useState<'events' | 'findings'>('events');
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
-  const [runId] = useState('RUN_20240609_003');
+  const [runId, setRunId] = useState<string | null>(null);
 
   const fetchAll = useCallback(async () => {
     try {
-      const [s, lag, tp, ev, ag, fi, ws] = await Promise.all([
-        streamingApi.getStatus(runId),
-        streamingApi.getLagHistory(runId),
-        streamingApi.getThroughputHistory(runId),
-        streamingApi.getRecentEvents(runId),
-        streamingApi.getAgentsStatus(runId),
-        streamingApi.getAIFindings(runId),
-        streamingApi.getWindowStatus(runId),
+      const activeRun = await pipelineApi.getActiveRun().catch(() => null);
+      const currentRunId = activeRun?.run_id ?? runId;
+
+      if (activeRun?.run_id && activeRun.run_id !== runId) {
+        setRunId(activeRun.run_id);
+      }
+
+      const kafkaHealthPromise = pipelineApi.kafkaHealth().catch(() => null);
+
+      if (!currentRunId) {
+        const kafkaHealth = await kafkaHealthPromise;
+        setStatus({
+          run_id: '',
+          pipeline_status: activeRun?.status ?? 'idle',
+          kafka_connected: Boolean(kafkaHealth?.kafka_available),
+          records_processed: 0,
+          throughput_per_sec: 0,
+          consumer_lag: 0,
+          anomalies_detected: 0,
+          partitions: 0,
+          uptime: '0s',
+        });
+        setLagHistory([]);
+        setThroughputHistory([]);
+        setEvents([]);
+        setAgents([]);
+        setFindings([]);
+        setWindowStatus(null);
+        setLastRefresh(new Date());
+        return;
+      }
+
+      const [s, lag, tp, ev, ag, fi, ws, kafkaHealth] = await Promise.all([
+        streamingApi.getStatus(currentRunId).catch((error) => ({ error })),
+        streamingApi.getLagHistory(currentRunId).catch((error) => ({ error })),
+        streamingApi.getThroughputHistory(currentRunId).catch((error) => ({ error })),
+        streamingApi.getRecentEvents(currentRunId).catch((error) => ({ error })),
+        streamingApi.getAgentsStatus(currentRunId).catch((error) => ({ error })),
+        streamingApi.getAIFindings(currentRunId).catch((error) => ({ error })),
+        streamingApi.getWindowStatus(currentRunId).catch((error) => ({ error })),
+        kafkaHealthPromise,
       ]);
-      setStatus(s);
-      setLagHistory(lag);
-      setThroughputHistory(tp);
-      setEvents(ev);
-      setAgents(ag);
-      setFindings(fi);
-      setWindowStatus(ws);
+
+      const statusData = (s as any)?.error ? null : s;
+      const lagResponse = (lag as any)?.error ? [] : lag;
+      const throughputResponse = (tp as any)?.error ? [] : tp;
+      const eventsResponse = (ev as any)?.error ? [] : ev;
+      const agentsResponse = (ag as any)?.error ? [] : ag;
+      const findingsResponse = (fi as any)?.error ? [] : fi;
+      const windowResponse = (ws as any)?.error ? null : ws;
+
+      const lagData = Array.isArray(lagResponse)
+        ? lagResponse
+        : (lagResponse?.data_points ?? []).map((point: any) => ({
+            time: point.timestamp ?? '',
+            lag: Number(point.consumer_lag ?? 0),
+          }));
+
+      const tpData = Array.isArray(throughputResponse)
+        ? throughputResponse
+        : (throughputResponse?.data_points ?? []).map((point: any) => ({
+            time: point.timestamp ?? '',
+            in: Number(point.events_per_sec ?? 0),
+            out: Number(point.events_per_sec ?? 0),
+          }));
+
+      const eventsData = Array.isArray(eventsResponse)
+        ? eventsResponse
+        : (eventsResponse?.events ?? []).map((item: any) => ({
+            event_type: item.event_type ?? 'record_processed',
+            message: item.message ?? item.status ?? 'Event received',
+            severity: item.severity ?? null,
+            agent: item.agent ?? null,
+            record_id: item.record_id ?? item.event_id ?? null,
+            timestamp: item.time ?? item.timestamp ?? new Date().toISOString(),
+          }));
+
+      const agentsData = Array.isArray(agentsResponse)
+        ? agentsResponse
+        : (agentsResponse?.agents ?? []).map((item: any, index: number) => ({
+            agent_id: item.name ?? `agent-${index}`,
+            name: item.name ?? `Agent ${index + 1}`,
+            status: item.status ?? 'PENDING',
+            last_run: item.last_run ?? '',
+            confidence: typeof item.confidence === 'number' ? item.confidence : 0,
+            inferences: item.findings ? 1 : 0,
+            findings_count: item.findings ? 1 : 0,
+            avg_latency_ms: 0,
+          }));
+
+      const findingsData = Array.isArray(findingsResponse)
+        ? findingsResponse
+        : (findingsResponse?.findings ?? []).map((item: any) => ({
+            finding_type: item.finding_type ?? item.message ?? 'Finding',
+            severity: item.severity ?? 'low',
+            confidence: typeof item.confidence === 'number' ? item.confidence : 0,
+            description: item.description ?? item.message ?? '',
+            agent: item.agent ?? 'pipeline',
+            record_ids: Array.isArray(item.record_ids) ? item.record_ids : (item.id ? [item.id] : []),
+            affected_field: item.affected_field ?? null,
+            recommendation: item.recommendation ?? '',
+          }));
+
+      const normalizedWindow = windowResponse
+        ? {
+            window_size_seconds: windowResponse.window_size ?? windowResponse.window_size_seconds ?? 0,
+            current_window: windowResponse.current_window ?? 1,
+            windows_closed: windowResponse.window_end ? 1 : 0,
+            next_close_in: windowResponse.window_end
+              ? Math.max(0, Math.ceil((new Date(windowResponse.window_end).getTime() - Date.now()) / 1000))
+              : 0,
+          }
+        : null;
+
+      setStatus(statusData ? {
+        ...statusData,
+        kafka_connected: Boolean(kafkaHealth?.kafka_available),
+        records_processed: statusData.records_processed ?? statusData.events_processed ?? 0,
+        throughput_per_sec: statusData.throughput_per_sec ?? statusData.events_per_sec_avg ?? 0,
+        consumer_lag: statusData.consumer_lag ?? statusData.consumer?.consumer_lag_avg ?? 0,
+        partitions: statusData.partitions ?? statusData.topic?.partitions ?? 0,
+        uptime: statusData.uptime ?? `${Math.floor((statusData.uptime_seconds ?? 0) / 60)}m`,
+      } : {
+        run_id: currentRunId,
+        pipeline_status: activeRun?.status ?? 'unknown',
+        kafka_connected: Boolean(kafkaHealth?.kafka_available),
+      });
+      setLagHistory(lagData);
+      setThroughputHistory(tpData);
+      setEvents(eventsData);
+      setAgents(agentsData);
+      setFindings(findingsData);
+      setWindowStatus(normalizedWindow);
       setLastRefresh(new Date());
     } catch (e) {
       console.error('Streaming fetch error', e);
@@ -89,7 +206,7 @@ export default function Streaming() {
             <h1 className="text-2xl font-bold text-white font-space">Live Streaming Monitor</h1>
           </div>
           <p className="text-sm text-slate-400 font-dm">
-            Run: <span className="text-slate-200 font-mono text-xs">{runId}</span>
+            Run: <span className="text-slate-200 font-mono text-xs">{runId ?? 'No active run'}</span>
             &nbsp;·&nbsp;Refreshes every 3s
             &nbsp;·&nbsp;Last: <span className="text-slate-300">{lastRefresh.toLocaleTimeString()}</span>
           </p>

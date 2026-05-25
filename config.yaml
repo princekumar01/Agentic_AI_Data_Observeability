@@ -45,12 +45,12 @@ kafka:
   bootstrap_servers: localhost:9092
   topic: clinical_trial_events
   inter_message_delay_ms: 50
-  window_threshold: 500
+  window_threshold: 5
   consumer_timeout_ms: 10000
 
 llm:
-  model: gpt-4o
-  model_fast: gpt-4o-mini
+  model: gpt-4
+  model_fast: gpt-3.5-turbo
   temperature: 0.3
   max_tokens: 2048
 

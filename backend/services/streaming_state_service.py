@@ -47,7 +47,7 @@ class StreamingState:
     window_status: Dict = field(default_factory=dict)
 
     # Targets
-    target_events: int = 500
+    target_events: int = 5
 
     _lock: Lock = field(default_factory=Lock, repr=False, compare=False)
 
@@ -151,7 +151,7 @@ _stream_states: Dict[str, StreamingState] = {}
 _registry_lock = Lock()
 
 
-def create_state(run_id: str, target_events: int = 500) -> StreamingState:
+def create_state(run_id: str, target_events: int = 5) -> StreamingState:
     with _registry_lock:
         state = StreamingState(run_id=run_id, target_events=target_events)
         _stream_states[run_id] = state
@@ -162,7 +162,7 @@ def get_state(run_id: str) -> Optional[StreamingState]:
     return _stream_states.get(run_id)
 
 
-def get_or_create(run_id: str, target_events: int = 500) -> StreamingState:
+def get_or_create(run_id: str, target_events: int = 5) -> StreamingState:
     existing = get_state(run_id)
     if existing:
         return existing
