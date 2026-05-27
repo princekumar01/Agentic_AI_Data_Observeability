@@ -249,6 +249,7 @@ export interface AuditEvent {
   event_type: string;
   user?: string;
   run_id?: string;
+  description?: string;
   details?: string;
   ip_address?: string;
   has_prompt?: boolean;

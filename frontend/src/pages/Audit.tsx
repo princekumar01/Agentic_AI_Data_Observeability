@@ -39,7 +39,7 @@ const EVENT_ICONS: Record<string, string> = {
 
 export default function Audit() {
   const [events, setEvents] = useState<AuditEvent[]>([]);
-  const [summary, setSummary] = useState<any>(null);
+
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<AuditEvent | null>(null);
   const [promptModal, setPromptModal] = useState<any>(null);
@@ -54,17 +54,13 @@ export default function Audit() {
   const fetchEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const [ev, sum] = await Promise.all([
-        auditApi.getEvents({
+      const ev = await auditApi.getEvents({
           event_type: filterType !== 'all' ? filterType : undefined,
           user: filterUser !== 'all' ? filterUser : undefined,
           from_date: dateFrom || undefined,
           to_date: dateTo || undefined,
-        }),
-        auditApi.getSummary(),
-      ]);
+        });
       setEvents(ev);
-      setSummary(sum);
     } catch (e) { console.error(e); } finally { setLoading(false); }
   }, [filterType, filterUser, dateFrom, dateTo]);
 
@@ -96,7 +92,7 @@ export default function Audit() {
     return (
       e.event_type.toLowerCase().includes(search.toLowerCase()) ||
       e.user?.toLowerCase().includes(search.toLowerCase()) ||
-      e.details?.toLowerCase().includes(search.toLowerCase()) ||
+      (e.description ?? e.details)?.toLowerCase().includes(search.toLowerCase()) ||
       e.run_id?.toLowerCase().includes(search.toLowerCase())
     );
   });
@@ -136,21 +132,19 @@ export default function Audit() {
       </div>
 
       {/* Summary Cards */}
-      {summary && (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {[
-            { label: 'Total Events', value: summary.total_events, color: 'text-blue-400' },
-            { label: 'Pipeline Events', value: summary.pipeline_events, color: 'text-green-400' },
-            { label: 'Alert Events', value: summary.alert_events, color: 'text-orange-400' },
-            { label: 'Prompt Events', value: summary.prompt_events, color: 'text-purple-400' },
-          ].map((s, i) => (
-            <GlassCard key={i} className="p-3">
-              <div className="text-xs text-slate-500 mb-1">{s.label}</div>
-              <div className={`text-xl font-bold font-space ${s.color}`}>{s.value?.toLocaleString() ?? '—'}</div>
-            </GlassCard>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        {[
+          { label: 'Total Events', value: events.length, color: 'text-blue-400' },
+          { label: 'HITL Events', value: events.filter(e => e.event_type === 'HITL_DECISION').length, color: 'text-purple-400' },
+          { label: 'STAGE-START Events', value: events.filter(e => e.event_type === 'STAGE_START').length, color: 'text-green-400' },
+          { label: 'STAGE-COMPLETE Events', value: events.filter(e => e.event_type === 'STAGE_COMPLETE').length, color: 'text-teal-400' },
+        ].map((s, i) => (
+          <GlassCard key={i} className="p-3">
+            <div className="text-xs text-slate-500 mb-1">{s.label}</div>
+            <div className={`text-xl font-bold font-space ${s.color}`}>{s.value.toLocaleString()}</div>
+          </GlassCard>
+        ))}
+      </div>
 
       {/* Filters */}
       <GlassCard className="p-3">
@@ -261,7 +255,7 @@ export default function Audit() {
                           <span className="text-xs font-mono text-blue-300">{ev.run_id || '—'}</span>
                         </td>
                         <td className="px-4 py-2.5 max-w-xs">
-                          <span className="text-xs text-slate-400 truncate block">{ev.details || '—'}</span>
+                          <span className="text-xs text-slate-400 truncate block">{ev.description || ev.details || '—'}</span>
                         </td>
                         <td className="px-4 py-2.5">
                           <div className="flex items-center gap-2">
@@ -354,10 +348,6 @@ export default function Audit() {
               <div>
                 <div className="text-xs text-slate-500 mb-1">User</div>
                 <div className="text-sm text-slate-300">{selected.user || '—'}</div>
-              </div>
-              <div>
-                <div className="text-xs text-slate-500 mb-1">IP Address</div>
-                <code className="text-xs text-slate-300 font-mono">{selected.ip_address || '—'}</code>
               </div>
             </div>
 

@@ -160,14 +160,7 @@ export default function Login() {
                     <button type="submit" className="btn-primary" style={{ width: '100%', justifyContent: 'center' }} disabled={loading}>
                       {loading && <LoadingSpinner size="sm" />} Sign In
                     </button>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, margin: '20px 0' }}>
-                      <div style={{ flex: 1, height: 1, background: 'var(--border-color)' }} />
-                      <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>OR</span>
-                      <div style={{ flex: 1, height: 1, background: 'var(--border-color)' }} />
-                    </div>
-                    <button type="button" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => showToast('Google SSO not available in POC')}>
-                      <span>G</span> Sign in with Google
-                    </button>
+
                   </form>
                   <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text-muted)' }}>
                     Don't have an account? <button onClick={() => setTab('signup')} style={{ background: 'none', border: 'none', color: 'var(--accent-blue)', cursor: 'pointer', fontFamily: 'Space Grotesk', fontSize: 13 }}>Sign Up</button>
