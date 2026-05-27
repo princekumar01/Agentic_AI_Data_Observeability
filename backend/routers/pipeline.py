@@ -2,7 +2,7 @@
 backend/routers/pipeline.py
 ─────────────────────────────────────────────────────
 All /pipeline/* endpoints.
-Handles file upload, synthetic generation, preflight, run, status, reset.
+Handles file upload, synthetic generation, run, status, reset.
 Rate limited: 3 runs/minute/IP.
 """
 from __future__ import annotations
@@ -41,7 +41,6 @@ from backend.models.schemas import (
     PipelineRunsResponse,
     PipelineStatusResponse,
     PipelineRunSummary,
-    PreflightResponse,
     RecentRunsResponse,
     ResetPipelineRequest,
     ResetPipelineResponse,
@@ -52,7 +51,7 @@ from backend.models.schemas import (
     TestApiConnectionResponse,
     UploadResponse,
 )
-from backend.services import auth_service
+from backend.services.auth_service import require_auth_user as _require_auth
 
 logger = logging.getLogger(__name__)
 router = APIRouter(prefix="/pipeline", tags=["pipeline"])
@@ -142,25 +141,6 @@ def _check_rate_limit(client_ip: str) -> bool:
         return True
 
 
-# ─── Auth dependency ──────────────────────────────────────────────────────────
-
-def _get_current_user(authorization: Optional[str] = Header(default=None)) -> Optional[Dict]:
-    if not authorization or not authorization.startswith("Bearer "):
-        return None
-    token = authorization[7:]
-    try:
-        return auth_service.get_current_user(token)
-    except ValueError:
-        return None
-
-
-def _require_auth(authorization: Optional[str] = Header(default=None)) -> Dict:
-    user = _get_current_user(authorization)
-    if not user:
-        raise HTTPException(status_code=401, detail="Authentication required")
-    return user
-
-
 # ─── Background pipeline task ─────────────────────────────────────────────────
 
 def _run_pipeline_bg(
@@ -173,7 +153,6 @@ def _run_pipeline_bg(
     """Full pipeline execution: 7 stages."""
     import logging as _logging
     from backend.services.audit_service import AuditService
-    from backend.services.validation_service import run_preflight
     from backend.services.preprocessing_service import run_preprocessing
     from backend.services.pii_service import mask_metrics_json, mask_etl_log, save_sanitized_metrics
     from backend.services.alert_service import write_alert
@@ -220,30 +199,18 @@ def _run_pipeline_bg(
         mark(0, "completed", int((time.time() - t0) * 1000))
         audit.log("input_discovery", "STAGE_COMPLETE", {"csv_path": csv_path, "mode": input_mode})
 
-        # ── Stage 2: Entry Validation ──────────────────────────────────────────
+        # ── Stage 2: Entry Validation (row count only; preflight gate removed) ──
         mark(1, "active")
         t0 = time.time()
         audit.log("entry_validation", "STAGE_START", {})
 
-        preflight = run_preflight(csv_path, run_id, config, output_dir)
-        if not preflight["passed"]:
-            write_alert(
-                severity="CRITICAL",
-                message=f"Pre-ingest validation failed: {len(preflight['hard_blocks'])} hard block(s)",
-                run_id=run_id,
-                source="validation_service",
-            )
-            mark(1, "failed", int((time.time() - t0) * 1000))
-            update_status("failed")
-            audit.finalize("failed")
-            return
-
+        row_count = _count_csv_rows(csv_path)
         mark(1, "completed", int((time.time() - t0) * 1000))
-        audit.log("entry_validation", "STAGE_COMPLETE", {"passed": True, "rows": preflight["row_count"]})
+        audit.log("entry_validation", "STAGE_COMPLETE", {"rows": row_count})
         with _runs_lock:
             r = _pipeline_runs.get(run_id)
             if r:
-                r["rows"] = preflight["row_count"]
+                r["rows"] = row_count
 
         # ── Stage 3: Preprocessing (Kafka) ────────────────────────────────────
         mark(2, "active")
@@ -545,6 +512,30 @@ async def upload_file(
     return UploadResponse(**info)
 
 
+def _count_csv_rows(csv_path: str) -> int:
+    """Read input CSV and return row count (no preflight validation)."""
+    if not os.path.exists(csv_path):
+        return 0
+    try:
+        import pandas as pd
+        df = pd.read_csv(csv_path, encoding="utf-8", on_bad_lines="skip")
+        return len(df)
+    except Exception:
+        return 0
+
+
+def _normalize_rate(value: float) -> float:
+    """
+    Convert UI percentage (0–100) to probability (0–1).
+    The frontend sends null_rate/outlier_pct as percent (e.g. 5 = 5%);
+    generate_dataset expects a fraction (e.g. 0.05).
+    Values already in 0–1 range are passed through unchanged.
+    """
+    if value > 1.0:
+        return min(1.0, value / 100.0)
+    return max(0.0, value)
+
+
 @router.post("/generate-synthetic", response_model=GenerateSyntheticResponse)
 def generate_synthetic(
     body: GenerateSyntheticRequest,
@@ -554,13 +545,17 @@ def generate_synthetic(
 
     config = _load_config()
     run_id = str(uuid.uuid4())
+    null_rate = _normalize_rate(body.null_rate)
+    outlier_pct = _normalize_rate(body.outlier_pct)
+    duplicate_rate = _normalize_rate(body.duplicate_rate)
+
     records = generate_dataset(
         scenario=body.scenario,
         rows=body.rows,
-        null_rate=body.null_rate,
-        outlier_pct=body.outlier_pct,
+        null_rate=null_rate,
+        outlier_pct=outlier_pct,
         date_drift_days=body.date_drift_days,
-        duplicate_rate=body.duplicate_rate,
+        duplicate_rate=duplicate_rate,
     )
 
     import pandas as pd
@@ -572,7 +567,7 @@ def generate_synthetic(
 
     sev_dist = df["severity"].value_counts().to_dict() if "severity" in df.columns else {}
     null_avg = float(df.isnull().mean().mean())
-    outlier_preview = body.outlier_pct
+    outlier_preview = outlier_pct
 
     with _runs_lock:
         _pipeline_runs[run_id] = _new_run_state(run_id, "synthetic")
@@ -604,44 +599,6 @@ def test_api_connection(
         max_records=body.max_records_per_poll,
     )
     return TestApiConnectionResponse(**result)
-
-
-@router.post("/preflight/{run_id}", response_model=PreflightResponse)
-def run_preflight_endpoint(
-    run_id: str,
-    user: Dict = Depends(_require_auth),
-):
-    from backend.services.validation_service import run_preflight
-
-    config = _load_config()
-    output_dir = os.path.join(
-        config.get("output", {}).get("runs_directory", "output/runs"), run_id
-    )
-    os.makedirs(output_dir, exist_ok=True)
-
-    with _runs_lock:
-        run = _pipeline_runs.get(run_id)
-    csv_path = (run or {}).get("csv_path") or os.path.join(
-        config.get("data", {}).get("csv_directory", "data/clinical"),
-        config.get("data", {}).get("csv_filename", "clinical_trial_data.csv"),
-    )
-
-    report = run_preflight(csv_path, run_id, config, output_dir)
-    return PreflightResponse(**report)
-
-
-@router.get("/preflight/{run_id}", response_model=PreflightResponse)
-def get_preflight(run_id: str, user: Dict = Depends(_require_auth)):
-    config = _load_config()
-    output_dir = os.path.join(
-        config.get("output", {}).get("runs_directory", "output/runs"), run_id
-    )
-    path = os.path.join(output_dir, "preflight_report.json")
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="Preflight report not found")
-    with open(path) as fh:
-        data = json.load(fh)
-    return PreflightResponse(**data)
 
 
 @router.post("/run", response_model=RunPipelineResponse, status_code=status.HTTP_202_ACCEPTED)

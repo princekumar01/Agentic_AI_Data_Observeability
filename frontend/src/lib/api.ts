@@ -84,10 +84,6 @@ export const pipelineApi = {
     apiFetch('/pipeline/generate-synthetic', { method: 'POST', body: JSON.stringify(data) }),
   testApiConnection: (data: any) =>
     apiFetch('/pipeline/test-api-connection', { method: 'POST', body: JSON.stringify(data) }),
-  runPreflight: (runId: string) =>
-    apiFetch(`/pipeline/preflight/${runId}`, { method: 'POST', body: JSON.stringify({ run_id: runId }) }),
-  getPreflightReport: (runId: string) =>
-    apiFetch(`/pipeline/preflight/${runId}`),
   runPipeline: (data: any) =>
     apiFetch('/pipeline/run', { method: 'POST', body: JSON.stringify(data) }),
   getStatus: (runId: string) => apiFetch(`/pipeline/status/${runId}`),

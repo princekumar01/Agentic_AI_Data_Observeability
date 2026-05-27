@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.models.schemas import (
     AcknowledgeAlertRequest,
@@ -25,18 +25,10 @@ from backend.models.schemas import (
     ReadAlertRequest,
     ReadAlertResponse,
 )
-from backend.services import auth_service, alert_service
+from backend.services import alert_service
+from backend.services.auth_service import require_auth_user as _require_auth
 
 router = APIRouter(prefix="/alerts", tags=["alerts"])
-
-
-def _require_auth(authorization: Optional[str] = Header(default=None)) -> Dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Authentication required")
-    try:
-        return auth_service.get_current_user(authorization[7:])
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 @router.get("", response_model=AlertsListResponse)

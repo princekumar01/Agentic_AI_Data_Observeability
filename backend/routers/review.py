@@ -23,7 +23,7 @@ from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import yaml
-from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 
 from backend.models.schemas import (
     AgentFindings,
@@ -32,7 +32,6 @@ from backend.models.schemas import (
     ApproveRequest,
     ApproveResponse,
     FindingsResponse,
-    KeyFinding,
     PendingRunInfo,
     PendingRunsResponse,
     RejectRequest,
@@ -41,22 +40,12 @@ from backend.models.schemas import (
     TokenUsageResponse,
     AgentTokenUsage,
 )
-from backend.services import auth_service
+from backend.services.auth_service import require_auth_user as _require_auth
+from backend.services.findings_parser_service import parse_agent_findings
 
 router = APIRouter(prefix="/review", tags=["review"])
 
 RUNS_DIR = os.path.join("output", "runs")
-
-
-# ─── Auth ─────────────────────────────────────────────────────────────────────
-
-def _require_auth(authorization: Optional[str] = Header(default=None)) -> Dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Authentication required")
-    try:
-        return auth_service.get_current_user(authorization[7:])
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 # ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -93,108 +82,6 @@ def _set_run_status(run_id: str, status_: str, review_status: str) -> None:
     if run:
         run["status"] = status_
         run["review_status"] = review_status
-
-
-def _parse_agent_findings(
-    agent_name: str,
-    response_text: str,
-    confidence: int,
-) -> AgentFindings:
-    """
-    Parse agent response text into structured AgentFindings.
-    Extracts key findings as list items from the response.
-    """
-    import re
-
-    lines = [l.strip() for l in response_text.split("\n") if l.strip()]
-    summary = ""
-    key_findings: List[KeyFinding] = []
-    evidence = ""
-    recommendations = ""
-    insight = ""
-
-    # Extract SUMMARY section
-    in_summary = False
-    for line in lines:
-        if line.startswith("SUMMARY:"):
-            summary = line.replace("SUMMARY:", "").strip()
-            in_summary = True
-        elif in_summary and not any(line.startswith(h) for h in [
-            "PILLAR:", "STATUS:", "FINDING:", "OVERALL SEVERITY:", "CONFIDENCE:",
-            "ERROR COUNT:", "WARNING COUNT:", "ROOT CAUSE", "INCIDENT:", "PRIORITY:",
-            "COMPLIANCE STATUS:", "PHI/PII CHECK:",
-        ]):
-            if summary and line:
-                summary += " " + line
-            in_summary = False
-
-    # Extract findings as key findings
-    finding_count = 0
-    for line in lines:
-        if line.startswith("FINDING:") and finding_count < 5:
-            finding_text = line.replace("FINDING:", "").strip()
-            # Try to extract a percentage or count
-            pct_match = re.search(r"([\d.]+)\s*%", finding_text)
-            count_match = re.search(r"\b(\d+)\b", finding_text)
-            pct = float(pct_match.group(1)) if pct_match else 0.0
-            count = int(count_match.group(1)) if count_match else 0
-            # Extract severity
-            sev_match = re.search(r"\b(Critical|High|Medium|Low|PASS|WARN|FAIL)\b", finding_text, re.I)
-            sev = sev_match.group(1).capitalize() if sev_match else "Medium"
-            key_findings.append(KeyFinding(
-                issue=finding_text[:80],
-                severity=sev,
-                affected=count,
-                total=500,
-                percentage=pct,
-                trend="stable",
-            ))
-            finding_count += 1
-
-    # Evidence from EVIDENCE: lines
-    for line in lines:
-        if line.startswith("EVIDENCE:"):
-            evidence = line.replace("EVIDENCE:", "").strip()
-
-    # Recommendations from ACTION: lines
-    rec_parts = []
-    for line in lines:
-        if line.startswith("ACTION:"):
-            rec_parts.append(line.replace("ACTION:", "").strip())
-    recommendations = "; ".join(rec_parts[:2]) if rec_parts else ""
-
-    # Insight from FINAL RECOMMENDATION / OPERATIONAL STATUS
-    for line in lines:
-        if line.startswith("FINAL RECOMMENDATION:") or line.startswith("OPERATIONAL STATUS:"):
-            insight = line.split(":", 1)[-1].strip()
-            break
-
-    # Flag for review if confidence < 75 or critical found
-    flag = confidence < 75 or any(kf.severity == "Critical" for kf in key_findings)
-
-    return AgentFindings(
-        name=agent_name,
-        status="COMPLETED",
-        confidence=confidence,
-        confidence_label=_conf_label(confidence),
-        flag_for_review=flag,
-        summary=summary or response_text[:200],
-        key_findings=key_findings[:5],
-        evidence=evidence,
-        recommendations=recommendations,
-        insight=insight,
-    )
-
-
-def _conf_label(c: int) -> str:
-    if c >= 90:
-        return "Very High"
-    elif c >= 75:
-        return "High"
-    elif c >= 60:
-        return "Medium"
-    else:
-        return "Low"
 
 
 # ─── Endpoints ────────────────────────────────────────────────────────────────
@@ -236,6 +123,23 @@ def get_findings(run_id: str, user: Dict = Depends(_require_auth)):
     if not os.path.isdir(output_dir):
         raise HTTPException(status_code=404, detail="Run not found")
 
+    # Load sanitized metrics — REQUIRED.  The findings parser joins agent
+    # responses with these numbers to populate KeyFinding.affected/total/percentage.
+    # rolling_metrics.json is accepted as a fallback for runs that completed
+    # before the PII masking stage existed.
+    metrics: Optional[Dict[str, Any]] = (
+        _load_json(os.path.join(output_dir, "sanitized_metrics.json"))
+        or _load_json(os.path.join(output_dir, "rolling_metrics.json"))
+    )
+    if metrics is None:
+        raise HTTPException(
+            status_code=500,
+            detail=(
+                f"Run {run_id} is missing sanitized_metrics.json (and rolling_metrics.json). "
+                "Findings cannot be produced without computed pipeline metrics."
+            ),
+        )
+
     # Load confidence scores
     conf_data: Dict[str, int] = {}
     conf_path = os.path.join(output_dir, "agent_confidence.json")
@@ -246,7 +150,6 @@ def get_findings(run_id: str, user: Dict = Depends(_require_auth)):
         except Exception:
             pass
 
-    # Load responses
     responses_dir = os.path.join(output_dir, "responses")
 
     agent_configs = [
@@ -265,19 +168,20 @@ def get_findings(run_id: str, user: Dict = Depends(_require_auth)):
 
     for agent_key, _label in agent_configs:
         resp_path = os.path.join(responses_dir, f"{agent_key}.json")
-        confidence = conf_data.get(agent_key, 0)
+        confidence = int(conf_data.get(agent_key, 0))
         response_text = ""
 
         if os.path.exists(resp_path):
             try:
-                with open(resp_path) as fh:
+                with open(resp_path, encoding="utf-8") as fh:
                     resp_data = json.load(fh)
                     response_text = resp_data.get("response", "")
-                    total_completed += 1
+                    if response_text:
+                        total_completed += 1
             except Exception:
                 pass
 
-        findings = _parse_agent_findings(agent_key, response_text, confidence)
+        findings = parse_agent_findings(agent_key, response_text, confidence, metrics)
         agents_out.append(findings)
 
         if confidence >= 75:
@@ -288,7 +192,8 @@ def get_findings(run_id: str, user: Dict = Depends(_require_auth)):
             critical_issues += 1
 
     overall_confidence = int(
-        sum(conf_data.get(k, 0) for k, _ in agent_configs) / max(1, len(agent_configs))
+        sum(int(conf_data.get(k, 0)) for k, _ in agent_configs)
+        / max(1, len(agent_configs))
     )
     attention_required = overall_confidence < 75 or critical_issues > 0
 
@@ -298,7 +203,8 @@ def get_findings(run_id: str, user: Dict = Depends(_require_auth)):
         overall_confidence=overall_confidence,
         attention_required=attention_required,
         attention_message=(
-            f"{critical_issues} agent(s) flagged for review — confidence below threshold or critical issues detected"
+            f"{critical_issues} agent(s) flagged for review — "
+            "confidence below threshold or critical issues detected"
             if attention_required else None
         ),
         review_summary=ReviewSummary(

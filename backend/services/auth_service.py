@@ -5,15 +5,20 @@ In-memory user store with JWT creation and validation.
 """
 from __future__ import annotations
 
+import logging
 import os
 from datetime import datetime, timedelta, timezone
 from typing import Dict, Optional
 
 from dotenv import load_dotenv
+from fastapi import Depends, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 JWT_SECRET: str = os.getenv("JWT_SECRET", "change-me-to-a-random-32-char-string")
 JWT_ALGORITHM: str = "HS256"
@@ -108,6 +113,49 @@ def get_current_user(token: str) -> Dict:
     if not user:
         raise ValueError("User not found")
     return _safe_user(user)
+
+
+# ─── FastAPI dependencies ────────────────────────────────────────────────────
+# Uses HTTPBearer so Swagger UI renders a global "Authorize" button and
+# reliably sends the Authorization header on every secured endpoint.
+# `auto_error=False` lets us return a uniform 401 from our own code instead of
+# Swagger's default 403 when the header is missing.
+
+bearer_scheme = HTTPBearer(
+    bearerFormat="JWT",
+    auto_error=False,
+    description="Paste the JWT returned by POST /auth/login (no 'Bearer ' prefix).",
+)
+
+
+def require_auth_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
+) -> Dict:
+    """Required-auth dependency: returns user dict or raises 401."""
+    if credentials is None or not credentials.credentials:
+        logger.warning("AUTH | 401 — no/empty Bearer credentials received")
+        raise HTTPException(status_code=401, detail="Authentication required")
+    try:
+        return get_current_user(credentials.credentials)
+    except ValueError as exc:
+        logger.warning(
+            "AUTH | 401 — token validation failed: %s | token_prefix=%s...",
+            exc,
+            credentials.credentials[:20],
+        )
+        raise HTTPException(status_code=401, detail="Invalid token")
+
+
+def get_optional_auth_user(
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
+) -> Optional[Dict]:
+    """Optional-auth dependency: returns user dict or None (never raises)."""
+    if credentials is None or not credentials.credentials:
+        return None
+    try:
+        return get_current_user(credentials.credentials)
+    except ValueError:
+        return None
 
 
 # ─── Private helpers ─────────────────────────────────────────────────────────

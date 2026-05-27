@@ -47,6 +47,26 @@ def _close_logger(logger: logging.Logger) -> None:
         logger.removeHandler(handler)
 
 
+class _NumpyJSONEncoder(json.JSONEncoder):
+    """JSON encoder that converts numpy scalar/array types to native Python."""
+
+    def default(self, o: Any) -> Any:  # type: ignore[override]
+        if isinstance(o, np.bool_):
+            return bool(o)
+        if isinstance(o, np.integer):
+            return int(o)
+        if isinstance(o, np.floating):
+            f = float(o)
+            if np.isnan(o) or np.isinf(o):
+                return None
+            return f
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        if isinstance(o, (pd.Timestamp, datetime)):
+            return o.isoformat()
+        return super().default(o)
+
+
 def _count_log_levels(log_path: str) -> Dict[str, int]:
     """
     Count WARNING and ERROR lines in the ETL log.
@@ -122,7 +142,7 @@ def run_preprocessing(
 
     # ── 3. PILLAR 1: Volume ───────────────────────────────────────────────────
     expected_rows = config.get("data", {}).get("expected_row_count", 500)
-    volume_ok = total_rows >= expected_rows * 0.8
+    volume_ok = bool(total_rows >= expected_rows * 0.8)
     logger.info(f"PILLAR:VOLUME | rows={total_rows}, expected={expected_rows}, ok={volume_ok}")
 
     # ── 4. PILLAR 2: Freshness ────────────────────────────────────────────────
@@ -135,19 +155,18 @@ def run_preprocessing(
         latencies_ms = ((now_utc - ts).dt.total_seconds() * 1000).dropna().tolist()
         event_arrival_latencies = [round(v, 2) for v in latencies_ms]
         avg_latency = round(float(np.mean(latencies_ms)), 2) if latencies_ms else 0.0
-        freshness_ok = avg_latency < freshness_max_days * 24 * 3600 * 1000
+        freshness_ok = bool(avg_latency < freshness_max_days * 24 * 3600 * 1000)
     else:
         avg_latency = 0.0
         freshness_ok = True
 
+    days_since = 0
     if "visit_date" in df.columns:
         vd = pd.to_datetime(df["visit_date"], errors="coerce")
         if not vd.dropna().empty:
             most_recent_visit = vd.max()
-            days_since = (pd.Timestamp.now() - most_recent_visit).days
-            freshness_ok = freshness_ok and (days_since <= freshness_max_days)
-    else:
-        days_since = 0
+            days_since = int((pd.Timestamp.now() - most_recent_visit).days)
+            freshness_ok = bool(freshness_ok and (days_since <= freshness_max_days))
 
     logger.info(f"PILLAR:FRESHNESS | avg_latency_ms={avg_latency}, days_since_last_visit={days_since}, ok={freshness_ok}")
 
@@ -168,7 +187,7 @@ def run_preprocessing(
             continue
         null_count = int(df[col].isna().sum())
         null_pct = round(null_count / total_rows * 100, 2) if total_rows > 0 else 0.0
-        exceeds = null_pct > null_threshold
+        exceeds = bool(null_pct > null_threshold)
         null_stats[col] = {"null_count": null_count, "null_pct": null_pct, "exceeds_threshold": exceeds}
         if exceeds:
             logger.warning(f"SCHEMA | High null rate: {col}={null_pct:.1f}% (threshold={null_threshold}%)")
@@ -222,13 +241,13 @@ def run_preprocessing(
     # Severity distribution
     severity_dist: Dict[str, int] = {}
     if "severity" in df.columns:
-        severity_dist = df["severity"].value_counts().to_dict()
+        severity_dist = {str(k): int(v) for k, v in df["severity"].value_counts().to_dict().items()}
         logger.info(f"DISTRIBUTION | Severity: {severity_dist}")
 
     # Side effects
     side_effect_dist: Dict[str, int] = {}
     if "side_effects" in df.columns:
-        side_effect_dist = df["side_effects"].value_counts().head(10).to_dict()
+        side_effect_dist = {str(k): int(v) for k, v in df["side_effects"].value_counts().head(10).to_dict().items()}
 
     # ── 7. PILLAR 5: Lineage / Drift Detection (KS-test) ─────────────────────
     baseline_path = config.get("data", {}).get("baseline_metrics_path", "config/baseline_metrics.json")
@@ -248,7 +267,7 @@ def run_preprocessing(
                 if len(current_vals) < 10:
                     continue
                 ks_stat, p_value = stats.ks_2samp(baseline_vals, current_vals)
-                drift_detected = p_value < ks_pvalue
+                drift_detected = bool(p_value < ks_pvalue)
                 drift_results[col] = {
                     "ks_statistic": round(float(ks_stat), 4),
                     "p_value": round(float(p_value), 4),
@@ -371,7 +390,7 @@ def run_preprocessing(
     # ── 10. Write output files ────────────────────────────────────────────────
     metrics_path = os.path.join(output_dir, "rolling_metrics.json")
     with open(metrics_path, "w", encoding="utf-8") as fh:
-        json.dump(metrics, fh, indent=2)
+        json.dump(metrics, fh, indent=2, cls=_NumpyJSONEncoder)
 
     return metrics
 
@@ -397,5 +416,5 @@ def _minimal_metrics(run_id: str, output_dir: str) -> Dict[str, Any]:
     }
     path = os.path.join(output_dir, "rolling_metrics.json")
     with open(path, "w", encoding="utf-8") as fh:
-        json.dump(metrics, fh, indent=2)
+        json.dump(metrics, fh, indent=2, cls=_NumpyJSONEncoder)
     return metrics

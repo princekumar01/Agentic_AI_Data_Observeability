@@ -11,7 +11,7 @@ from datetime import datetime, timezone
 from typing import Dict, Optional
 
 import yaml
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from backend.models.schemas import (
     AgentStreamStatus,
@@ -31,18 +31,10 @@ from backend.models.schemas import (
     TopicStatus,
     WindowStatusResponse,
 )
-from backend.services import auth_service, streaming_state_service
+from backend.services import streaming_state_service
+from backend.services.auth_service import require_auth_user as _require_auth
 
 router = APIRouter(prefix="/streaming", tags=["streaming"])
-
-
-def _require_auth(authorization: Optional[str] = Header(default=None)) -> Dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Authentication required")
-    try:
-        return auth_service.get_current_user(authorization[7:])
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 def _load_config() -> Dict:

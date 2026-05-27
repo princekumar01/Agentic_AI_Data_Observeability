@@ -8,7 +8,7 @@ import { formatDateTime } from '../lib/utils';
 
 const STEPS = [
   { n: 1, icon: '📂', title: 'Input Data', desc: 'Upload CSV, generate synthetic, or connect external API' },
-  { n: 2, icon: '🔍', title: 'Pre-Ingest Gate', desc: 'Validate schema, detect hard blocks and soft warnings' },
+  { n: 2, icon: '✅', title: 'Input Ready', desc: 'Discover data source and prepare the run for streaming' },
   { n: 3, icon: '⚡', title: 'Kafka Streaming', desc: '50ms/event streaming with rolling window buffer' },
   { n: 4, icon: '🤖', title: 'AI Agents', desc: '5 specialized agents analyze, detect, recommend' },
   { n: 5, icon: '👤', title: 'Human Review', desc: 'Clinical expert reviews AI report and approves' },
@@ -26,7 +26,7 @@ const PILLARS = [
 const WHATS_NEW = [
   'LangGraph multi-agent orchestration with 5 specialized agents',
   'Real-time Kafka streaming at 50ms per event',
-  'Pre-ingest validation gate with hard blocks and soft warnings',
+  'Synthetic data generation with configurable anomaly scenarios',
   'Microsoft Presidio PII/PHI masking (PERSON, EMAIL, PHONE, SSN)',
   'Human-in-the-Loop review with approval/rejection workflow',
   'Immutable append-only audit trail (FDA 21 CFR Part 11)',
@@ -103,7 +103,7 @@ export default function Overview() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12 }}>
                 {[
                   { label: 'Data Sources', icon: '💾', color: '#06B6D4' },
-                  { label: 'Pre-Ingest Validation', icon: '🔍', color: '#3B82F6' },
+                  { label: 'Pipeline Run', icon: '▶️', color: '#3B82F6' },
                   { label: 'Kafka Streaming', icon: '⚡', color: '#F59E0B' },
                   { label: 'AI Agents (LangGraph)', icon: '🤖', color: '#7C3AED' },
                   { label: 'HITL Review', icon: '👤', color: '#10B981' },

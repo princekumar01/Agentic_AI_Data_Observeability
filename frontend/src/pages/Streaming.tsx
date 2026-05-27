@@ -165,7 +165,7 @@ export default function Streaming() {
 
   useEffect(() => {
     fetchAll();
-    const interval = setInterval(fetchAll, 3000);
+    const interval = setInterval(fetchAll, 10000);
     return () => clearInterval(interval);
   }, [fetchAll]);
 
@@ -207,7 +207,7 @@ export default function Streaming() {
           </div>
           <p className="text-sm text-slate-400 font-dm">
             Run: <span className="text-slate-200 font-mono text-xs">{runId ?? 'No active run'}</span>
-            &nbsp;·&nbsp;Refreshes every 3s
+            &nbsp;·&nbsp;Refreshes every 10s
             &nbsp;·&nbsp;Last: <span className="text-slate-300">{lastRefresh.toLocaleTimeString()}</span>
           </p>
         </div>

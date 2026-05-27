@@ -18,7 +18,7 @@ import io
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Depends, Header, HTTPException, Query, Response
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 
 from backend.models.schemas import (
     AgentInfo,
@@ -32,20 +32,11 @@ from backend.models.schemas import (
     RequestResponseInfo,
     TokenUsageDetail,
 )
-from backend.services import auth_service
+from backend.services.auth_service import require_auth_user as _require_auth
 
 router = APIRouter(prefix="/audit", tags=["audit"])
 
 RUNS_DIR = os.path.join("output", "runs")
-
-
-def _require_auth(authorization: Optional[str] = Header(default=None)) -> Dict:
-    if not authorization or not authorization.startswith("Bearer "):
-        raise HTTPException(status_code=401, detail="Authentication required")
-    try:
-        return auth_service.get_current_user(authorization[7:])
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 # ─── Internal helpers ─────────────────────────────────────────────────────────
@@ -103,7 +94,7 @@ def _entry_to_item(entry: Dict) -> AuditEventItem:
     # Build a human-readable description
     if event_type == "STAGE_START":
         description = f"Stage '{stage}' started"
-        detail = json.dumps(data)[:120]
+        detail = json.dumps({"stage": stage})[:120]
     elif event_type == "STAGE_COMPLETE":
         description = f"Stage '{stage}' completed"
         detail = json.dumps(data)[:120]

@@ -36,6 +36,8 @@ from backend.routers.dashboard import router as dashboard_router
 from backend.routers.alerts import router as alerts_router
 from backend.routers.audit import router as audit_router
 from backend.routers.system import router as system_router
+from backend.routers.mock_external_api import router as mock_external_api_router
+from backend.routers.seg_dashboard import router as seg_dashboard_router
 
 # ─── Logging ──────────────────────────────────────────────────────────────────
 logging.basicConfig(
@@ -128,6 +130,8 @@ app.include_router(dashboard_router)
 app.include_router(alerts_router)
 app.include_router(audit_router)
 app.include_router(system_router)
+app.include_router(mock_external_api_router)
+app.include_router(seg_dashboard_router)
 
 
 # ─── Health check ─────────────────────────────────────────────────────────────

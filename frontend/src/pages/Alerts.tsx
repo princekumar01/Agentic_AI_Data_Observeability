@@ -7,18 +7,35 @@ import { formatDateTime } from '../lib/utils';
 
 const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low'];
 
-const SEV_COLORS: Record<string, { color: string; bg: string; border: string; badgeBg: string; badgeText: string }> = {
+type SevKey = 'critical' | 'high' | 'medium' | 'low';
+
+const SEV_COLORS: Record<SevKey, { color: string; bg: string; border: string; badgeBg: string; badgeText: string }> = {
   critical: { color: '#f87171', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.4)', badgeBg: 'rgba(239,68,68,0.15)', badgeText: '#fca5a5' },
   high:     { color: '#fb923c', bg: 'rgba(249,115,22,0.06)', border: 'rgba(249,115,22,0.4)', badgeBg: 'rgba(249,115,22,0.15)', badgeText: '#fdba74' },
   medium:   { color: '#facc15', bg: 'rgba(234,179,8,0.06)',  border: 'rgba(234,179,8,0.3)',  badgeBg: 'rgba(234,179,8,0.15)',  badgeText: '#fde047' },
   low:      { color: '#60a5fa', bg: 'rgba(59,130,246,0.06)', border: 'rgba(59,130,246,0.3)', badgeBg: 'rgba(59,130,246,0.15)', badgeText: '#93c5fd' },
 };
 
+/** Map API severities (CRITICAL, WARNING, INFO, …) to palette keys. */
+function sevKey(severity: string | undefined): SevKey {
+  const s = (severity || '').toLowerCase();
+  if (s === 'critical') return 'critical';
+  if (s === 'high' || s === 'warning') return 'high';
+  if (s === 'medium') return 'medium';
+  return 'low'; // low, info, unknown
+}
+
+function sevStyle(severity: string | undefined) {
+  return SEV_COLORS[sevKey(severity)];
+}
+
 const STATUS_COLORS: Record<string, string> = {
+  new: '#f87171',
   active: '#f87171',
   acknowledged: '#facc15',
   escalated: '#c084fc',
   resolved: '#4ade80',
+  'in progress': '#60a5fa',
 };
 
 export default function Alerts() {
@@ -54,10 +71,10 @@ const handleMarkRead = async (alertId: string) => {
   });
 
   const counts = {
-    critical: alerts.filter(a => a.severity === 'critical').length,
-    high:     alerts.filter(a => a.severity === 'high').length,
-    medium:   alerts.filter(a => a.severity === 'medium').length,
-    low:      alerts.filter(a => a.severity === 'low').length,
+    critical: alerts.filter(a => sevKey(a.severity) === 'critical').length,
+    high:     alerts.filter(a => sevKey(a.severity) === 'high').length,
+    medium:   alerts.filter(a => sevKey(a.severity) === 'medium').length,
+    low:      alerts.filter(a => sevKey(a.severity) === 'low').length,
   };
 
   if (loading) return (
@@ -81,7 +98,7 @@ const handleMarkRead = async (alertId: string) => {
       {/* Severity Summary Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
         {SEVERITY_ORDER.map(sev => {
-          const c = SEV_COLORS[sev];
+          const c = sevStyle(sev);
           const count = counts[sev as keyof typeof counts];
           const isActive = filterSeverity === sev;
           return (
@@ -139,7 +156,7 @@ const handleMarkRead = async (alertId: string) => {
             ) : (
               <div>
                 {filtered.map((alert, i) => {
-                  const c = SEV_COLORS[alert.severity] || SEV_COLORS.low;
+                  const c = sevStyle(alert.severity);
                   const isSelected = selected?.id === alert.id;
                   return (
                     <div
@@ -191,9 +208,14 @@ const handleMarkRead = async (alertId: string) => {
                     <SeverityIcon severity={selected.severity} size={16} className="shrink-0" />
                     <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', margin: 0, lineHeight: 1.4 }}>{selected.title}</h3>
                   </div>
-                  {(() => { const c = SEV_COLORS[selected.severity]; return (
-                    <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, background: c.badgeBg, color: c.badgeText }}>{selected.severity.toUpperCase()}</span>
-                  ); })()}
+                  {(() => {
+                    const c = sevStyle(selected.severity);
+                    return (
+                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, background: c.badgeBg, color: c.badgeText }}>
+                        {selected.severity.toUpperCase()}
+                      </span>
+                    );
+                  })()}
                 </div>
 
                 <div>

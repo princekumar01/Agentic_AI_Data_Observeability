@@ -79,7 +79,7 @@ cd frontend && npm install && npm run dev
 ## Architecture
 
 ```
-Data Sources → Pre-Ingest Validation → Kafka Streaming
+Data Sources → Kafka Streaming
             → AI Agents (LangGraph) → HITL Review
             → Dashboard & Audit Trail
 ```
@@ -110,3 +110,6 @@ Data Sources → Pre-Ingest Validation → Kafka Streaming
 - ICH E6 GCP
 - HIPAA PHI masking (Presidio)
 - All data stays local — no cloud storage
+
+The endpoint is also listed in Swagger at http://localhost:8000/docs under mock-external-api.
+http://localhost:8000/mock/clinical-trial/patients

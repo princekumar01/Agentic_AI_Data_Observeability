@@ -70,24 +70,6 @@ export interface UploadResult {
   saved_to: string;
 }
 
-export interface PreflightBlock {
-  id: string;
-  check: string;
-  column: string;
-  message: string;
-  detail: string;
-}
-
-export interface PreflightReport {
-  run_id: string;
-  passed: boolean;
-  checked_at: string;
-  row_count: number;
-  hard_blocks: PreflightBlock[];
-  soft_warnings: PreflightBlock[];
-  cross_field_violations: any[];
-}
-
 // ── Streaming ─────────────────────────────────────────────────────────────────
 export interface StreamingStatus {
   run_id: string;

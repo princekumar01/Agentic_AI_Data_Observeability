@@ -148,19 +148,22 @@ def check_kafka_available(bootstrap_servers: str) -> bool:
     """
     Attempt a lightweight consumer connection to test Kafka availability.
     Returns True if Kafka is reachable, False otherwise.
+
+    Note: request_timeout_ms must be greater than session_timeout_ms
+    (kafka-python default session timeout is 10000 ms).
     """
     consumer: KafkaConsumer | None = None
     try:
         consumer = KafkaConsumer(
             bootstrap_servers=bootstrap_servers,
-            group_id="clinical_observability_healthcheck",
-            consumer_timeout_ms=3000,
-            request_timeout_ms=4000,
+            consumer_timeout_ms=5000,
+            request_timeout_ms=15000,
+            api_version=(2, 5, 0),
         )
         consumer.topics()  # triggers metadata fetch
         return True
     except Exception as exc:
-        logger.debug("Kafka availability check failed: %s", exc)
+        logger.warning("Kafka availability check failed: %s", exc)
         return False
     finally:
         if consumer:
@@ -176,8 +179,9 @@ def list_topics(bootstrap_servers: str) -> list:
     try:
         consumer = KafkaConsumer(
             bootstrap_servers=bootstrap_servers,
-            group_id="clinical_observability_list_topics",
-            consumer_timeout_ms=3000,
+            consumer_timeout_ms=5000,
+            request_timeout_ms=15000,
+            api_version=(2, 5, 0),
         )
         return list(consumer.topics())
     except Exception:
