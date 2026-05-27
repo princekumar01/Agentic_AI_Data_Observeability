@@ -176,38 +176,6 @@ class TestApiConnectionResponse(BaseModel):
     error: Optional[str] = None
 
 
-class PreflightHardBlock(BaseModel):
-    id: str
-    check: str
-    column: Optional[str] = None
-    message: str
-    detail: Optional[str] = None
-
-
-class PreflightSoftWarning(BaseModel):
-    id: str
-    check: str
-    column: Optional[str] = None
-    message: str
-    detail: Optional[str] = None
-
-
-class CrossFieldViolation(BaseModel):
-    rule: str
-    affected_rows: int
-    example: Optional[str] = None
-
-
-class PreflightResponse(BaseModel):
-    run_id: str
-    passed: bool
-    checked_at: str
-    row_count: int
-    hard_blocks: List[PreflightHardBlock]
-    soft_warnings: List[PreflightSoftWarning]
-    cross_field_violations: List[CrossFieldViolation]
-
-
 class RunPipelineRequest(BaseModel):
     run_id: str
     run_name: Optional[str] = None

@@ -2,7 +2,7 @@
 backend/routers/pipeline.py
 ─────────────────────────────────────────────────────
 All /pipeline/* endpoints.
-Handles file upload, synthetic generation, preflight, run, status, reset.
+Handles file upload, synthetic generation, run, status, reset.
 Rate limited: 3 runs/minute/IP.
 """
 from __future__ import annotations
@@ -41,7 +41,6 @@ from backend.models.schemas import (
     PipelineRunsResponse,
     PipelineStatusResponse,
     PipelineRunSummary,
-    PreflightResponse,
     RecentRunsResponse,
     ResetPipelineRequest,
     ResetPipelineResponse,
@@ -71,7 +70,6 @@ def _load_config() -> Dict:
 
 STAGE_LABELS = [
     "Input Discovery",
-    "Entry Validation",
     "Preprocessing",
     "PII/PHI Masking",
     "AI Agents",
@@ -95,7 +93,7 @@ def _new_run_state(run_id: str, input_mode: str, description: str = "") -> Dict:
         "completed_at": None,
         "current_stage": STAGE_LABELS[0],
         "stage_index": 1,
-        "total_stages": 7,
+        "total_stages": 6,
         "events_processed": 0,
         "stages": [
             {"num": i + 1, "label": lbl, "status": "pending", "duration_ms": None}
@@ -170,10 +168,9 @@ def _run_pipeline_bg(
     inter_event_delay_ms: int,
     config: Dict,
 ) -> None:
-    """Full pipeline execution: 7 stages."""
+    """Full pipeline execution: 6 stages."""
     import logging as _logging
     from backend.services.audit_service import AuditService
-    from backend.services.validation_service import run_preflight
     from backend.services.preprocessing_service import run_preprocessing
     from backend.services.pii_service import mask_metrics_json, mask_etl_log, save_sanitized_metrics
     from backend.services.alert_service import write_alert
@@ -202,9 +199,13 @@ def _run_pipeline_bg(
                 r["status"] = status_
 
     t_total = time.time()
+    print(f"\n{'='*60}")
+    print(f"[PIPELINE] RUN STARTED  | run_id={run_id} | mode={input_mode} | window={window_size}")
+    print(f"{'='*60}")
 
     try:
         # ── Stage 1: Input Discovery ──────────────────────────────────────────
+        print(f"[STAGE 1/6] Input Discovery — STARTED")
         mark(0, "active")
         audit.log("input_discovery", "STAGE_START", {"stage": "input_discovery"})
         t0 = time.time()
@@ -217,36 +218,13 @@ def _run_pipeline_bg(
             )
             filename = run.get("filename", "clinical_trial_data.csv")
 
+        print(f"[STAGE 1/6] Input Discovery — COMPLETED | file={filename} | path={csv_path}")
         mark(0, "completed", int((time.time() - t0) * 1000))
         audit.log("input_discovery", "STAGE_COMPLETE", {"csv_path": csv_path, "mode": input_mode})
 
-        # ── Stage 2: Entry Validation ──────────────────────────────────────────
+        # ── Stage 2: Preprocessing (Kafka) ────────────────────────────────────
+        print(f"[STAGE 2/6] Preprocessing (Kafka) — STARTED | window_size={window_size} | delay_ms={inter_event_delay_ms}")
         mark(1, "active")
-        t0 = time.time()
-        audit.log("entry_validation", "STAGE_START", {})
-
-        preflight = run_preflight(csv_path, run_id, config, output_dir)
-        if not preflight["passed"]:
-            write_alert(
-                severity="CRITICAL",
-                message=f"Pre-ingest validation failed: {len(preflight['hard_blocks'])} hard block(s)",
-                run_id=run_id,
-                source="validation_service",
-            )
-            mark(1, "failed", int((time.time() - t0) * 1000))
-            update_status("failed")
-            audit.finalize("failed")
-            return
-
-        mark(1, "completed", int((time.time() - t0) * 1000))
-        audit.log("entry_validation", "STAGE_COMPLETE", {"passed": True, "rows": preflight["row_count"]})
-        with _runs_lock:
-            r = _pipeline_runs.get(run_id)
-            if r:
-                r["rows"] = preflight["row_count"]
-
-        # ── Stage 3: Preprocessing (Kafka) ────────────────────────────────────
-        mark(2, "active")
         t0 = time.time()
         audit.log("preprocessing", "STAGE_START", {"window_size": window_size})
 
@@ -308,16 +286,18 @@ def _run_pipeline_bg(
 
         if producer_errors or not event_buffer:
             reason = producer_errors[0] if producer_errors else "No events were consumed from Kafka"
+            print(f"[STAGE 2/6] Preprocessing — FAILED | reason={reason}")
             write_alert(
                 severity="CRITICAL",
                 message=f"Preprocessing failed: {reason}",
                 run_id=run_id,
                 source="preprocessing",
             )
-            mark(2, "failed", int((time.time() - t0) * 1000))
+            mark(1, "failed", int((time.time() - t0) * 1000))
             update_status("failed")
             audit.log("preprocessing", "STAGE_FAILED", {"reason": reason})
             audit.finalize("failed")
+            print(f"[PIPELINE] RUN FAILED | run_id={run_id}")
             return
 
         with _runs_lock:
@@ -331,11 +311,11 @@ def _run_pipeline_bg(
             handler.close()
             etl_logger.removeHandler(handler)
 
-        mark(2, "completed", int((time.time() - t0) * 1000))
+        print(f"[STAGE 2/6] Preprocessing — COMPLETED | events_consumed={len(event_buffer)}")
+        mark(1, "completed", int((time.time() - t0) * 1000))
         audit.log("preprocessing", "STAGE_COMPLETE", {"events_collected": len(event_buffer)})
 
         # Run rolling metrics on event buffer
-        from backend.services.preprocessing_service import run_preprocessing
         rolling_metrics = run_preprocessing(
             event_buffer=event_buffer,
             streaming_metadata=streaming_metadata,
@@ -344,19 +324,22 @@ def _run_pipeline_bg(
             output_dir=output_dir,
         )
 
-        # ── Stage 4: PII/PHI Masking ──────────────────────────────────────────
-        mark(3, "active")
+        # ── Stage 3: PII/PHI Masking ──────────────────────────────────────────
+        print(f"[STAGE 3/6] PII/PHI Masking — STARTED")
+        mark(2, "active")
         t0 = time.time()
         audit.log("pii_masking", "STAGE_START", {})
 
         try:
             masked_metrics = mask_metrics_json(rolling_metrics)
         except RuntimeError as exc:
+            print(f"[STAGE 3/6] PII/PHI Masking — FAILED | error={exc}")
             run_log.error(f"PII masking failed: {exc}")
             write_alert(severity="CRITICAL", message=str(exc), run_id=run_id, source="pii_service")
-            mark(3, "failed", int((time.time() - t0) * 1000))
+            mark(2, "failed", int((time.time() - t0) * 1000))
             update_status("failed")
             audit.finalize("failed")
+            print(f"[PIPELINE] RUN FAILED | run_id={run_id}")
             return
 
         sanitized_metrics_path = save_sanitized_metrics(masked_metrics, output_dir)
@@ -365,11 +348,13 @@ def _run_pipeline_bg(
         with open(sanitized_log_path, encoding="utf-8") as fh_:
             sanitized_log_text = fh_.read()
 
-        mark(3, "completed", int((time.time() - t0) * 1000))
+        print(f"[STAGE 3/6] PII/PHI Masking — COMPLETED | entities=PERSON,EMAIL_ADDRESS,PHONE_NUMBER,US_SSN")
+        mark(2, "completed", int((time.time() - t0) * 1000))
         audit.log("pii_masking", "STAGE_COMPLETE", {"entities_masked": ["PERSON", "EMAIL_ADDRESS", "PHONE_NUMBER", "US_SSN"]})
 
-        # ── Stage 5: AI Agents ─────────────────────────────────────────────────
-        mark(4, "active")
+        # ── Stage 4: AI Agents ─────────────────────────────────────────────────
+        print(f"[STAGE 4/6] AI Agents — STARTED | agents=data_quality,log_analysis,rca,recommendation,compliance")
+        mark(3, "active")
         t0 = time.time()
         audit.log("ai_agents", "STAGE_START", {})
 
@@ -388,15 +373,17 @@ def _run_pipeline_bg(
         )
 
         if agent_state.get("error"):
+            print(f"[STAGE 4/6] AI Agents — FAILED | error={agent_state['error']}")
             write_alert(
                 severity="CRITICAL",
                 message=f"Agent pipeline error: {agent_state['error']}",
                 run_id=run_id,
                 source="agent_graph",
             )
-            mark(4, "failed", int((time.time() - t0) * 1000))
+            mark(3, "failed", int((time.time() - t0) * 1000))
             update_status("failed")
             audit.finalize("failed")
+            print(f"[PIPELINE] RUN FAILED | run_id={run_id}")
             return
 
         # Update agent statuses post-completion
@@ -421,26 +408,31 @@ def _run_pipeline_bg(
             for a in ["data_quality_agent", "log_analysis_agent", "rca_agent", "recommendation_agent", "compliance_agent"]
         ])
 
-        mark(4, "completed", int((time.time() - t0) * 1000))
+        print(f"[STAGE 4/6] AI Agents — COMPLETED | agents_completed=5")
+        mark(3, "completed", int((time.time() - t0) * 1000))
         audit.log("ai_agents", "STAGE_COMPLETE", {"agents_completed": 5})
 
-        # ── Stage 6: Incident Report ───────────────────────────────────────────
-        mark(5, "active")
+        # ── Stage 5: Incident Report ───────────────────────────────────────────
+        print(f"[STAGE 5/6] Incident Report — STARTED")
+        mark(4, "active")
         t0 = time.time()
         audit.log("incident_report", "STAGE_START", {})
 
         # incident_report_draft.md already written by aggregator node
         draft_path = os.path.join(output_dir, "incident_report_draft.md")
         if not os.path.exists(draft_path):
+            print(f"[STAGE 5/6] Incident Report — draft not found, creating placeholder")
             run_log.warning("incident_report_draft.md not found — creating placeholder")
             with open(draft_path, "w") as fp:
                 fp.write(f"# Incident Report Draft\nRun: {run_id}\nGenerated: {now_iso}\n")
 
-        mark(5, "completed", int((time.time() - t0) * 1000))
+        print(f"[STAGE 5/6] Incident Report — COMPLETED | path={draft_path}")
+        mark(4, "completed", int((time.time() - t0) * 1000))
         audit.log("incident_report", "STAGE_COMPLETE", {"draft_path": draft_path})
 
-        # ── Stage 7: Awaiting Review ───────────────────────────────────────────
-        mark(6, "active")
+        # ── Stage 6: Awaiting Review ───────────────────────────────────────────
+        print(f"[STAGE 6/6] Awaiting Review — STARTED")
+        mark(5, "active")
         audit.log("awaiting_review", "STAGE_START", {})
 
         with _runs_lock:
@@ -451,13 +443,19 @@ def _run_pipeline_bg(
                 r["completed_at"] = datetime.now(timezone.utc).isoformat()
                 r["health_score"] = rolling_metrics.get("health_score")
                 r["health_label"] = rolling_metrics.get("health_label")
-                r["stages"][6]["status"] = "completed"
+                r["stages"][5]["status"] = "completed"
                 r["current_stage"] = "Awaiting Review"
 
         audit.finalize("pending_review")
+        total_ms = int((time.time() - t_total) * 1000)
+        print(f"[STAGE 6/6] Awaiting Review — COMPLETED")
+        print(f"{'='*60}")
+        print(f"[PIPELINE] RUN COMPLETED | run_id={run_id} | total_time={total_ms}ms | status=pending_review")
+        print(f"{'='*60}\n")
         run_log.info(f"[pipeline] Run {run_id} completed — pending review")
 
     except Exception as exc:
+        print(f"[PIPELINE] UNHANDLED ERROR | run_id={run_id} | error={exc}")
         run_log.error(f"[pipeline] Unhandled error in run {run_id}: {exc}", exc_info=True)
         update_status("failed")
         try:
@@ -542,6 +540,7 @@ async def upload_file(
         _pipeline_runs[run_id]["csv_path"] = saved_path
         _pipeline_runs[run_id]["filename"] = file.filename
 
+    print(f"[UPLOAD] File uploaded | run_id={run_id} | filename={file.filename} | size={info.get('file_size_mb')}MB | rows={info.get('total_rows')}")
     return UploadResponse(**info)
 
 
@@ -579,6 +578,7 @@ def generate_synthetic(
         _pipeline_runs[run_id]["csv_path"] = csv_path
         _pipeline_runs[run_id]["filename"] = f"synthetic_{body.scenario}.csv"
 
+    print(f"[SYNTHETIC] Dataset generated | run_id={run_id} | scenario={body.scenario} | rows={len(records)} | saved={csv_path}")
     return GenerateSyntheticResponse(
         run_id=run_id,
         scenario=body.scenario,
@@ -603,45 +603,8 @@ def test_api_connection(
         token=body.token,
         max_records=body.max_records_per_poll,
     )
+    print(f"[API CONNECTION] Test | url={body.url} | connected={result.get('connected')} | latency={result.get('avg_latency_ms')}ms")
     return TestApiConnectionResponse(**result)
-
-
-@router.post("/preflight/{run_id}", response_model=PreflightResponse)
-def run_preflight_endpoint(
-    run_id: str,
-    user: Dict = Depends(_require_auth),
-):
-    from backend.services.validation_service import run_preflight
-
-    config = _load_config()
-    output_dir = os.path.join(
-        config.get("output", {}).get("runs_directory", "output/runs"), run_id
-    )
-    os.makedirs(output_dir, exist_ok=True)
-
-    with _runs_lock:
-        run = _pipeline_runs.get(run_id)
-    csv_path = (run or {}).get("csv_path") or os.path.join(
-        config.get("data", {}).get("csv_directory", "data/clinical"),
-        config.get("data", {}).get("csv_filename", "clinical_trial_data.csv"),
-    )
-
-    report = run_preflight(csv_path, run_id, config, output_dir)
-    return PreflightResponse(**report)
-
-
-@router.get("/preflight/{run_id}", response_model=PreflightResponse)
-def get_preflight(run_id: str, user: Dict = Depends(_require_auth)):
-    config = _load_config()
-    output_dir = os.path.join(
-        config.get("output", {}).get("runs_directory", "output/runs"), run_id
-    )
-    path = os.path.join(output_dir, "preflight_report.json")
-    if not os.path.exists(path):
-        raise HTTPException(status_code=404, detail="Preflight report not found")
-    with open(path) as fh:
-        data = json.load(fh)
-    return PreflightResponse(**data)
 
 
 @router.post("/run", response_model=RunPipelineResponse, status_code=status.HTTP_202_ACCEPTED)
@@ -667,6 +630,7 @@ def run_pipeline(
 
     run_id = body.run_id
     config = _load_config()
+    print(f"[RUN REQUEST] Received | run_id={run_id} | mode={body.input_mode} | window_size={body.window_size} | delay_ms={body.inter_event_delay_ms} | user={user.get('username')}")
     logger.info(
         "[pipeline] Run request received | run_id=%s mode=%s window_size=%s delay_ms=%s",
         run_id,
@@ -711,7 +675,7 @@ def run_pipeline(
         started_at=_pipeline_runs[run_id]["started_at"],
         current_stage=STAGE_LABELS[0],
         stage_index=1,
-        total_stages=7,
+        total_stages=6,
     )
 
 
@@ -745,6 +709,7 @@ def reset_pipeline(body: ResetPipelineRequest, user: Dict = Depends(_require_aut
             s["duration_ms"] = None
         run["stage_index"] = 1
         run["current_stage"] = STAGE_LABELS[0]
+    print(f"[RESET] Pipeline reset | run_id={body.run_id}")
     return ResetPipelineResponse(success=True, message="Pipeline state reset successfully")
 
 
@@ -758,6 +723,7 @@ def kafka_health():
     )
     topic = config.get("kafka", {}).get("topic", "clinical_trial_events")
     ok = check_kafka_available(servers)
+    print(f"[KAFKA HEALTH] servers={servers} | topic={topic} | available={ok}")
     return KafkaHealthResponse(
         kafka_available=ok,
         bootstrap_servers=servers,

@@ -11,6 +11,8 @@ dist/
 build/
 venv/
 .venv/
+myenv/
+.myenv/
 *.egg
 
 # Output / runtime artifacts

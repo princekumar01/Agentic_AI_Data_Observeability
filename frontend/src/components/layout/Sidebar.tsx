@@ -11,7 +11,7 @@ const NAV = [
   ]},
   { group: 'OBSERVABILITY', items: [
     { to: '/review', icon: '◫', label: 'Review (HITL)' },
-    { to: '/dashboard', icon: '▦', label: 'Dashboard' },
+    { to: '/result', icon: '◇', label: 'Result' },
   ]},
   { group: 'GOVERNANCE', items: [
     { to: '/alerts', icon: '◬', label: 'Alerts' },

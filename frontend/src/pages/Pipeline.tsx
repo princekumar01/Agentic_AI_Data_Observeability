@@ -1,18 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { GlassCard, StatusBadge, LoadingSpinner, Toast } from '../components/ui/index';
 import { pipelineApi } from '../lib/api';
-import { PreflightReport, PipelineStatus, Run, UploadResult } from '../lib/types';
+import { PipelineStatus, Run, UploadResult } from '../lib/types';
 import { formatDateTime, SCENARIOS } from '../lib/utils';
 
-const STAGE_ICONS = ['💾','✓','⚙','🛡','🤖','📄','👤'];
-const STAGE_LABELS = ['Input Discovery','Entry Validation','Preprocessing','PII/PHI Masking','AI Agents','Incident Report','Awaiting Review'];
+const STAGE_ICONS = ['💾','⚙','🛡','🤖','📄','👤'];
+const STAGE_LABELS = ['Input Discovery','Preprocessing','PII/PHI Masking','AI Agents','Incident Report','Awaiting Review'];
 
 export default function Pipeline() {
   const [mode, setMode] = useState<1|2|3>(1);
   const [uploadResult, setUploadResult] = useState<UploadResult|null>(null);
   const [syntheticResult, setSyntheticResult] = useState<any>(null);
   const [apiConnResult, setApiConnResult] = useState<any>(null);
-  const [preflight, setPreflight] = useState<PreflightReport|null>(null);
   const [pipelineStatus, setPipelineStatus] = useState<PipelineStatus|null>(null);
   const [runs, setRuns] = useState<Run[]>([]);
   const [activeRunId, setActiveRunId] = useState<string|null>(null);
@@ -58,16 +57,6 @@ export default function Pipeline() {
     finally { setLoading(l=>({...l,upload:false})); }
   }
 
-  async function handlePreflight() {
-    const rid = uploadResult?.run_id || syntheticResult?.run_id || `RUN_${Date.now()}`;
-    setLoading(l=>({...l,preflight:true}));
-    try {
-      const res = await pipelineApi.runPreflight(rid);
-      setPreflight(res);
-    } catch { showToast('Preflight check failed','error'); }
-    finally { setLoading(l=>({...l,preflight:false})); }
-  }
-
   async function handleRunPipeline() {
     const rid = uploadResult?.run_id || syntheticResult?.run_id || `RUN_${Date.now().toString().slice(-8)}`;
     setLoading(l=>({...l,run:true}));
@@ -99,7 +88,7 @@ export default function Pipeline() {
   async function handleReset() {
     if (!activeRunId) return;
     await pipelineApi.reset(activeRunId).catch(()=>{});
-    setActiveRunId(null); setPipelineStatus(null); setPreflight(null);
+    setActiveRunId(null); setPipelineStatus(null);
     setUploadResult(null); setSyntheticResult(null); setApiConnResult(null);
     showToast('Pipeline reset','info');
   }
@@ -125,7 +114,7 @@ export default function Pipeline() {
   }
 
   const apiReady = mode !== 3 || !!apiConnResult?.connected;
-  const canRun = !!preflight?.passed && apiReady && !loading.run && pipelineStatus?.status !== 'running';
+  const canRun = apiReady && !loading.run && pipelineStatus?.status !== 'running';
   const isRunning = pipelineStatus?.status === 'running';
 
   return (
@@ -288,10 +277,7 @@ export default function Pipeline() {
                   {loading.run||isRunning?<LoadingSpinner size="sm"/>:'▶'} {isRunning?'Pipeline Running…':'Run Pipeline'}
                 </button>
                 <button onClick={handleReset} className="btn-secondary">⟳ Reset</button>
-                {!preflight&&<span style={{fontSize:12,color:'var(--accent-orange)'}}>⚠ Run preflight checks first</span>}
                 {mode===3&&!apiConnResult?.connected&&<span style={{fontSize:12,color:'var(--accent-orange)'}}>⚠ Test API connection first</span>}
-                {preflight&&preflight.hard_blocks.length>0&&<span style={{fontSize:12,color:'var(--accent-red)'}}>✕ Fix hard blocks to enable run</span>}
-                {preflight&&preflight.hard_blocks.length===0&&apiReady&&<span style={{fontSize:12,color:'var(--accent-green)'}}>✓ All clear — ready to run</span>}
               </div>
             </GlassCard>
 
@@ -350,67 +336,8 @@ export default function Pipeline() {
             </GlassCard>
           </div>
 
-          {/* Right column — Preflight Gate */}
+          {/* Right column — Active Run */}
           <div style={{width:320,flexShrink:0,display:'flex',flexDirection:'column',gap:16}}>
-            <GlassCard>
-              <h2 style={{fontSize:14,fontWeight:700,color:'var(--text-primary)',fontFamily:'Space Grotesk',marginBottom:14}}>Preflight Validation Gate</h2>
-              <button onClick={handlePreflight} className="btn-secondary" style={{width:'100%',justifyContent:'center',marginBottom:14}} disabled={loading.preflight}>
-                {loading.preflight&&<LoadingSpinner size="sm"/>} Run Checks
-              </button>
-              {preflight && (
-                <div>
-                  {/* Summary */}
-                  <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:14}}>
-                    <div style={{background:'rgba(239,68,68,0.08)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:8,padding:'10px 12px',textAlign:'center'}}>
-                      <p style={{fontSize:22,fontWeight:700,color:'#EF4444',fontFamily:'Space Grotesk'}}>{preflight.hard_blocks.length}</p>
-                      <p style={{fontSize:11,color:'var(--text-muted)'}}>Hard Blocks</p>
-                    </div>
-                    <div style={{background:'rgba(245,158,11,0.08)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:8,padding:'10px 12px',textAlign:'center'}}>
-                      <p style={{fontSize:22,fontWeight:700,color:'#F59E0B',fontFamily:'Space Grotesk'}}>{preflight.soft_warnings.length}</p>
-                      <p style={{fontSize:11,color:'var(--text-muted)'}}>Soft Warnings</p>
-                    </div>
-                  </div>
-                  <p style={{fontSize:11,color:'var(--text-muted)',marginBottom:8}}>Checked: {formatDateTime(preflight.checked_at)} · {preflight.row_count} rows</p>
-
-                  {preflight.hard_blocks.length>0&&(
-                    <div style={{marginBottom:12}}>
-                      <p style={{fontSize:12,fontWeight:600,color:'#EF4444',fontFamily:'Space Grotesk',marginBottom:6}}>Hard Blocks</p>
-                      {preflight.hard_blocks.map(b=>(
-                        <div key={b.id} style={{background:'rgba(239,68,68,0.06)',border:'1px solid rgba(239,68,68,0.2)',borderRadius:6,padding:'8px 10px',marginBottom:6}}>
-                          <p style={{fontSize:12,color:'#EF4444',fontWeight:600,fontFamily:'Space Grotesk'}}>{b.message}</p>
-                          <p style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>{b.detail}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {preflight.soft_warnings.length>0&&(
-                    <div style={{marginBottom:12}}>
-                      <p style={{fontSize:12,fontWeight:600,color:'#F59E0B',fontFamily:'Space Grotesk',marginBottom:6}}>Soft Warnings</p>
-                      {preflight.soft_warnings.map(w=>(
-                        <div key={w.id} style={{background:'rgba(245,158,11,0.06)',border:'1px solid rgba(245,158,11,0.2)',borderRadius:6,padding:'8px 10px',marginBottom:6}}>
-                          <p style={{fontSize:12,color:'#F59E0B',fontWeight:600,fontFamily:'Space Grotesk'}}>{w.message}</p>
-                          <p style={{fontSize:11,color:'var(--text-muted)',marginTop:2}}>{w.detail}</p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {preflight.hard_blocks.length===0 ? (
-                    <div style={{background:'rgba(16,185,129,0.1)',border:'1px solid rgba(16,185,129,0.25)',borderRadius:8,padding:'10px 12px',textAlign:'center'}}>
-                      <p style={{fontSize:13,color:'#10B981',fontWeight:700,fontFamily:'Space Grotesk'}}>✓ All Clear — Ready to Run</p>
-                    </div>
-                  ) : (
-                    <div style={{background:'rgba(239,68,68,0.1)',border:'1px solid rgba(239,68,68,0.25)',borderRadius:8,padding:'10px 12px',textAlign:'center'}}>
-                      <p style={{fontSize:12,color:'#EF4444',fontWeight:600,fontFamily:'Space Grotesk'}}>✕ Fix Hard Blocks to Enable Run</p>
-                    </div>
-                  )}
-                </div>
-              )}
-              {!preflight&&<p style={{fontSize:12,color:'var(--text-muted)',textAlign:'center',padding:'16px 0'}}>Click "Run Checks" to validate your data</p>}
-            </GlassCard>
-
-            {/* Active Run panel */}
             <GlassCard>
               <h3 style={{fontSize:13,fontWeight:700,color:'var(--text-primary)',fontFamily:'Space Grotesk',marginBottom:10}}>Active Run</h3>
               {activeRunId ? (

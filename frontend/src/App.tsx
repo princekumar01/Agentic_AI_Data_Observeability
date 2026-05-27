@@ -9,6 +9,7 @@ import Pipeline from './pages/Pipeline';
 import Streaming from './pages/Streaming';
 import Review from './pages/Review';
 import Dashboard from './pages/Dashboard';
+import ResultDashboard from './pages/ResultDashboard';
 import Alerts from './pages/Alerts';
 import Audit from './pages/Audit';
 
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/review" element={<AppLayout title="Review" subtitle="Human-in-the-Loop review"><Review /></AppLayout>} />
             <Route path="/dashboard" element={<AppLayout title="Dashboard" subtitle="Analytics and observability"><Dashboard /></AppLayout>} />
             <Route path="/dashboard/:run_id" element={<AppLayout title="Dashboard" subtitle="Analytics and observability"><Dashboard /></AppLayout>} />
+            <Route path="/result" element={<AppLayout title="Result" subtitle="Segregated and aggregated dashboard"><ResultDashboard /></AppLayout>} />
             <Route path="/alerts" element={<AppLayout title="Alerts" subtitle="Alert center"><Alerts /></AppLayout>} />
             <Route path="/audit" element={<AppLayout title="Audit Trail" subtitle="Immutable event log"><Audit /></AppLayout>} />
           </Route>

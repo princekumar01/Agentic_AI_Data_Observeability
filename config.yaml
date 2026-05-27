@@ -45,7 +45,7 @@ kafka:
   bootstrap_servers: localhost:9092
   topic: clinical_trial_events
   inter_message_delay_ms: 50
-  window_threshold: 5
+  window_threshold: 50
   consumer_timeout_ms: 10000
 
 llm:

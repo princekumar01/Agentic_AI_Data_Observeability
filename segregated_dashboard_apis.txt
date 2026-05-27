@@ -1,0 +1,324 @@
+1. GET /seg-dashboard/approved-runs
+
+why: Returns list of all approved pipeline runs (run_id, timestamps, record counts). Used in the segregated dashboard.
+
+	
+Response body
+Download
+[
+  {
+    "run_id": "RUN-2026-0526-001",
+    "started_at": "2026-05-26T14:18:00",
+    "completed_at": "2026-05-26T14:26:42",
+    "duration_seconds": 522,
+    "records_processed": 500,
+    "records_expected": 510,
+    "status": "approved",
+    "model": "claude-sonnet-4",
+    "approved_at": "2026-05-26T14:32:00",
+    "approved_by": "Dr. Priya Nair"
+  }
+]
+
+2.GET /seg-dashboard/run/{run_id}/info
+
+sample runid:RUN-2026-0526-001
+
+why:Returns metadata for a specific run: started_at, duration, records, model, approved_by. Shown in the Pipeline Run ID banner at the top of the segregated dashboard.
+	
+Response body
+
+{
+  "run_id": "RUN-2026-0526-001",
+  "started_at": "2026-05-26T14:18:00",
+  "completed_at": "2026-05-26T14:26:42",
+  "duration_seconds": 522,
+  "records_processed": 500,
+  "records_expected": 510,
+  "status": "approved",
+  "model": "claude-sonnet-4",
+  "approved_at": "2026-05-26T14:32:00",
+  "approved_by": "Dr. Priya Nair"
+}
+
+3.GET/seg-dashboard/run/{run_id}/kpis
+why:Returns the 4 top KPI cards for a run: anomalies_detected, records_processed, data_health_score, compliance_score.
+
+	
+Response body
+{
+  "anomalies_detected": 17,
+  "records_processed": 500,
+  "compliance_score": 91
+}
+
+4.GET/seg-dashboard/run/{run_id}/null-rate
+
+why:Returns null percentage per column with the 5% threshold. Powers the Null Rate by Column bar chart. Columns exceeding the threshold are highlighted red.
+
+Response body
+Download
+[
+  {
+    "column": "patient_id",
+    "null_pct": 0,
+    "threshold": 5
+  },
+  {
+    "column": "age",
+    "null_pct": 0,
+    "threshold": 5
+  },
+  {
+    "column": "medication",
+    "null_pct": 0.2,
+    "threshold": 5
+  },
+  {
+    "column": "blood_pressure",
+    "null_pct": 0.8,
+    "threshold": 5
+  },
+  {
+    "column": "glucose_level",
+    "null_pct": 2.4,
+    "threshold": 5
+  },
+  {
+    "column": "side_effect",
+    "null_pct": 7.4,
+    "threshold": 5
+  },
+  {
+    "column": "severity",
+    "null_pct": 0,
+    "threshold": 5
+  },
+  {
+    "column": "visit_date",
+    "null_pct": 0,
+    "threshold": 5
+  },
+  {
+    "column": "hospital_name",
+    "null_pct": 0,
+    "threshold": 5
+  }
+]
+______________________________________additional info___________________________
+Here null_pct is different from the previous two — it is not calculated from other values in this response. It is calculated directly from the raw patient data.
+
+The math — how backend calculates null_pct:
+null_pct = (number of null/empty cells in that column / total records) × 100
+For side_effect column:
+37 null cells / 500 total records × 100 = 7.4%
+For glucose_level column:
+12 null cells / 500 total records × 100 = 2.4%
+For patient_id column:
+0 null cells / 500 total records × 100 = 0%
+________________________________________________________________________________________
+
+5.GET /seg-dashboard/run/{run_id}/severity-distribution
+
+why:Returns anomaly counts broken down by severity (Critical, High, Medium, Low). Powers the Severity Distribution donut chart.
+
+[
+  {
+    "severity": "Critical",
+    "count": 3,
+    "pct": 17.6,
+    "color": "#EF4444"
+  },
+  {
+    "severity": "High",
+    "count": 5,
+    "pct": 29.4,
+    "color": "#F59E0B"
+  },
+  {
+    "severity": "Medium",
+    "count": 7,
+    "pct": 41.2,
+    "color": "#3B82F6"
+  },
+  {
+    "severity": "Low",
+    "count": 2,
+    "pct": 11.8,
+    "color": "#10B981"
+  }
+]
+________________________________________additional info_________________
+The math:
+Total anomalies = 3 + 5 + 7 + 2 = 17
+Critical  →  3  / 17 × 100 = 17.6%
+High      →  5  / 17 × 100 = 29.4%
+Medium    →  7  / 17 × 100 = 41.2%
+Low       →  2  / 17 × 100 = 11.8%
+                              ──────
+                              100%
+___________________________________________________________________________
+
+6.GET/seg-dashboard/run/{run_id}/agent-confidence
+why:Returns confidence score and inference count per agent for this run. Powers the Agent Confidence horizontal bar chart.
+
+	
+Response body
+Download
+[
+  {
+    "agent": "Data Quality Agent",
+    "confidence": 88,
+    "status": "Completed"
+  },
+  {
+    "agent": "Log Analysis Agent",
+    "confidence": 76,
+    "status": "Completed"
+  },
+  {
+    "agent": "Root Cause Agent",
+    "confidence": 82,
+    "status": "Completed"
+  },
+  {
+    "agent": "Recommendation Agent",
+    "confidence": 91,
+    "status": "Completed"
+  },
+  {
+    "agent": "Compliance Agent",
+    "confidence": 68,
+    "status": "Completed"
+  }
+]
+
+7.GET/seg-dashboard/run/{run_id}/anomaly-summary
+why:Returns per-severity anomaly count with short description for this run. Powers the Anomaly Summary panel (replaces trend chart for single runs).
+
+	
+Response body
+Download
+[
+  {
+    "severity": "Critical",
+    "count": 3,
+    "description": "Null spike in side_effect field"
+  },
+  {
+    "severity": "High",
+    "count": 5,
+    "description": "Blood pressure out-of-range values"
+  },
+  {
+    "severity": "Medium",
+    "count": 7,
+    "description": "Glucose level distribution drift"
+  },
+  {
+    "severity": "Low",
+    "count": 2,
+    "description": "Minor visit date inconsistency"
+  }
+]
+
+8.GET/seg-dashboard/run/{run_id}/token-usage
+why:Returns total tokens (input/output), estimated cost, and per-agent breakdown. Powers the Token Usage section — run total card + agents bar chart.
+
+	
+Response body
+Download
+{
+  "run_total_input": 24810,
+  "run_total_output": 8340,
+  "run_total": 33150,
+  "estimated_cost": 0.0281,
+  "model": "claude-sonnet-4",
+  "by_agent": [
+    {
+      "agent": "Data Quality Agent",
+      "tokens": 12580,
+      "pct": 37.9
+    },
+    {
+      "agent": "Log Analysis Agent",
+      "tokens": 6820,
+      "pct": 20.6
+    },
+    {
+      "agent": "Root Cause Agent",
+      "tokens": 5640,
+      "pct": 17
+    },
+    {
+      "agent": "Recommendation Agent",
+      "tokens": 4520,
+      "pct": 13.6
+    },
+    {
+      "agent": "Compliance Agent",
+      "tokens": 3590,
+      "pct": 10.8
+    }
+  ]
+}
+
+
+
+_________________________additional info______________________________
+pct = percentage share of the total tokens that each agent consumed.
+
+The math — how backend calculates it:
+pct = (agent_tokens / run_total) × 100
+For Data Quality Agent:
+12580 / 33150 × 100 = 37.9%
+For Compliance Agent:
+3590 / 33150 × 100 = 10.8%
+All 5 pct values add up to 100% (37.9 + 20.6 + 17 + 13.6 + 10.8 = 100).
+________________________________________________________________________________
+
+9.GET/seg-dashboard/run/{run_id}/findings/{agent}
+why:Returns agent-specific findings list for a run. agent must be one of: data_quality, log_analysis, rca, recommendation, compliance. Powers the Agent Analysis tabbed section.
+
+
+
+
+Request
+run_id:RUN-2026-0526-001
+                                        -------------example
+agent:data_quality
+
+	
+Response body
+Download
+[
+  {
+    "finding_type": "High Null Rate — side_effect",
+    "severity": "critical",
+    "confidence": 88,
+    "description": "7.4% null rate in side_effect column exceeds 5% threshold. Affects 37 patient records. Indicates possible data collection failure at source.",
+    "affected_field": "side_effect",
+    "recommendation": "Investigate data collection pipeline for side_effect field. Contact site coordinators to backfill missing entries."
+  },
+  {
+    "finding_type": "Blood Pressure Out-of-Range",
+    "severity": "high",
+    "confidence": 82,
+    "description": "12 records with blood_pressure values outside clinically acceptable range (systolic >180 or <80). Requires clinical review.",
+    "affected_field": "blood_pressure",
+    "recommendation": "Flag affected records for clinical review. Verify measurement device calibration at relevant sites."
+  },
+  {
+    "finding_type": "Glucose Distribution Drift",
+    "severity": "medium",
+    "confidence": 76,
+    "description": "Glucose level distribution shifted from baseline. Null rate at 2.4% — within threshold but trending upward.",
+    "affected_field": "glucose_level",
+    "recommendation": "Monitor glucose null rate in next run. Consider alert threshold lowering to 3% for this field."
+  }
+]
+
+
+
+
+

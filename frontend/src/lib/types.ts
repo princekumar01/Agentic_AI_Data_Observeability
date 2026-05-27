@@ -70,24 +70,6 @@ export interface UploadResult {
   saved_to: string;
 }
 
-export interface PreflightBlock {
-  id: string;
-  check: string;
-  column: string;
-  message: string;
-  detail: string;
-}
-
-export interface PreflightReport {
-  run_id: string;
-  passed: boolean;
-  checked_at: string;
-  row_count: number;
-  hard_blocks: PreflightBlock[];
-  soft_warnings: PreflightBlock[];
-  cross_field_violations: any[];
-}
-
 // ── Streaming ─────────────────────────────────────────────────────────────────
 export interface StreamingStatus {
   run_id: string;
@@ -163,6 +145,84 @@ export interface TokenUsage {
 export interface PipelineHealth {
   overall?: string;
   [key: string]: any;
+}
+
+// ── Segregated Dashboard ──────────────────────────────────────────────────────
+export interface ApprovedRun {
+  run_id: string;
+  started_at: string;
+  completed_at: string;
+  duration_seconds: number;
+  records_processed: number;
+  records_expected: number;
+  status: string;
+  model: string;
+  approved_at: string;
+  approved_by: string;
+}
+
+export interface RunKpis {
+  anomalies_detected: number;
+  critical_count: number;
+  high_count: number;
+  records_processed: number;
+  records_expected: number;
+  data_health_score: number;
+  compliance_score: number;
+}
+
+export interface NullRateColumn {
+  column: string;
+  null_pct: number;
+  threshold: number;
+}
+
+export interface SeverityItem {
+  severity: string;
+  count: number;
+  pct: number;
+  color: string;
+}
+
+export interface AgentConfidence {
+  agent: string;
+  confidence: number;
+  inferences: number;
+  status: string;
+}
+
+export interface AnomalySummaryItem {
+  severity: string;
+  count: number;
+  description: string;
+}
+
+export interface SegregatedTokenUsage {
+  run_total_input: number;
+  run_total_output: number;
+  run_total: number;
+  estimated_cost: number;
+  model: string;
+  by_agent: { agent: string; tokens: number; pct: number }[];
+}
+
+export interface Pillar {
+  key: string;
+  label: string;
+  icon: string;
+  score: number;
+  status: 'normal' | 'warning' | 'critical';
+  detail: string;
+  color: string;
+}
+
+export interface Finding {
+  finding_type: string;
+  severity: string;
+  confidence: number;
+  description: string;
+  affected_field: string | null;
+  recommendation: string;
 }
 
 // ── Alerts ────────────────────────────────────────────────────────────────────

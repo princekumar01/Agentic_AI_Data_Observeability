@@ -33,8 +33,7 @@ from backend.routers.pipeline import router as pipeline_router
 from backend.routers.streaming import router as streaming_router
 from backend.routers.review import router as review_router
 from backend.routers.dashboard import router as dashboard_router
-#from backend.routers.dashboard_segregated import router as dashboard_segregated_router
-from backend.routers.seg_dashboard import router as seg_dashboard_router
+from backend.routers.dashboard_segregated import router as dashboard_segregated_router
 from backend.routers.alerts import router as alerts_router
 from backend.routers.audit import router as audit_router
 from backend.routers.system import router as system_router
@@ -127,8 +126,7 @@ app.include_router(pipeline_router)
 app.include_router(streaming_router)
 app.include_router(review_router)
 app.include_router(dashboard_router)
-#app.include_router(dashboard_segregated_router)
-app.include_router(seg_dashboard_router)
+app.include_router(dashboard_segregated_router)
 app.include_router(alerts_router)
 app.include_router(audit_router)
 app.include_router(system_router)

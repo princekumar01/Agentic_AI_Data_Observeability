@@ -1,0 +1,9 @@
+Alert Page 
+*add the filter by severity option
+*removed the unwanted options like escalated, etc..
+
+Segregated Page 
+*design
+*in backend the dummy api are in the folder
+---routers/seg_dashboard.py
+---services/seg_dashboard_service.py
