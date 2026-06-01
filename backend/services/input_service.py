@@ -16,6 +16,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import pandas as pd
 
+from backend.services.null_detection import count_nullish
+
 
 EXPECTED_COLUMNS = [
     "patient_id",
@@ -80,7 +82,7 @@ def save_uploaded_file(
 
     columns = []
     for col in df.columns:
-        null_count = int(df[col].isna().sum())
+        null_count = count_nullish(df[col])
         null_pct = round(null_count / len(df) * 100, 2) if len(df) > 0 else 0.0
         sample_val = df[col].dropna().head(1)
         sample = str(sample_val.iloc[0]) if not sample_val.empty else None
@@ -108,8 +110,12 @@ def save_uploaded_file(
 
 def load_csv_as_records(csv_path: str) -> List[Dict[str, Any]]:
     """Load a CSV file and return list of record dicts."""
+    from backend.services.null_detection import normalize_record_columns
+
     df = pd.read_csv(csv_path)
-    return df.where(pd.notnull(df), None).to_dict(orient="records")
+    df.columns = [c.lower().strip() for c in df.columns]
+    records = df.where(pd.notnull(df), None).to_dict(orient="records")
+    return [normalize_record_columns(r) for r in records]
 
 
 def test_api_connection(

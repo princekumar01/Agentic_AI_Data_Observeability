@@ -30,30 +30,28 @@ logger = logging.getLogger(__name__)
 # ─── Normalise a raw data row into the 10-column Kafka event schema ───────────
 
 def _build_event(row: Dict[str, Any], run_id: str, source: str) -> Dict[str, Any]:
-    def _safe_int(val, default=0):
-        try:
-            return int(float(val))
-        except (TypeError, ValueError):
-            return default
+    from backend.services.null_detection import (
+        get_record_field,
+        normalize_record_columns,
+        preserve_optional_float,
+        preserve_optional_int,
+        preserve_optional_str,
+    )
 
-    def _safe_float(val, default=0.0):
-        try:
-            return float(val)
-        except (TypeError, ValueError):
-            return default
+    row = normalize_record_columns(row)
 
     return {
-        # Required data columns
-        "patient_id": str(row.get("patient_id", "")),
-        "patient_name": str(row.get("patient_name", "")),
-        "age": _safe_int(row.get("age")),
-        "gender": str(row.get("gender", "")),
-        "diagnosis": str(row.get("diagnosis", "")),
-        "treatment_group": str(row.get("treatment_group", "")),
-        "visit_date": str(row.get("visit_date", "")),
-        "glucose_level": _safe_float(row.get("glucose_level")),
-        "side_effects": str(row.get("side_effects", "")),
-        "severity": str(row.get("severity", "Low")),
+        # Required data columns — preserve JSON null for missing values
+        "patient_id": preserve_optional_str(get_record_field(row, "patient_id")),
+        "patient_name": preserve_optional_str(get_record_field(row, "patient_name")),
+        "age": preserve_optional_int(get_record_field(row, "age")),
+        "gender": preserve_optional_str(get_record_field(row, "gender")),
+        "diagnosis": preserve_optional_str(get_record_field(row, "diagnosis")),
+        "treatment_group": preserve_optional_str(get_record_field(row, "treatment_group")),
+        "visit_date": preserve_optional_str(get_record_field(row, "visit_date")),
+        "glucose_level": preserve_optional_float(get_record_field(row, "glucose_level")),
+        "side_effects": preserve_optional_str(get_record_field(row, "side_effects")),
+        "severity": preserve_optional_str(get_record_field(row, "severity")),
         # Metadata
         "event_id": str(uuid.uuid4()),
         "event_timestamp": datetime.now(timezone.utc).isoformat(),

@@ -1,5 +1,5 @@
 {
-  "initialized_at": "2026-05-26T12:42:41.816429+00:00",
+  "initialized_at": "2026-06-01T06:47:49.791737+00:00",
   "bootstrap_servers": "localhost:9092",
   "topics_created": [
     "clinical_trial_events"

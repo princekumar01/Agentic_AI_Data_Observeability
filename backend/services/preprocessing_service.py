@@ -18,6 +18,8 @@ import numpy as np
 import pandas as pd
 from scipy import stats
 
+from backend.services.null_detection import count_nullish
+
 
 # ─── ETL Logger factory ──────────────────────────────────────────────────────
 
@@ -133,12 +135,12 @@ def run_preprocessing(
     df = pd.DataFrame(event_buffer)
     logger.info(f"DataFrame shape: {df.shape[0]} rows × {df.shape[1]} cols")
 
-    # Coerce types
+    total_rows = len(df)
+
+    # Coerce numeric types before null detection (unparseable → NaN)
     for col in ["age", "glucose_level"]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
-
-    total_rows = len(df)
 
     # ── 3. PILLAR 1: Volume ───────────────────────────────────────────────────
     expected_rows = config.get("data", {}).get("expected_row_count", 500)
@@ -185,7 +187,7 @@ def run_preprocessing(
             logger.warning(f"SCHEMA | Missing column: {col}")
             null_stats[col] = {"null_count": total_rows, "null_pct": 100.0, "exceeds_threshold": True}
             continue
-        null_count = int(df[col].isna().sum())
+        null_count = count_nullish(df[col])
         null_pct = round(null_count / total_rows * 100, 2) if total_rows > 0 else 0.0
         exceeds = bool(null_pct > null_threshold)
         null_stats[col] = {"null_count": null_count, "null_pct": null_pct, "exceeds_threshold": exceeds}

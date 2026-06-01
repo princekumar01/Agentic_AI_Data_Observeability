@@ -132,31 +132,21 @@ export default function Dashboard() {
           label="Total Pipeline Runs"
           value={summary?.total_runs ?? '—'}
           icon={<Activity size={18} className="text-blue-400" />}
-          trend={summary?.runs_trend}
-          trendLabel="vs last month"
         />
         <KpiCard
           label="Anomalies Detected"
           value={summary?.total_anomalies ?? '—'}
           icon={<AlertTriangle size={18} className="text-orange-400" />}
-          trend={summary?.anomalies_trend}
-          trendLabel="vs last month"
-          trendInvert
         />
         <KpiCard
           label="Avg Confidence Score"
           value={summary?.avg_confidence_score ? `${summary.avg_confidence_score}%` : '—'}
           icon={<CheckCircle size={18} className="text-green-400" />}
-          trend={summary?.confidence_trend}
-          trendLabel="vs last month"
         />
         <KpiCard
           label="Total Token Cost"
           value={summary?.total_token_cost ? `$${summary.total_token_cost.toFixed(2)}` : '—'}
           icon={<DollarSign size={18} className="text-purple-400" />}
-          trend={summary?.cost_trend}
-          trendLabel="vs last month"
-          trendInvert
         />
       </div>
 

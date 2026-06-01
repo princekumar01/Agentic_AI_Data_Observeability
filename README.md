@@ -4,8 +4,6 @@
 
 ---
 
-# Go to project folder
-cd Agentic_AI_Data_Observeability
 
 # Stop running containers
 docker compose down

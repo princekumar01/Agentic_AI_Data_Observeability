@@ -447,30 +447,37 @@ class StreamProcessor:
         if errors:
             return False, errors
 
-        # age: numeric, 0–130
-        try:
-            age = float(event["age"])
-            if not (0 <= age <= 130):
-                errors.append(f"age out of range: {age}")
-        except (TypeError, ValueError):
-            errors.append(f"age not numeric: {event.get('age')}")
+        # age: optional; when present must be numeric 0–130
+        age_val = event.get("age")
+        if age_val is not None:
+            try:
+                age = float(age_val)
+                if not (0 <= age <= 130):
+                    errors.append(f"age out of range: {age}")
+            except (TypeError, ValueError):
+                errors.append(f"age not numeric: {age_val}")
 
-        # glucose_level: numeric, 0–2000
-        try:
-            gluc = float(event["glucose_level"])
-            if not (0 <= gluc <= 2000):
-                errors.append(f"glucose_level out of range: {gluc}")
-        except (TypeError, ValueError):
-            errors.append(f"glucose_level not numeric: {event.get('glucose_level')}")
+        # glucose_level: optional; when present must be numeric 0–2000
+        gluc_val = event.get("glucose_level")
+        if gluc_val is not None:
+            try:
+                gluc = float(gluc_val)
+                if not (0 <= gluc <= 2000):
+                    errors.append(f"glucose_level out of range: {gluc}")
+            except (TypeError, ValueError):
+                errors.append(f"glucose_level not numeric: {gluc_val}")
 
-        # severity — normalise non-standard labels first, then validate
-        raw_sev = str(event.get("severity", ""))
-        normalised_sev = SEVERITY_NORMALISE.get(raw_sev, raw_sev)
-        if normalised_sev != raw_sev:
-            # Mutate the event in-place so preprocessing sees the canonical value
-            event["severity"] = normalised_sev
-        if normalised_sev not in VALID_SEVERITIES:
-            errors.append(f"severity invalid: '{raw_sev}' (expected one of {VALID_SEVERITIES})")
+        # severity — null allowed; normalise non-standard labels when present
+        raw_sev = event.get("severity")
+        if raw_sev is not None:
+            raw_sev_str = str(raw_sev)
+            normalised_sev = SEVERITY_NORMALISE.get(raw_sev_str, raw_sev_str)
+            if normalised_sev != raw_sev_str:
+                event["severity"] = normalised_sev
+            if normalised_sev not in VALID_SEVERITIES:
+                errors.append(
+                    f"severity invalid: '{raw_sev_str}' (expected one of {VALID_SEVERITIES})"
+                )
 
         return len(errors) == 0, errors
 

@@ -5,37 +5,27 @@ import { Alert } from '../lib/types';
 import { GlassCard, SeverityIcon, LoadingSpinner } from '../components/ui';
 import { formatDateTime } from '../lib/utils';
 
-const SEVERITY_ORDER = ['critical', 'high', 'medium', 'low'];
+const SEVERITY_ORDER = ['critical', 'warning', 'total'];
 
-type SevKey = 'critical' | 'high' | 'medium' | 'low';
-
-const SEV_COLORS: Record<SevKey, { color: string; bg: string; border: string; badgeBg: string; badgeText: string }> = {
+const SEV_COLORS: Record<string, { color: string; bg: string; border: string; badgeBg: string; badgeText: string }> = {
   critical: { color: '#f87171', bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.4)', badgeBg: 'rgba(239,68,68,0.15)', badgeText: '#fca5a5' },
-  high:     { color: '#fb923c', bg: 'rgba(249,115,22,0.06)', border: 'rgba(249,115,22,0.4)', badgeBg: 'rgba(249,115,22,0.15)', badgeText: '#fdba74' },
+  warning:  { color: '#fb923c', bg: 'rgba(249,115,22,0.06)', border: 'rgba(249,115,22,0.4)', badgeBg: 'rgba(249,115,22,0.15)', badgeText: '#fdba74' },
+  high:     { color: '#f59e0b', bg: 'rgba(245,158,11,0.06)', border: 'rgba(245,158,11,0.4)', badgeBg: 'rgba(245,158,11,0.15)', badgeText: '#fcd34d' },
+  total:    { color: '#60a5fa', bg: 'rgba(59,130,246,0.06)', border: 'rgba(59,130,246,0.3)', badgeBg: 'rgba(59,130,246,0.15)', badgeText: '#93c5fd' },
   medium:   { color: '#facc15', bg: 'rgba(234,179,8,0.06)',  border: 'rgba(234,179,8,0.3)',  badgeBg: 'rgba(234,179,8,0.15)',  badgeText: '#fde047' },
   low:      { color: '#60a5fa', bg: 'rgba(59,130,246,0.06)', border: 'rgba(59,130,246,0.3)', badgeBg: 'rgba(59,130,246,0.15)', badgeText: '#93c5fd' },
+  info:     { color: '#4ade80', bg: 'rgba(34,197,94,0.06)', border: 'rgba(34,197,94,0.3)', badgeBg: 'rgba(34,197,94,0.15)', badgeText: '#86efac' },
 };
 
-/** Map API severities (CRITICAL, WARNING, INFO, …) to palette keys. */
-function sevKey(severity: string | undefined): SevKey {
-  const s = (severity || '').toLowerCase();
-  if (s === 'critical') return 'critical';
-  if (s === 'high' || s === 'warning') return 'high';
-  if (s === 'medium') return 'medium';
-  return 'low'; // low, info, unknown
-}
-
-function sevStyle(severity: string | undefined) {
-  return SEV_COLORS[sevKey(severity)];
+function sevColors(severity: string) {
+  return SEV_COLORS[severity?.toLowerCase()] ?? SEV_COLORS.low;
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  new: '#f87171',
   active: '#f87171',
   acknowledged: '#facc15',
   escalated: '#c084fc',
   resolved: '#4ade80',
-  'in progress': '#60a5fa',
 };
 
 export default function Alerts() {
@@ -45,6 +35,7 @@ export default function Alerts() {
   const [filterSeverity, setFilterSeverity] = useState<string>('all');
   const [filterStatus, setFilterStatus] = useState<string>('all');
   const [search, setSearch] = useState('');
+  const [dropdownSeverity, setDropdownSeverity] = useState<string>('all');
   const fetchAlerts = useCallback(async () => {
     try {
       const data = await alertsApi.getAlerts({
@@ -67,14 +58,14 @@ const handleMarkRead = async (alertId: string) => {
 
   const filtered = alerts.filter(a => {
     const matchSearch = !search || a.title.toLowerCase().includes(search.toLowerCase()) || a.message?.toLowerCase().includes(search.toLowerCase());
-    return matchSearch;
+    const matchDropdown = dropdownSeverity === 'all' || a.severity === dropdownSeverity;
+    return matchSearch && matchDropdown;
   });
 
   const counts = {
-    critical: alerts.filter(a => sevKey(a.severity) === 'critical').length,
-    high:     alerts.filter(a => sevKey(a.severity) === 'high').length,
-    medium:   alerts.filter(a => sevKey(a.severity) === 'medium').length,
-    low:      alerts.filter(a => sevKey(a.severity) === 'low').length,
+    critical: alerts.filter(a => a.severity === 'critical').length,
+    warning:  alerts.filter(a => a.severity === 'warning').length,
+    total:    alerts.length,
   };
 
   if (loading) return (
@@ -96,15 +87,15 @@ const handleMarkRead = async (alertId: string) => {
       </div>
 
       {/* Severity Summary Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 200px)', gap: 12, marginBottom: 20, justifyContent: 'center' }}>
         {SEVERITY_ORDER.map(sev => {
-          const c = sevStyle(sev);
+          const c = SEV_COLORS[sev];
           const count = counts[sev as keyof typeof counts];
           const isActive = filterSeverity === sev;
           return (
             <button
               key={sev}
-              onClick={() => setFilterSeverity(isActive ? 'all' : sev)}
+              onClick={() => {}}
               style={{ padding: 12, borderRadius: 12, border: `1px solid ${isActive ? c.border : 'rgba(51,65,85,0.5)'}`, background: isActive ? c.bg : 'rgba(15,23,42,0.5)', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s' }}
             >
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
@@ -124,14 +115,14 @@ const handleMarkRead = async (alertId: string) => {
           <input
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Search alerts..."
+            placeholder="Search alerts by id"
             className="field"
             style={{ paddingLeft: 30, width: '100%', boxSizing: 'border-box' }}
           />
         </div>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <Filter size={13} style={{ color: 'var(--text-muted)' }} />
-          {['all', 'active', 'acknowledged', 'escalated', 'resolved'].map(s => (
+          {['all'].map(s => (
             <button
               key={s}
               onClick={() => setFilterStatus(s)}
@@ -140,6 +131,19 @@ const handleMarkRead = async (alertId: string) => {
               {s}
             </button>
           ))}
+          <select
+            value={dropdownSeverity}
+            onChange={e => setDropdownSeverity(e.target.value)}
+            style={{ padding: '5px 10px', borderRadius: 8, fontSize: 11, cursor: 'pointer', background: 'var(--bg-secondary)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)', fontFamily: 'Space Grotesk', outline: 'none' }}
+          >
+            <option value="all">All Severity</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="warning">Warning</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+            <option value="info">Info</option>
+          </select>
         </div>
       </div>
 
@@ -156,7 +160,7 @@ const handleMarkRead = async (alertId: string) => {
             ) : (
               <div>
                 {filtered.map((alert, i) => {
-                  const c = sevStyle(alert.severity);
+                  const c = sevColors(alert.severity);
                   const isSelected = selected?.id === alert.id;
                   return (
                     <div
@@ -209,11 +213,9 @@ const handleMarkRead = async (alertId: string) => {
                     <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', margin: 0, lineHeight: 1.4 }}>{selected.title}</h3>
                   </div>
                   {(() => {
-                    const c = sevStyle(selected.severity);
+                    const c = sevColors(selected.severity);
                     return (
-                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, background: c.badgeBg, color: c.badgeText }}>
-                        {selected.severity.toUpperCase()}
-                      </span>
+                      <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, border: `1px solid ${c.border}`, background: c.badgeBg, color: c.badgeText }}>{selected.severity.toUpperCase()}</span>
                     );
                   })()}
                 </div>

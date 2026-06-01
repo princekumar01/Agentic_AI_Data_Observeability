@@ -1,4 +1,4 @@
-const BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000';
+﻿const BASE = ((import.meta as any).env?.VITE_API_URL) || 'http://localhost:8000';
 const PIPELINE_API_KEY = ((import.meta as any).env?.VITE_PIPELINE_API_KEY as string | undefined) || '';
 
 function getToken(): string | null {
@@ -92,7 +92,7 @@ export const pipelineApi = {
   kafkaHealth: () => apiFetch('/pipeline/kafka-health'),
 };
 
-// STREAMING — all routes require a run_id
+// STREAMING â€” all routes require a run_id
 export const streamingApi = {
   getStatus: (runId: string) => apiFetch(`/streaming/status/${runId}`),
   getLagHistory: (runId: string) => apiFetch(`/streaming/lag-history/${runId}`),
@@ -180,7 +180,7 @@ export const reviewApi = {
     apiFetch('/review/reject', { method: 'POST', body: JSON.stringify(withReviewer(data, 'reviewer_id')) }),
 };
 
-// DASHBOARD — matches backend route names exactly
+// DASHBOARD â€” matches backend route names exactly
 function dashboardList(data: any, key: string) {
   if (Array.isArray(data)) return data;
   if (Array.isArray(data?.[key])) return data[key];
@@ -188,6 +188,18 @@ function dashboardList(data: any, key: string) {
 }
 
 export const dashboardApi = {
+  // â”€â”€ Segregated (per-run) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  getApprovedRuns: () => apiFetch('/dashboard/approved-runs'),
+  getRunInfo:             (id: string) => apiFetch(`/dashboard/run/${id}/info`),
+  getRunKpis:             (id: string) => apiFetch(`/dashboard/run/${id}/kpis`),
+  getNullRate:            (id: string) => apiFetch(`/dashboard/run/${id}/null-rate`),
+  getSeverityDistribution:(id: string) => apiFetch(`/dashboard/run/${id}/severity-distribution`),
+  getAgentConfidence:     (id: string) => apiFetch(`/dashboard/run/${id}/agent-confidence`),
+  getAnomalySummary:      (id: string) => apiFetch(`/dashboard/run/${id}/anomaly-summary`),
+  getRunTokenUsage:       (id: string) => apiFetch(`/dashboard/run/${id}/token-usage`),
+  getAgentFindings:       (id: string, agent: string) => apiFetch(`/dashboard/run/${id}/findings/${agent}`),
+
+  // â”€â”€ Aggregated â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   getSummary: () => apiFetch('/dashboard/summary').then(d => ({
     ...d,
     total_anomalies: d?.anomalies_detected ?? 0,
@@ -237,6 +249,23 @@ export const dashboardApi = {
     }))
   ),
   getRunTokens: (runId: string) => apiFetch(`/dashboard/run-tokens/${runId}`),
+};
+
+// RESULT DASHBOARD - isolated API surface copied from dashboard_deliverable
+export const segDashboardApi = {
+  getApprovedRuns: () => apiFetch('/seg-dashboard/approved-runs'),
+
+  getRunInfo:              (id: string) => apiFetch(`/seg-dashboard/run/${id}/info`),
+  getRunKpis:              (id: string) => apiFetch(`/seg-dashboard/run/${id}/kpis`),
+  getRecordsVsExpected:    (id: string) => apiFetch(`/seg-dashboard/run/${id}/records-vs-expected`),
+  getNullRate:             (id: string) => apiFetch(`/seg-dashboard/run/${id}/null-rate`),
+  getSeverityDistribution: (id: string) => apiFetch(`/seg-dashboard/run/${id}/severity-distribution`),
+  getAgentConfidence:      (id: string) => apiFetch(`/seg-dashboard/run/${id}/agent-confidence`),
+  getAnomalySummary:       (id: string) => apiFetch(`/seg-dashboard/run/${id}/anomaly-summary`),
+  getTokenUsage:           (id: string) => apiFetch(`/seg-dashboard/run/${id}/token-usage`),
+  getPillars:              (id: string) => apiFetch(`/seg-dashboard/run/${id}/pillars`),
+  getAgentFindings:        (id: string, agent: string) => apiFetch(`/seg-dashboard/run/${id}/findings/${agent}`),
+
 };
 
 function normalizeAlertsResponse(data: any) {

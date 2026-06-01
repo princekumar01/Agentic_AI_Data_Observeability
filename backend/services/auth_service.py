@@ -40,12 +40,12 @@ _users: Dict[str, Dict] = {
     "admin": {
         "id": "USR_001",
         "username": "admin",
-        "fullName": "Dr. Sarah Johnson",
-        "email": "sarah.johnson@clinicaltrials.ai",
-        "role": "Clinical Data Manager",
+        "fullName": "Admin User",       
+        "email": "admin@clinicaltrials.ai",
+        "role": "System Administrator",
         "hashed_password": _pwd_ctx.hash("admin123"),
         "created_at": "2024-01-01T00:00:00Z",
-        "avatar_initials": "SJ",
+        "avatar_initials": "AU",
     }
 }
 

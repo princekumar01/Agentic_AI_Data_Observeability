@@ -165,7 +165,7 @@ export default function Streaming() {
 
   useEffect(() => {
     fetchAll();
-    const interval = setInterval(fetchAll, 10000);
+    const interval = setInterval(fetchAll, 3000);
     return () => clearInterval(interval);
   }, [fetchAll]);
 
@@ -207,7 +207,7 @@ export default function Streaming() {
           </div>
           <p className="text-sm text-slate-400 font-dm">
             Run: <span className="text-slate-200 font-mono text-xs">{runId ?? 'No active run'}</span>
-            &nbsp;·&nbsp;Refreshes every 10s
+            &nbsp;·&nbsp;Refreshes every 3s
             &nbsp;·&nbsp;Last: <span className="text-slate-300">{lastRefresh.toLocaleTimeString()}</span>
           </p>
         </div>
@@ -231,7 +231,6 @@ export default function Streaming() {
           { label: 'Records/sec', value: status?.throughput_per_sec?.toLocaleString() ?? '—', icon: <Zap size={16} className="text-blue-400" />, sub: 'throughput' },
           { label: 'Consumer Lag', value: status?.consumer_lag?.toLocaleString() ?? '—', icon: <TrendingUp size={16} className="text-orange-400" />, sub: 'messages behind' },
           { label: 'Processed', value: status?.records_processed?.toLocaleString() ?? '—', icon: <Database size={16} className="text-green-400" />, sub: 'total records' },
-          { label: 'Anomalies', value: status?.anomalies_detected?.toString() ?? '—', icon: <AlertTriangle size={16} className="text-red-400" />, sub: 'detected' },
           { label: 'Partitions', value: status?.partitions?.toString() ?? '—', icon: <Layers size={16} className="text-purple-400" />, sub: 'active' },
           { label: 'Uptime', value: status?.uptime ?? '—', icon: <Activity size={16} className="text-teal-400" />, sub: 'stream runtime' },
         ].map((k, i) => (
@@ -309,114 +308,7 @@ export default function Streaming() {
         </GlassCard>
       )}
 
-      {/* Agents Grid */}
-      <div>
-        <h3 className="text-sm font-semibold text-slate-300 font-space flex items-center gap-2 mb-3">
-          <Cpu size={15} className="text-blue-400" /> AI Agent Status
-          <span className="text-xs text-slate-500 font-normal">({agents.length} agents active)</span>
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
-          {agents.map(agent => (
-            <AgentCard key={agent.agent_id} agent={agent} />
-          ))}
-        </div>
-      </div>
 
-      {/* Events + Findings Tabs */}
-      <GlassCard>
-        <div className="border-b border-slate-800 px-4">
-          <div className="flex items-center gap-0">
-            {(['events', 'findings'] as const).map(tab => (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors capitalize ${
-                  activeTab === tab
-                    ? 'border-blue-500 text-blue-400'
-                    : 'border-transparent text-slate-500 hover:text-slate-300'
-                }`}
-              >
-                {tab === 'events' ? `Stream Events (${events.length})` : `AI Findings (${findings.length})`}
-              </button>
-            ))}
-            {activeTab === 'findings' && (
-              <div className="ml-auto flex items-center gap-2 py-2 pr-1">
-                <span className="text-xs text-slate-500">Filter:</span>
-                {['all', 'critical', 'high', 'medium', 'low'].map(sev => (
-                  <button
-                    key={sev}
-                    onClick={() => setFilterSeverity(sev)}
-                    className={`px-2 py-0.5 rounded text-xs capitalize transition-colors ${
-                      filterSeverity === sev ? 'bg-blue-600 text-white' : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {sev}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {activeTab === 'events' && (
-          <div className="divide-y divide-slate-800/50 max-h-80 overflow-y-auto">
-            {events.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">No events yet</div>
-            ) : events.map((ev, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-2.5 hover:bg-slate-800/30 transition-colors">
-                <div className="mt-0.5">{eventTypeIcon[ev.event_type] ?? <Activity size={13} className="text-slate-500" />}</div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-medium text-slate-200 truncate">{ev.message}</span>
-                    {ev.severity && (
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded border font-medium ${severityColor[ev.severity] ?? ''}`}>
-                        {ev.severity}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-3 mt-0.5">
-                    <span className="text-[10px] text-slate-500 font-mono">{ev.event_type}</span>
-                    {ev.agent && <span className="text-[10px] text-slate-500">· {agentLabel(ev.agent)}</span>}
-                    {ev.record_id && <span className="text-[10px] text-slate-500 font-mono">· {ev.record_id}</span>}
-                  </div>
-                </div>
-                <span className="text-[10px] text-slate-600 font-mono shrink-0">{formatDateTime(ev.timestamp)}</span>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {activeTab === 'findings' && (
-          <div className="divide-y divide-slate-800/50 max-h-80 overflow-y-auto">
-            {filteredFindings.length === 0 ? (
-              <div className="p-8 text-center text-slate-500 text-sm">No findings match this filter</div>
-            ) : filteredFindings.map((f, i) => (
-              <div key={i} className="flex items-start gap-3 px-4 py-3 hover:bg-slate-800/30 transition-colors">
-                <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${
-                  f.severity === 'critical' ? 'bg-red-500' :
-                  f.severity === 'high' ? 'bg-orange-500' :
-                  f.severity === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
-                }`} />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-0.5">
-                    <span className="text-xs font-medium text-slate-200">{f.finding_type}</span>
-                    <span className={`text-[10px] px-1.5 py-0.5 rounded border ${severityColor[f.severity]}`}>{f.severity}</span>
-                    <ConfidenceBadge score={f.confidence} />
-                  </div>
-                  <p className="text-xs text-slate-400">{f.description}</p>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[10px] text-slate-500">Agent: {agentLabel(f.agent)}</span>
-                    {f.record_ids?.length > 0 && (
-                      <span className="text-[10px] text-slate-500">Records: {f.record_ids.join(', ')}</span>
-                    )}
-                  </div>
-                </div>
-                <Eye size={13} className="text-slate-600 mt-0.5 shrink-0" />
-              </div>
-            ))}
-          </div>
-        )}
-      </GlassCard>
     </div>
   );
 }
